@@ -1,0 +1,20 @@
+Lista,ID,Card,Descricao,Labels, Pontos
+Backlog,S2-01,Scaffold Spring Boot,"Criar api\ com Spring Initializr (Web, JPA, Validation, H2, Actuator), Maven wrapper e perfil demo",backend,3
+Backlog,S2-02,Camada transversal,"ProblemDetail RFC 7807, validacao Jakarta, paginacao padrao e SpringDoc configurado",backend,3
+Backlog,S2-03,Seed de dados demo,"CSVs: relatos, servicos, vagas, trilhas, paradas GTFS reduzido; importadores",dados,5
+Backlog,S2-04,Motor de regras escudo,"proxies-idade.json e termos-discriminatorios.json a partir de 05-ETARISMO.md",escudo,5
+Backlog,S2-05,Front de demo,"Pagina simples para demonstrar relatos no mapa e auditoria de curriculo",frontend,8
+Backlog,S2-06,CI do projeto,"GitHub Actions: build + testes em PR",infra,3
+A Fazer,S1-11,Dataset seed minimo,"Definir quantidades: 10 relatos, 5 servicos, 10 vagas, 3 trilhas, 10 paradas",dados,2
+A Fazer,S1-12,Congelar enums,"Criar arquivo compartilhado com enums (categorias, status, faixas etarias)",backend,1
+Em Andamento,S1-10,Revisar 07-ARQUITETURA,"Equipe aprova monolito modular, gates de modulo e profiles demo/prod",docs,2
+Em Andamento,S1-13,Revisar 08-ROTAS,"Equipe aprova as 29 rotas e os deltas em relacao aos rascunhos",docs,2
+Concluido,S1-01,Design thinking completo,"Emapatia Definicao e Ideacao documentadas em 01 02 03",docs,8
+Concluido,S1-02,Pesquisa etarismo,"05-ETARISMO.md: proxies, lei BR, 5 metodos de deteccao, 15 regras age-blind",pesquisa,5
+Concluido,S1-03,Panorama de concorrencia,"06-CONCORRENCIA.md: 4 familias, ~25 produtos, 7 diferenciais",pesquisa,3
+Concluido,S1-04,Decisao de arquitetura,"Monolito modular Spring Boot com 3 contextos e interfaces Gateway",arquitetura,2
+Concluido,S1,05,Documento de arquitetura,"07-ARQUITETURA.md: stack, pacotes, modelo de dados, integracoes, riscos",arquitetura,5
+Concluido,S1-06,Catalogo de rotas,"08-ROTAS.md: 29 rotas oficiais + tabela de deltas",api,3
+Concluido,S1-07,OpenAPI 3.0,"openapi.yaml com paths e schemas dos 4 modulos",api,5
+Concluido,S1-09,Kanban da sprint,"kanban/SPRINT-1.md e trello-import.csv",gestao,2
+Concluido,S1-08,Validar openapi.yaml,"Parse OK via js-yaml: 29 paths e 35 schemas",docs,1
