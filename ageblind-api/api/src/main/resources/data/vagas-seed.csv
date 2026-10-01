@@ -1,0 +1,21 @@
+titulo|empresa|area|descricao|salario|modelo|prazo|competencias
+Analista de Logistica|TransLivre|Logistica|Planejamento de rotas e controle de estoque em distribuidora regional|4800|HIBRIDO|2026-10-20T18:00|PCP;Logistica;Power BI
+Coordenador de Transportes|TransLivre|Logistica|Coordenacao de frota e negociacao com transportadoras|7200|PRESENCIAL|2026-10-25T18:00|Logistica;Gestao de Equipes;Negociacao
+Supervisor de Centro de Distribuicao|LogMais|Logistica|Gestao de equipe de picking e expedicao|6500|PRESENCIAL|2026-11-05T18:00|Gestao de Equipes;Logistica;Qualidade de Processos
+Planejador de Rotas|RotasBr|Logistica|Otimizacao de rotas de entrega com foco em custo e prazo|5200|REMOTO|2026-10-18T18:00|Roteirizacao;Logistica;Power BI
+Assistente Administrativo|ContabilMais|Administracao|Rotinas administrativas, controle de documentos e agenda|3100|PRESENCIAL|2026-10-30T18:00|Administracao;Excel Avancado
+Analista de Processos|ContabilMais|Administracao|Mapeamento e melhoria de processos internos|5400|HIBRIDO|2026-11-10T18:00|Processos;Lean Six Sigma;Indicadores
+Coordenador Administrativo|Grupo Norte|Administracao|Supervisao de equipe administrativa e contas a pagar|7000|PRESENCIAL|2026-10-22T18:00|Administracao;Gestao de Equipes;Controladoria
+Analista de Controladoria|Grupo Norte|Administracao|Analise de custos, orcamento e relatorios gerenciais|6100|HIBRIDO|2026-11-01T18:00|Controladoria;Power BI;Orcamento
+Suporte Tecnico N2|ConectaTI|TI|Atendimento de chamados, redes e infraestrutura|4500|REMOTO|2026-10-17T18:00|Suporte;Redes;Sistemas
+Administrador de Bancos de Dados|ConectaTI|TI|Operacao e monitoramento de bancos de dados corporativos|8300|REMOTO|2026-11-15T18:00|Sistemas;Dados;Seguranca da Informacao
+Analista de Sistemas|CodeVale|TI|Manutencao evolutiva de sistemas internos em Java|7800|HIBRIDO|2026-11-08T18:00|Desenvolvimento;Sistemas;Qualidade de Processos
+Analista de Dados|CodeVale|TI|Construcao de indicadores e dashboards para operacao|6900|REMOTO|2026-10-28T18:00|Dados;Power BI;Indicadores
+Atendente de Suporte ao Cliente|FaleCom|Atendimento|Canal telefone e chat com foco em resolucao no primeiro contato|2900|PRESENCIAL|2026-10-16T18:00|Atendimento;Relacionamento
+Supervisor de Atendimento|FaleCom|Atendimento|Lideranca de equipe de atendimento e qualidade do servico|5900|HIBRIDO|2026-10-27T18:00|Gestao de Equipes;Atendimento;Indicadores
+Analista de Pos-vendas|MercadoLivreiro|Vendas|Follow-up de clientes e recomendacao de solucoes|4200|REMOTO|2026-11-03T18:00|Pos-vendas;Clientes;CRM
+Consultor Comercial|MercadoLivreiro|Vendas|Prospeccao B2B e negociacao de contratos recorrentes|5600|HIBRIDO|2026-10-24T18:00|Comercial;Negociacao;Prospeccao
+Coordenador de Vendas|MercadoLivreiro|Vendas|Gestao de meta e time comercial por regiao|7500|PRESENCIAL|2026-11-12T18:00|Gestao de Equipes;Comercial;Indicadores
+Analista de Producao|FabricaSul|Producao|Controle de ordens de producao e paradas de linha|4900|PRESENCIAL|2026-10-21T18:00|PCP;Producao;Qualidade de Processos
+Engenheiro de Qualidade|FabricaSul|Producao|Auditorias, SPC e melhoria continua de processos|7100|HIBRIDO|2026-11-06T18:00|Qualidade de Processos;Lean Six Sigma;Indicadores
+Planejador de Producao|FabricaSul|Producao|Cronograma mestre e consumo de materiais|5500|PRESENCIAL|2026-10-29T18:00|PCP;Planejamento;Logistica
