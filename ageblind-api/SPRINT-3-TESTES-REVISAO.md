@@ -36,10 +36,10 @@
 
 ### 1.3 Testes de regressão anti-viés (assinatura do produto)
 
-- [ ] **Idade não muda ranking:** mesmo perfil, 2 idades hipotéticas → mesma ordem de vagas.
-- [ ] **Fixture age-blind:** currículo real → versão gerada **não contém** ano de graduação, nem "30 anos de experiência", nem data de nascimento (assert de substring).
-- [ ] **Adverse impact:** dataset sintético com 40% vs 15% de aprovação → razão 0,375 → alerta.
-- [ ] **LGPD:** resposta de decisão automatizada inclui caminho para `revisao/solicitacao`.
+- [x] **Idade não muda ranking:** mesmo perfil, 2 idades hipotéticas → mesma ordem de vagas. (`rankingSemDadosEtariosEDeterministico`)
+- [x] **Fixture age-blind:** currículo real → versão gerada **não contém** ano de graduação, nem "30 anos de experiência", nem data de nascimento (assert de substring). (`FixtureCurriculoRegressionTest`)
+- [x] **Adverse impact:** dataset sintético com 40% vs 15% de aprovação → razão 0,375 (exibida 0,37) → alerta. (`adverseImpactoExato40vs15PorCentoDisparaAlerta`)
+- [x] **LGPD:** resposta de decisão automatizada inclui caminho para `revisao/solicitacao`. (`LgpdRevisaoCaminhoTest` — campo `caminhoParaRevisao` em ranking, auditoria e funil)
 
 ## 2. Revisão no Git/GitHub
 
@@ -56,19 +56,19 @@ main ──► feat/d-07-perfis ──► PR #1 ──► main
 
 ### 2.2 Checklist do PR (revisor outro que o autor)
 
-- [ ] Compila e testes verdes localmente (`./mvnw clean verify`)
-- [ ] Sem `dataNascimento`/`idade` em nenhuma entidade (`grep -ri "idade" src/`)
-- [ ] Endpoints batem com `openapi.yaml` (sem rota órfã)
-- [ ] Erros em RFC 7807 com `fieldErrors`
-- [ ] Sem segredo/credencial no diff
-- [ ] Mensagem de commit explica o *porquê*
-- [ ] Swagger atualizado (exemplos)
+- [x] Compila e testes verdes localmente (`./mvnw clean verify` → **58/58**)
+- [x] Sem `dataNascimento`/`idade` em nenhuma entidade (`grep -ri "idade" src/` → só `Severidade`)
+- [x] Endpoints batem com `openapi.yaml` (sem rota órfã) — `ContratoOpenApiTest`
+- [x] Erros em RFC 7807 com `fieldErrors`
+- [x] Sem segredo/credencial no diff (grep password/secret/key/token → nenhum)
+- [x] Mensagem de commit explica o *porquê* (Conventional Commits)
+- [x] Swagger atualizado (exemplos/summaries em todas as 15 rotas)
 
 ### 2.3 Qualidade (Definition of Done)
 
-- [ ] Cobertura ≥ 70% nos services dos módulos `carreira` e `escudo`
-- [ ] `GET /actuator/health` → `UP`
-- [ ] README com `./mvnw spring-boot:run` + 3 curl de exemplo (age-blind, auditoria, funil)
+- [x] Cobertura ≥ 70% nos services dos módulos `carreira` e `escudo` — **94,2% linhas / 76% branches** (JaCoCo)
+- [x] `GET /actuator/health` → `UP` (smoke com jar seed, porta 8099)
+- [x] README com `./mvnw spring-boot:run` + 3 curl de exemplo (age-blind, auditoria, funil)
 - [ ] Tag `v1.0.0` no GitHub + release notes
 
 ## 3. Demo final (entrega)
