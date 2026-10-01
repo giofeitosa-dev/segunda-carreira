@@ -10,6 +10,7 @@ import com.reconecta.ageblind.escudo.dominio.MetricaFunil;
 import com.reconecta.ageblind.escudo.dto.EtapaMetrica;
 import com.reconecta.ageblind.escudo.dto.MetricasFunilResponse;
 import com.reconecta.ageblind.escudo.repository.MetricaFunilRepository;
+import com.reconecta.ageblind.shared.api.CaminhosLgpd;
 import com.reconecta.ageblind.shared.api.RecursoNaoEncontradoException;
 import com.reconecta.ageblind.shared.enums.FaixaEtaria;
 
@@ -43,7 +44,8 @@ public class FunilMetricasService {
 
 		if (linhas.isEmpty()) {
 			return new MetricasFunilResponse(vagaId, List.of(),
-					"Sem métricas para o período informado.");
+					"Sem métricas para o período informado.",
+					CaminhosLgpd.REVISAO_SOLICITACAO);
 		}
 
 		Map<String, List<MetricaFunil>> porEtapa = new LinkedHashMap<>();
@@ -58,7 +60,8 @@ public class FunilMetricasService {
 				? "Razão " + decimal(menorRazao) + " < 0,80 → possível viés etário; investigar."
 				: "Menor razão " + decimal(menorRazao) + " ≥ 0,80 → sem indícios de adverse impact.";
 
-		return new MetricasFunilResponse(vagaId, etapas, interpretacao);
+		return new MetricasFunilResponse(vagaId, etapas, interpretacao,
+				CaminhosLgpd.REVISAO_SOLICITACAO);
 	}
 
 	private EtapaMetrica calcularEtapa(String etapa, List<MetricaFunil> linhas) {

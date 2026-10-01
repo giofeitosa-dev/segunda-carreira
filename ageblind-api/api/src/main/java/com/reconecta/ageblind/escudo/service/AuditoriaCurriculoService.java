@@ -43,7 +43,8 @@ public class AuditoriaCurriculoService {
 		int penalidade = sinais.stream().mapToInt(s -> pontos(s.severidade())).sum();
 		int score = Math.max(0, 100 - penalidade);
 
-		return new AuditoriaCurriculoResponse(score, detalhe, sugestoes(sinais, vagaAlvo));
+		return new AuditoriaCurriculoResponse(score, detalhe, sugestoes(sinais, vagaAlvo),
+				com.reconecta.ageblind.shared.api.CaminhosLgpd.REVISAO_SOLICITACAO);
 	}
 
 	private int pontos(Severidade severidade) {

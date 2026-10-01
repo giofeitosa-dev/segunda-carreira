@@ -5,5 +5,7 @@ import java.util.List;
 public record VagaRecomendadaResponse(
 		VagaResponse vaga,
 		double score,
-		List<String> competenciasAtendidas) {
+		List<String> competenciasAtendidas,
+		List<String> competenciasFaltantes,
+		String caminhoParaRevisao) {
 }

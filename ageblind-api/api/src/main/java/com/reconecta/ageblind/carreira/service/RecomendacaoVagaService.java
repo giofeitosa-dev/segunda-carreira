@@ -16,6 +16,7 @@ import com.reconecta.ageblind.carreira.dto.VagaRecomendadaResponse;
 import com.reconecta.ageblind.carreira.dto.VagaResponse;
 import com.reconecta.ageblind.carreira.repository.PerfilRepository;
 import com.reconecta.ageblind.carreira.repository.VagaRepository;
+import com.reconecta.ageblind.shared.api.CaminhosLgpd;
 import com.reconecta.ageblind.shared.api.RecursoNaoEncontradoException;
 
 import org.springframework.stereotype.Service;
@@ -92,8 +93,11 @@ public class RecomendacaoVagaService {
 		double score = Math.min(1.0,
 				(double) somaNiveis / (NIVEL_MAXIMO * requisitos.size()));
 		score = Math.round(score * 100.0) / 100.0;
+		List<String> faltantes = requisitos.stream()
+				.filter(r -> !atendidas.contains(r))
+				.toList();
 		return new VagaRecomendadaResponse(vagaService.obter(vaga.getId()), score,
-				List.copyOf(atendidas));
+				List.copyOf(atendidas), faltantes, CaminhosLgpd.REVISAO_SOLICITACAO);
 	}
 
 	private String normalizar(String nome) {
