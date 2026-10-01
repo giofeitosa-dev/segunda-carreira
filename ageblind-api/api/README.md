@@ -36,7 +36,7 @@ java -jar target\ageblind-api-0.0.1-SNAPSHOT.jar --spring.profiles.active=seed
 | URL | O que é |
 |---|---|
 | http://localhost:8080/swagger-ui.html | Swagger UI (**AgeBlind API**) |
-| http://localhost:8080/v3/api-docs | JSON OpenAPI (spec completa em `reconecta-recode/openapi.yaml`) |
+| http://localhost:8080/v3/api-docs | JSON OpenAPI (spec completa em [`../openapi.yaml`](../openapi.yaml)) |
 | http://localhost:8080/actuator/health | Health (`UP`) |
 | http://localhost:8080/h2-console | H2 (JDBC: `jdbc:h2:mem:ageblind`) |
 

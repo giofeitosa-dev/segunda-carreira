@@ -1,7 +1,7 @@
 # 🗂️ Kanban — AgeBlind API (3 sprints)
 
 > Quadro único do projeto · atualizado em 30/09/2026
-> **WIP:** 3 cards em "Em Andamento" · import para Trello/Notion: [`../kanban/trello-import.csv`](../kanban/trello-import.csv) (sprint 1) ou copie as listas abaixo
+> **WIP:** 2 cards em "Em Andamento" (S1-10, S1-13 — aprovações da equipe) · import para Trello/Notion: [`../kanban/trello-import.csv`](../kanban/trello-import.csv) (sprint 1) ou copie as listas abaixo
 
 ---
 
@@ -17,6 +17,7 @@
 | S1-06 | Catálogo de rotas (29 / 15 do AgeBlind) | `08-ROTAS.md` |
 | S1-07 | OpenAPI 3.0 validado | `openapi.yaml` |
 | S1-09 | Kanban das sprints | este arquivo + CSV |
+| S1-11 | Dataset seed mínimo (10 perfis, 20 vagas, 5 trilhas, fixtures) | entregue como **D-20** |
 
 ## 🔄 Em Andamento
 
@@ -25,7 +26,7 @@
 | S1-10 | Aprovar arquitetura (`07-ARQUITETURA.md`) | equipe | 2 |
 | S1-13 | Aprovar rotas (`08-ROTAS.md` + deltas) | equipe | 2 |
 
-## ✅ Sprint 2 — Fases A+B+C+D-20 concluídas em 30/09/2026
+## ✅ Sprint 2 — CONCLUÍDA em 30/09/2026 (D-01…D-22)
 
 | ID | Card | Evidência |
 |---|---|---|
@@ -49,22 +50,18 @@
 | D-12 | `POST /inscricoes` + `POST /webhooks/lembretes` | 201/202 + validação perfil/vaga/trilha (404) + `LembreteJob` `@Scheduled` (dispara prazo dentro da antecedência) — 3 testes |
 | D-13 | `GET /mentorias` | `MentoriaService`: filtro `area` (case-insensitive) ou `perfilId`→`areaAlvo`, ordenado por id; 404 perfil inexistente — 3 testes |
 | D-20 | Seed demo completo | 10 perfis + competências (`PerfilSeedRunner`), 5 trilhas (2 novas), currículos fixture (`curriculos/sinalizado.txt`/`otimizado.txt`) + `SeedDemoTest` (DB isolado) — bônus: 405/400 RFC 7807 no handler |
+| D-21 | README da API | `api/README.md` — 15 rotas, como rodar (dev/seed/jar), 15 exemplos curl, seed, regras de ouro |
+| D-22 | Branch `feat/*` + PR inicial | Repo `giofeitosa-dev/segunda-carreira` (15 commits Conventional) + PR #1 `feat/ageblind-api` → `main` |
 
 > **Suite atual: 50/50 testes verdes** (`mvnw test` → BUILD SUCCESS) · **Sprint 2 CONCLUÍDA (D-01…D-22)** · smoke com jar + `--spring.profiles.active=seed`: 10 perfis, 20 vagas, 5 trilhas, recomendadas OK · **D-22:** repo GitHub `giofeitosa-dev/segunda-carreira` (privado), `main` = docs base, `feat/ageblind-api` = 11 commits da Sprint 2, PR #1 aberto → passa para Sprint 3
 
-## 📝 A Fazer — refinamento pré-Sprint 2
-
-| ID | Card | Pontos |
-|---|---|---|
-| S1-11 | Dataset seed mínimo (10 perfis, 20 vagas, 5 trilhas, fixtures de currículo) | 2 |
-
 ---
 
-## 📋 Backlog — Sprint 2 (Desenvolvimento) · 58h
+## 📋 Backlog — Sprint 2 (Desenvolvimento) · 58h · ✅ CONCLUÍDO
 
 *Detalhes e dependências em [`SPRINT-2-DESENVOLVIMENTO.md`](SPRINT-2-DESENVOLVIMENTO.md)*
 
-**Fase A — Setup** ✅ (D-03, D-05 em andamento — ver "Em Andamento")
+**Fase A — Setup** ✅ (D-01…D-05)
 | ID | Card | h |
 |---|---|---|
 | D-01 | Spring Initializr + Maven wrapper | 1 |

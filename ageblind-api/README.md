@@ -2,7 +2,7 @@
 
 > **API anti-etarismo para empregabilidade:** detecção **+ geração** de currículos age-blind, auditoria de vagas, métricas de funil e recomendação de vagas por competências — **sem usar idade**.
 > **Tagline:** *"A API que contrata por competência, não por ano de nascimento."*
-> ODS 10 + ODS 5 · módulo extraído do projeto [Reconecta](../README.md)
+> ODS 10 + ODS 5 · módulo extraído do projeto Reconecta (ReCode)
 
 ---
 
@@ -11,8 +11,8 @@
 | Sprint | Fase | Entregável | Status |
 |---|---|---|---|
 | 🔹 **Sprint 1** | Planejamento | Arquitetura + definição das rotas + quadro Kanban | ✅ 30/09/2026 (aguarda aprovação) |
-| 🔹 **Sprint 2** | Desenvolvimento | Mão na massa — **Java 17 + Spring Boot 4.1.1** (Fase A concluída ✅) | 🔄 em andamento |
-| 🔹 **Sprint 3** | Testes e revisão | Testes dos endpoints + revisão no Git/GitHub | ⬜ planejada |
+| 🔹 **Sprint 2** | Desenvolvimento | Mão na massa — **Java 17 + Spring Boot 4.1.1**: 15/15 rotas, seed demo, suite 50/50 | ✅ 30/09/2026 (PR #1 aberto) |
+| 🔹 **Sprint 3** | Testes e revisão | Testes dos endpoints + revisão no Git/GitHub | ⬜ próxima |
 
 ## Estrutura desta pasta
 
@@ -23,16 +23,16 @@ ageblind-api\
 ├── SPRINT-2-DESENVOLVIMENTO.md    ← backlog de código (setup → módulos → integração)
 ├── SPRINT-3-TESTES-REVISAO.md     ← matriz de testes + checklist Git/GitHub
 ├── kanban.md                      ← quadro único com as 3 sprints
-└── api\                           ← ⭐ projeto Spring Boot (Fase A pronta ✅)
-    ├── README.md                  ← como rodar + URLs + próximos passos
+└── api\                           ← ⭐ projeto Spring Boot (Sprint 2 concluída ✅)
+    ├── README.md                  ← como rodar + 15 rotas + exemplos curl
     ├── pom.xml                    ← Spring Boot 4.1.1 + SpringDoc
     └── src\main\java\com\reconecta\ageblind\
-        ├── carreira\  escudo\      ← módulos a implementar
+        ├── carreira\  escudo\      ← módulos implementados (10 + 5 rotas)
         └── shared\                 ← GlobalExceptionHandler + OpenApiConfig
 ```
 
-**Documentos compartilhados (raiz do projeto):**
-[`07-ARQUITETURA.md`](../07-ARQUITETURA.md) · [`08-ROTAS.md`](../08-ROTAS.md) · [`openapi.yaml`](../openapi.yaml) (tags `Carreira` e `Escudo Anti-Etarismo`) · [`05-ETARISMO.md`](../05-ETARISMO.md) (base das 15 regras)
+**Documentos da API:**
+[`openapi.yaml`](../openapi.yaml) (tags `Carreira` e `Escudo Anti-Etarismo`) · [`05-ETARISMO.md`](../05-ETARISMO.md) (base das 15 regras) · arquitetura/rotas completas (`07-ARQUITETURA.md`, `08-ROTAS.md`) ficam no repo Reconecta pai
 
 ---
 

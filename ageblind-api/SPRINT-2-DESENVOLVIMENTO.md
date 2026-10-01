@@ -43,9 +43,9 @@
 | D-18 | `GET /funil/metricas` — aprovação por faixa + `razaoAdverseImpact < 0,80` | 4h | ✅ `FunilMetricasService` + `VagaGateway` + 4 testes (404/400/razão 0,43/0,80) |
 | D-19 | `POST /revisao/solicitacao` — protocolo LGPD art. 20 | 2h | ✅ `RevisaoController` + protocolo `REV-` + 404 via `PerfilGateway` — 3 testes |
 
-### Fase D — Fechamento (dia 6)
+### Fase D — Fechamento (dia 6) — ✅ concluída em 30/09/2026
 
-| ID | Tarefa | Estimativa |
+| ID | Tarefa | Estimativa | Pronto quando |
 |---|---|---|
 | D-20 | Seed completo demo (10 perfis, 20 vagas, 5 trilhas, currículos fixture) | 3h | ✅ `perfis-seed.csv` + `PerfilSeedRunner` + `curriculos/` (sinalizado/otimizado) + `SeedDemoTest` + bônus: handler 405/400 |
 | D-21 | README da API: como rodar (`./mvnw spring-boot:run`) + exemplos curl | 2h | ✅ `api/README.md` — 15 rotas, seed, regras de ouro, 15 curls validados |
@@ -61,4 +61,4 @@
 4. Módulos falam entre si por `Gateway`, nunca por `@Autowired` do outro módulo direto no Repository.
 5. Commit pequeno: 1 task = 1 commit, mensagem `feat(D-08): ...`.
 
-**✔ Sprint 2 pronta quando:** os 15 endpoints funcionam no Swagger com exemplo de request/response e o seed demo carrega sozinho.
+**✔ Sprint 2 pronta quando:** os 15 endpoints funcionam no Swagger com exemplo de request/response e o seed demo carrega sozinho. — **✅ ATINGIDO em 30/09/2026:** 15/15 rotas, suite **50/50**, smoke com seed (10 perfis / 20 vagas / 5 trilhas) e PR #1 aberto no `segunda-carreira`.
