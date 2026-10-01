@@ -49,7 +49,7 @@
 |---|---|---|
 | D-20 | Seed completo demo (10 perfis, 20 vagas, 5 trilhas, currículos fixture) | 3h | ✅ `perfis-seed.csv` + `PerfilSeedRunner` + `curriculos/` (sinalizado/otimizado) + `SeedDemoTest` + bônus: handler 405/400 |
 | D-21 | README da API: como rodar (`./mvnw spring-boot:run`) + exemplos curl | 2h | ✅ `api/README.md` — 15 rotas, seed, regras de ouro, 15 curls validados |
-| D-22 | Preparar branch `feat/*` e PR inicial → passa para Sprint 3 | 1h |
+| D-22 | Preparar branch `feat/*` e PR inicial → passa para Sprint 3 | 1h | ✅ Repo `giofeitosa-dev/segunda-carreira` (recorte: API+ideação+kanban+etarismo), 15 commits Conventional, PR #1 `feat/ageblind-api` → `main` |
 
 **Total estimado:** ~58h · WIP: máx. 3 cards em andamento
 

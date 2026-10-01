@@ -50,7 +50,7 @@
 | D-13 | `GET /mentorias` | `MentoriaService`: filtro `area` (case-insensitive) ou `perfilId`→`areaAlvo`, ordenado por id; 404 perfil inexistente — 3 testes |
 | D-20 | Seed demo completo | 10 perfis + competências (`PerfilSeedRunner`), 5 trilhas (2 novas), currículos fixture (`curriculos/sinalizado.txt`/`otimizado.txt`) + `SeedDemoTest` (DB isolado) — bônus: 405/400 RFC 7807 no handler |
 
-> **Suite atual: 50/50 testes verdes** (`mvnw test` → BUILD SUCCESS) · **Fases A, B, C + D-20/D-21 concluídas** · smoke com jar + `--spring.profiles.active=seed`: 10 perfis, 20 vagas, 5 trilhas, recomendadas OK · resta D-22 (branch/PR)
+> **Suite atual: 50/50 testes verdes** (`mvnw test` → BUILD SUCCESS) · **Sprint 2 CONCLUÍDA (D-01…D-22)** · smoke com jar + `--spring.profiles.active=seed`: 10 perfis, 20 vagas, 5 trilhas, recomendadas OK · **D-22:** repo GitHub `giofeitosa-dev/segunda-carreira` (privado), `main` = docs base, `feat/ageblind-api` = 11 commits da Sprint 2, PR #1 aberto → passa para Sprint 3
 
 ## 📝 A Fazer — refinamento pré-Sprint 2
 
