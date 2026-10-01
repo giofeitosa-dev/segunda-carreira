@@ -24,7 +24,7 @@
 | 4 | `GET /vagas` | pagina + filtra por `area` | `400` página negativa |
 | 5 | `GET /vagas/recomendadas` | ≥3 vagas ranqueadas **com justificativa** | `404` perfil |
 | 6 | `GET /vagas/{id}` | detalhe completo | `404` |
-| 7 | `GET /trilhas/{area}` | 3 trilhas com módulos | `404` área desconhecida |
+| 7 | `GET /trilhas/{area}` | 3 trilhas com módulos | `200` + lista vazia (contrato não prevê 404) |
 | 8 | `POST /inscricoes` | criação + status `ENVIADA` | `400` tipo inválido |
 | 9 | `POST /webhooks/lembretes` | `202 Accepted` | `400` sem `inscricaoId` |
 | 10 | `GET /mentorias` | mentor da área | `404` perfil |

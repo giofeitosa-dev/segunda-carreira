@@ -94,6 +94,29 @@ class FunilMetricasControllerTest {
 				.andExpect(status().isNotFound());
 	}
 
+	/**
+	 * Regressão anti-viés (Sprint 3, T-03): 40% vs 15% de aprovação → razão
+	 * 0,375 (o serviço arredonda para 0,37 pelo limite binário) → alerta true.
+	 */
+	@Test
+	void adverseImpactoExato40vs15PorCentoDisparaAlerta() throws Exception {
+		long vagaId = criarVaga();
+		linha(vagaId, "Contratacao", FaixaEtaria.ATE_39, 100, 40);
+		linha(vagaId, "Contratacao", FaixaEtaria.DE_40_A_49, 100, 30);
+		linha(vagaId, "Contratacao", FaixaEtaria.MAIS_50, 100, 15);
+
+		mockMvc.perform(get("/api/v1/funil/metricas")
+						.param("vagaId", String.valueOf(vagaId))
+						.param("periodo", "2026-09"))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.etapas[0].aprovacao.ATE_39").value(0.4))
+				.andExpect(jsonPath("$.etapas[0].aprovacao['50_MAIS']").value(0.15))
+				.andExpect(jsonPath("$.etapas[0].razaoAdverseImpact").value(0.37))
+				.andExpect(jsonPath("$.etapas[0].alerta").value(true))
+				.andExpect(jsonPath("$.interpretacao").value(
+						org.hamcrest.Matchers.containsString("0,37")));
+	}
+
 	@Test
 	void metricasSemVagaIdDevolve400() throws Exception {
 		mockMvc.perform(get("/api/v1/funil/metricas"))
