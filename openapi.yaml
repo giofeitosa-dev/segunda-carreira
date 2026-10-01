@@ -1,0 +1,968 @@
+openapi: 3.0.3
+info:
+  title: Reconecta API
+  version: 1.0.0
+  description: >
+    API de mobilidade e participação cidadã para as ODS 5, 10 e 11.
+    4 módulos: Relatos do Bairro, Segunda Carreira, Escudo Anti-Etarismo e Rotas Acessíveis.
+    Documentação da sprint: 07-ARQUITETURA.md e 08-ROTAS.md.
+  contact:
+    name: Equipe Reconecta (ReCode)
+servers:
+  - url: http://localhost:8080
+    description: Local demo (perfil demo, H2)
+tags:
+  - name: Relatos
+    description: ODS 11+10 — reportar e acompanhar problemas do bairro
+  - name: Carreira
+    description: ODS 10+5 — perfis, vagas, trilhas e mentorias (40+)
+  - name: Escudo Anti-Etarismo
+    description: ODS 10+5 — currículo age-blind, auditorias e métricas de funil
+  - name: Rotas
+    description: ODS 11+10+5 — rotas acessíveis e seguras
+  - name: Operação
+    description: Saúde e documentação
+
+paths:
+  /api/v1/relatos:
+    post:
+      tags: [Relatos]
+      summary: Cria um relato de problema do bairro
+      operationId: criarRelato
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RelatoRequest' }
+      responses:
+        '201':
+          description: Relato criado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/RelatoResponse' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+    get:
+      tags: [Relatos]
+      summary: Lista relatos com filtros
+      operationId: listarRelatos
+      parameters:
+        - { name: bairro, in: query, schema: { type: string } }
+        - { name: categoria, in: query, schema: { $ref: '#/components/schemas/CategoriaRelato' } }
+        - { name: status, in: query, schema: { $ref: '#/components/schemas/StatusRelato' } }
+        - { $ref: '#/components/parameters/Page' }
+        - { $ref: '#/components/parameters/Size' }
+      responses:
+        '200':
+          description: Página de relatos
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PaginaRelato' }
+
+  /api/v1/relatos/mapa:
+    get:
+      tags: [Relatos]
+      summary: Relatos dentro de uma área (bbox)
+      operationId: relatosNoMapa
+      parameters:
+        - name: bbox
+          in: query
+          required: true
+          description: minLat,minLng,maxLat,maxLng
+          schema: { type: string }
+        - { name: categoria, in: query, schema: { $ref: '#/components/schemas/CategoriaRelato' } }
+      responses:
+        '200':
+          description: Lista geo de relatos
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/RelatoResponse' }
+
+  /api/v1/relatos/{id}:
+    get:
+      tags: [Relatos]
+      summary: Detalhe do relato com histórico
+      operationId: obterRelato
+      parameters: [{ $ref: '#/components/parameters/Id' }]
+      responses:
+        '200':
+          description: Relato
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/RelatoResponse' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /api/v1/relatos/{id}/status:
+    patch:
+      tags: [Relatos]
+      summary: Atualiza o status do relato
+      operationId: atualizarStatusRelato
+      parameters: [{ $ref: '#/components/parameters/Id' }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [status]
+              properties:
+                status: { $ref: '#/components/schemas/StatusRelato' }
+                comentario: { type: string }
+      responses:
+        '200':
+          description: Relato atualizado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/RelatoResponse' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+
+  /api/v1/relatos/{id}/apoios:
+    post:
+      tags: [Relatos]
+      summary: Apoia/confirma um relato existente
+      operationId: apoiarRelato
+      parameters: [{ $ref: '#/components/parameters/Id' }]
+      responses:
+        '200':
+          description: Total de apoios
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  relatoId: { type: integer, format: int64 }
+                  apoios: { type: integer }
+
+  /api/v1/acompanhamento/{codigo}:
+    get:
+      tags: [Relatos]
+      summary: Acompanha o relato pelo código público (sem login)
+      operationId: acompanharPorCodigo
+      parameters:
+        - name: codigo
+          in: path
+          required: true
+          schema: { type: string, example: RLT-8F3K2 }
+      responses:
+        '200':
+          description: Situação do relato
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AcompanhamentoResponse' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /api/v1/servicos:
+    get:
+      tags: [Relatos]
+      summary: Serviços públicos próximos
+      operationId: listarServicos
+      parameters:
+        - { name: lat, in: query, required: true, schema: { type: number, format: double } }
+        - { name: lng, in: query, required: true, schema: { type: number, format: double } }
+        - { name: raio, in: query, schema: { type: number, default: 2000, description: metros } }
+        - name: tipo
+          in: query
+          schema: { $ref: '#/components/schemas/TipoServico' }
+      responses:
+        '200':
+          description: Lista de serviços
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/ServicoPublico' }
+
+  /api/v1/perfis:
+    post:
+      tags: [Carreira]
+      summary: Cadastra perfil profissional (sem data de nascimento)
+      operationId: criarPerfil
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/PerfilRequest' }
+      responses:
+        '201':
+          description: Perfil criado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Perfil' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+
+  /api/v1/perfis/{id}:
+    get:
+      tags: [Carreira]
+      summary: Consulta perfil
+      operationId: obterPerfil
+      parameters: [{ $ref: '#/components/parameters/Id' }]
+      responses:
+        '200':
+          description: Perfil
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Perfil' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /api/v1/perfis/{id}/competencias-transferiveis:
+    post:
+      tags: [Carreira]
+      summary: Mapeia experiência antiga para a área alvo
+      operationId: competenciasTransferiveis
+      parameters: [{ $ref: '#/components/parameters/Id' }]
+      responses:
+        '200':
+          description: Competências transferíveis, gaps e trilha sugerida
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/TransferiveisResponse' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /api/v1/vagas:
+    get:
+      tags: [Carreira]
+      summary: Explora vagas
+      operationId: listarVagas
+      parameters:
+        - { name: area, in: query, schema: { type: string } }
+        - name: modelo
+          in: query
+          schema: { $ref: '#/components/schemas/ModeloVaga' }
+        - { $ref: '#/components/parameters/Page' }
+        - { $ref: '#/components/parameters/Size' }
+      responses:
+        '200':
+          description: Página de vagas
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PaginaVaga' }
+
+  /api/v1/vagas/recomendadas:
+    get:
+      tags: [Carreira]
+      summary: Vagas recomendadas por competências (ranking sem idade)
+      operationId: vagasRecomendadas
+      parameters:
+        - { name: perfilId, in: query, required: true, schema: { type: integer, format: int64 } }
+      responses:
+        '200':
+          description: Vagas ranqueadas com justificativa
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/VagaRecomendada' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /api/v1/vagas/{id}:
+    get:
+      tags: [Carreira]
+      summary: Detalhe da vaga
+      operationId: obterVaga
+      parameters: [{ $ref: '#/components/parameters/Id' }]
+      responses:
+        '200':
+          description: Vaga
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Vaga' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /api/v1/trilhas/{area}:
+    get:
+      tags: [Carreira]
+      summary: Trilhas de capacitação curtas da área
+      operationId: listarTrilhas
+      parameters:
+        - name: area
+          in: path
+          required: true
+          schema: { type: string, example: LOGISTICA }
+      responses:
+        '200':
+          description: Lista de trilhas
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Trilha' }
+
+  /api/v1/inscricoes:
+    post:
+      tags: [Carreira]
+      summary: Inscrição simplificada em vaga ou trilha
+      operationId: criarInscricao
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/InscricaoRequest' }
+      responses:
+        '201':
+          description: Inscrição criada
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Inscricao' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /api/v1/webhooks/lembretes:
+    post:
+      tags: [Carreira]
+      summary: Agenda alerta de prazo de inscrição
+      operationId: agendarLembrete
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [inscricaoId]
+              properties:
+                inscricaoId: { type: integer, format: int64 }
+                antecedenciaHoras: { type: integer, default: 24 }
+      responses:
+        '202':
+          description: Lembrete agendado
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /api/v1/mentorias:
+    get:
+      tags: [Carreira]
+      summary: Encaixe com mentores/pares da área
+      operationId: listarMentorias
+      parameters:
+        - { name: perfilId, in: query, schema: { type: integer, format: int64 } }
+        - { name: area, in: query, schema: { type: string } }
+      responses:
+        '200':
+          description: Lista de mentorias
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Mentoria' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /api/v1/curriculo/age-blind:
+    post:
+      tags: [Escudo Anti-Etarismo]
+      summary: Gera versão do currículo sem proxies de idade (15 regras)
+      operationId: gerarAgeBlind
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CurriculoRequest' }
+      responses:
+        '200':
+          description: Versão age-blind com regras aplicadas
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/VersaoCurriculo' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+
+  /api/v1/curriculo/auditoria:
+    post:
+      tags: [Escudo Anti-Etarismo]
+      summary: Score ATS e sinais que revelam idade
+      operationId: auditarCurriculo
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CurriculoRequest' }
+      responses:
+        '200':
+          description: Auditoria
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AuditoriaCurriculo' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+
+  /api/v1/vagas/auditoria-linguagem:
+    post:
+      tags: [Escudo Anti-Etarismo]
+      summary: Detecta termos discriminatórios na descrição da vaga e o risco legal
+      operationId: auditarLinguagemVaga
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [texto]
+              properties:
+                texto: { type: string, description: Descrição completa da vaga }
+                titulo: { type: string }
+      responses:
+        '200':
+          description: Termos encontrados, risco legal e sugestão de redação
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AuditoriaVaga' }
+
+  /api/v1/funil/metricas:
+    get:
+      tags: [Escudo Anti-Etarismo]
+      summary: Taxa de avanço por faixa etária + alerta de adverse impact
+      operationId: metricasFunil
+      parameters:
+        - { name: vagaId, in: query, required: true, schema: { type: integer, format: int64 } }
+        - { name: periodo, in: query, schema: { type: string, format: date, example: '2026-09' } }
+      responses:
+        '200':
+          description: Métricas por etapa
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/MetricasFunil' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /api/v1/revisao/solicitacao:
+    post:
+      tags: [Escudo Anti-Etarismo]
+      summary: Gera pedido de revisão humana da decisão automatizada (LGPD art. 20)
+      operationId: solicitarRevisao
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [perfilId, motivo]
+              properties:
+                perfilId: { type: integer, format: int64 }
+                vagaId: { type: integer, format: int64 }
+                motivo: { type: string }
+      responses:
+        '201':
+          description: Solicitação registrada
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SolicitacaoRevisao' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /api/v1/rotas:
+    post:
+      tags: [Rotas]
+      summary: Calcula rota acessível e segura (enriquecida com relatos)
+      operationId: calcularRota
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RotaRequest' }
+      responses:
+        '201':
+          description: Rota calculada
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Rota' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+
+  /api/v1/rotas/{id}:
+    get:
+      tags: [Rotas]
+      summary: Detalhe da rota e justificativa
+      operationId: obterRota
+      parameters: [{ $ref: '#/components/parameters/Id' }]
+      responses:
+        '200':
+          description: Rota
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Rota' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /api/v1/linhas:
+    get:
+      tags: [Rotas]
+      summary: Linhas e paradas próximas
+      operationId: listarLinhas
+      parameters:
+        - { name: lat, in: query, required: true, schema: { type: number, format: double } }
+        - { name: lng, in: query, required: true, schema: { type: number, format: double } }
+        - { name: raio, in: query, schema: { type: number, default: 500 } }
+      responses:
+        '200':
+          description: Lista de linhas
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/LinhaTransporte' }
+
+  /api/v1/paradas/{id}/acessibilidade:
+    get:
+      tags: [Rotas]
+      summary: Acessibilidade de uma parada
+      operationId: acessibilidadeParada
+      parameters: [{ $ref: '#/components/parameters/Id' }]
+      responses:
+        '200':
+          description: Atributos de acessibilidade
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AcessibilidadeParada' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /api/v1/zonas-de-risco:
+    get:
+      tags: [Rotas]
+      summary: Zonas com relatos abertos (dados do módulo Relatos)
+      operationId: zonasDeRisco
+      parameters:
+        - name: bbox
+          in: query
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Lista de zonas de alerta
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/ZonaAlerta' }
+
+  /api/v1/admin/sincronizacao/relatos:
+    post:
+      tags: [Rotas]
+      summary: Dispara sincronização relatos -> zonas de alerta (job roda a cada 5 min)
+      operationId: sincronizarRelatos
+      responses:
+        '202':
+          description: Sincronização disparada
+
+  /actuator/health:
+    get:
+      tags: [Operação]
+      summary: Health check
+      operationId: health
+      responses:
+        '200':
+          description: UP
+
+components:
+  parameters:
+    Id:
+      name: id
+      in: path
+      required: true
+      schema: { type: integer, format: int64 }
+    Page:
+      name: page
+      in: query
+      schema: { type: integer, default: 0 }
+    Size:
+      name: size
+      in: query
+      schema: { type: integer, default: 20, maximum: 100 }
+
+  responses:
+    BadRequest:
+      description: Violação de validação (RFC 7807)
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/ProblemDetail' }
+    NotFound:
+      description: Recurso não encontrado
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/ProblemDetail' }
+
+  schemas:
+    ProblemDetail:
+      type: object
+      properties:
+        type: { type: string }
+        title: { type: string }
+        status: { type: integer }
+        detail: { type: string }
+        fieldErrors:
+          type: array
+          items:
+            type: object
+            properties:
+              field: { type: string }
+              message: { type: string }
+
+    CategoriaRelato:
+      type: string
+      enum: [ILUMINACAO, VIAS, COLETA, SANEAMENTO, TRANSPORTE, SEGURANCA, OUTROS]
+    StatusRelato:
+      type: string
+      enum: [RECEBIDO, EM_ANALISE, EM_ANDAMENTO, RESOLVIDO, REJEITADO]
+    TipoServico:
+      type: string
+      enum: [SAUDE, EDUCACAO, ASSISTENCIA, TRANSPORTE, LAZER]
+    ModeloVaga:
+      type: string
+      enum: [PRESENCIAL, HIBRIDO, REMOTO]
+    FaixaEtaria:
+      type: string
+      enum: [ATE_39, '40_49', '50_MAIS']
+    PerfilMobilidade:
+      type: string
+      enum: [PCD_CADEIRANTE, PCD_VISUAL, IDOSO, NENHUM]
+    ModoTrecho:
+      type: string
+      enum: [A_PE, ONIBUS, METRO, BICICLETA]
+
+    RelatoRequest:
+      type: object
+      required: [titulo, categoria, latitude, longitude]
+      properties:
+        titulo: { type: string, maxLength: 120 }
+        descricao: { type: string, maxLength: 2000 }
+        categoria: { $ref: '#/components/schemas/CategoriaRelato' }
+        latitude: { type: number, format: double }
+        longitude: { type: number, format: double }
+        bairro: { type: string }
+        anonimo: { type: boolean, default: false }
+
+    RelatoResponse:
+      type: object
+      properties:
+        id: { type: integer, format: int64 }
+        titulo: { type: string }
+        categoria: { $ref: '#/components/schemas/CategoriaRelato' }
+        status: { $ref: '#/components/schemas/StatusRelato' }
+        latitude: { type: number }
+        longitude: { type: number }
+        bairro: { type: string }
+        apoios: { type: integer }
+        codigoAcompanhamento: { type: string, example: RLT-8F3K2 }
+        criadoEm: { type: string, format: date-time }
+        historico:
+          type: array
+          items:
+            type: object
+            properties:
+              de: { $ref: '#/components/schemas/StatusRelato' }
+              para: { $ref: '#/components/schemas/StatusRelato' }
+              em: { type: string, format: date-time }
+              comentario: { type: string }
+
+    PaginaRelato:
+      type: object
+      properties:
+        content:
+          type: array
+          items: { $ref: '#/components/schemas/RelatoResponse' }
+        page: { type: integer }
+        size: { type: integer }
+        totalElements: { type: integer, format: int64 }
+        totalPages: { type: integer }
+
+    AcompanhamentoResponse:
+      type: object
+      properties:
+        codigo: { type: string }
+        status: { $ref: '#/components/schemas/StatusRelato' }
+        titulo: { type: string }
+        atualizadoEm: { type: string, format: date-time }
+        historico:
+          type: array
+          items: { type: object }
+
+    ServicoPublico:
+      type: object
+      properties:
+        id: { type: integer, format: int64 }
+        nome: { type: string }
+        tipo: { $ref: '#/components/schemas/TipoServico' }
+        endereco: { type: string }
+        latitude: { type: number }
+        longitude: { type: number }
+        bairro: { type: string }
+        acessivelPcd: { type: boolean }
+        horario: { type: string }
+        distanciaMetros: { type: number }
+
+    PerfilRequest:
+      type: object
+      required: [nome, areaAtual, areaAlvo]
+      properties:
+        nome: { type: string }
+        email: { type: string, format: email }
+        areaAtual: { type: string, description: CBO simplificado }
+        areaAlvo: { type: string }
+        pretensaoSalarial: { type: number }
+        disponibilidade:
+          type: array
+          items: { type: string, enum: [TURNO_NOITE, REMOTO, HIBRIDO, PRESENCIAL] }
+        competencias:
+          type: array
+          items: { type: string }
+
+    Perfil:
+      allOf:
+        - $ref: '#/components/schemas/PerfilRequest'
+        - type: object
+          properties:
+            id: { type: integer, format: int64 }
+            statusCuradoria: { type: string, enum: [EM_CURADORIA, APROVADO, REVISAR] }
+
+    TransferiveisResponse:
+      type: object
+      properties:
+        areaAlvo: { type: string }
+        competenciasTransferiveis:
+          type: array
+          items:
+            type: object
+            properties:
+              de: { type: string }
+              para: { type: string }
+              similaridade: { type: number, format: float }
+        gaps:
+          type: array
+          items: { type: string }
+        trilhaSugerida: { type: string }
+
+    Vaga:
+      type: object
+      properties:
+        id: { type: integer, format: int64 }
+        titulo: { type: string }
+        empresa: { type: string }
+        area: { type: string }
+        descricao: { type: string }
+        salario: { type: number }
+        modelo: { $ref: '#/components/schemas/ModeloVaga' }
+        prazoInscricao: { type: string, format: date-time }
+        requisitos:
+          type: array
+          items: { type: string }
+
+    VagaRecomendada:
+      type: object
+      properties:
+        vaga: { $ref: '#/components/schemas/Vaga' }
+        score: { type: number, format: float }
+        competenciasAtendidas:
+          type: array
+          items: { type: string }
+        competenciasFaltantes:
+          type: array
+          items: { type: string }
+
+    PaginaVaga:
+      type: object
+      properties:
+        content:
+          type: array
+          items: { $ref: '#/components/schemas/Vaga' }
+        page: { type: integer }
+        size: { type: integer }
+        totalElements: { type: integer, format: int64 }
+        totalPages: { type: integer }
+
+    Trilha:
+      type: object
+      properties:
+        id: { type: string, example: TRIL-LOG-01 }
+        area: { type: string }
+        nome: { type: string }
+        duracaoSemanas: { type: integer }
+        custo: { type: number }
+        instituicao: { type: string }
+        certificado: { type: boolean }
+        modulos:
+          type: array
+          items:
+            type: object
+            properties:
+              nome: { type: string }
+              cargaHoraria: { type: integer }
+
+    InscricaoRequest:
+      type: object
+      required: [perfilId, tipo, referenciaId]
+      properties:
+        perfilId: { type: integer, format: int64 }
+        tipo: { type: string, enum: [VAGA, TRILHA] }
+        referenciaId: { type: string }
+
+    Inscricao:
+      type: object
+      properties:
+        id: { type: integer, format: int64 }
+        perfilId: { type: integer, format: int64 }
+        tipo: { type: string }
+        status: { type: string, enum: [ENVIADA, EM_ANALISE, APROVADA, REJEITADA] }
+        criadoEm: { type: string, format: date-time }
+
+    Mentoria:
+      type: object
+      properties:
+        id: { type: integer, format: int64 }
+        mentor: { type: string }
+        area: { type: string }
+        disponibilidade: { type: string }
+        agendamento: { type: string, nullable: true }
+
+    CurriculoRequest:
+      type: object
+      required: [curriculo]
+      properties:
+        curriculo: { type: string, description: Texto do currículo ou JSON estruturado }
+        vagaAlvo: { type: string, description: Descrição da vaga (melhora score ATS) }
+
+    VersaoCurriculo:
+      type: object
+      properties:
+        tipo: { type: string, enum: [COMPLETO, AGE_BLIND] }
+        conteudo: { type: string }
+        regrasAplicadas:
+          type: array
+          items:
+            type: object
+            properties:
+              regra: { type: string }
+              acao: { type: string }
+
+    AuditoriaCurriculo:
+      type: object
+      properties:
+        scoreAts: { type: integer, minimum: 0, maximum: 100 }
+        sinaisQueRevelamIdade:
+          type: array
+          items:
+            type: object
+            properties:
+              sinal: { type: string, example: ANO_GRADUACAO }
+              localizacao: { type: string }
+              severidade: { type: string, enum: [ALTA, MEDIA, BAIXA] }
+              acao: { type: string }
+        sugestoes:
+          type: array
+          items: { type: string }
+
+    AuditoriaVaga:
+      type: object
+      properties:
+        termosEncontrados:
+          type: array
+          items:
+            type: string
+            enum: [PERFIL_JOVEM, LIMITE_ETARIO, NATIVO_DIGITAL, RECEM_FORMADO, ANOS_MAX_EXPERIENCIA, FIT_CULTURAL]
+        riscoLegal:
+          type: string
+          enum: [BAIXO, MEDIO, ALTO]
+        baseLegal:
+          type: array
+          items: { type: string, example: 'CLT art. 373-A' }
+        sugestaoRedacao: { type: string }
+
+    MetricasFunil:
+      type: object
+      properties:
+        vagaId: { type: integer, format: int64 }
+        etapas:
+          type: array
+          items:
+            type: object
+            properties:
+              nome: { type: string }
+              aprovacao:
+                type: object
+                properties:
+                  ATE_39: { type: number }
+                  '40_49': { type: number }
+                  '50_MAIS': { type: number }
+              razaoAdverseImpact: { type: number, description: menor taxa / maior taxa }
+              alerta: { type: boolean, description: true se razao < 0.80 }
+        interpretacao: { type: string }
+
+    SolicitacaoRevisao:
+      type: object
+      properties:
+        id: { type: integer, format: int64 }
+        perfilId: { type: integer, format: int64 }
+        vagaId: { type: integer, format: int64 }
+        motivo: { type: string }
+        status: { type: string, enum: [PENDENTE, EM_REVISAO, DECIDIDA] }
+        protocolo: { type: string }
+        criadoEm: { type: string, format: date-time }
+
+    Coordenada:
+      type: object
+      required: [latitude, longitude]
+      properties:
+        latitude: { type: number, format: double }
+        longitude: { type: number, format: double }
+
+    RotaRequest:
+      type: object
+      required: [origem, destino]
+      properties:
+        origem: { $ref: '#/components/schemas/Coordenada' }
+        destino: { $ref: '#/components/schemas/Coordenada' }
+        perfil: { $ref: '#/components/schemas/PerfilMobilidade' }
+        prioridades:
+          type: array
+          items: { type: string, enum: [ACESSIBILIDADE, SEGURANCA, TEMPO] }
+
+    Rota:
+      type: object
+      properties:
+        id: { type: integer, format: int64 }
+        tempoTotalMin: { type: integer }
+        distanciaM: { type: number }
+        transferencias: { type: integer }
+        trechos:
+          type: array
+          items:
+            type: object
+            properties:
+              modo: { $ref: '#/components/schemas/ModoTrecho' }
+              linha: { type: string }
+              duracaoMin: { type: integer }
+              acessivel: { type: boolean }
+              aviso: { type: string }
+        alertasSeguranca:
+          type: array
+          items:
+            type: object
+            properties:
+              categoria: { $ref: '#/components/schemas/CategoriaRelato' }
+              distanciaM: { type: number }
+              relatoId: { type: integer, format: int64 }
+        justificativa: { type: string }
+
+    LinhaTransporte:
+      type: object
+      properties:
+        id: { type: integer, format: int64 }
+        codigo: { type: string }
+        modal: { type: string }
+        frotaAcessivelPct: { type: number }
+        horarioInicio: { type: string }
+        horarioFim: { type: string }
+        paradasProximas: { type: integer }
+
+    AcessibilidadeParada:
+      type: object
+      properties:
+        paradaId: { type: integer, format: int64 }
+        nome: { type: string }
+        rampa: { type: boolean }
+        elevador: { type: boolean }
+        pisoTatil: { type: boolean }
+        banheiroAcessivel: { type: boolean }
+        observacao: { type: string }
+
+    ZonaAlerta:
+      type: object
+      properties:
+        relatoId: { type: integer, format: int64 }
+        categoria: { $ref: '#/components/schemas/CategoriaRelato' }
+        latitude: { type: number }
+        longitude: { type: number }
+        status: { $ref: '#/components/schemas/StatusRelato' }
+        severidade: { type: string, enum: [ALTA, MEDIA, BAIXA] }
