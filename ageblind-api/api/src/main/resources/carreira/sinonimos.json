@@ -1,0 +1,12 @@
+[
+  ["pcp", "planejamento", "planning", "cronograma", "controle", "producao"],
+  ["logistica", "transporte", "distribuicao", "supply", "cadeia"],
+  ["gestao", "administracao", "coordenacao", "lideranca", "equipe", "gerencia"],
+  ["dados", "analise", "relatorios", "bi", "indicadores", "kpis"],
+  ["vendas", "comercial", "negociacao", "clientes", "prospeccao"],
+  ["tecnologia", "sistemas", "software", "ti", "desenvolvimento"],
+  ["rotas", "roteirizacao", "percurso", "navegacao"],
+  ["qualidade", "processos", "melhoria", "lean", "sixsigma"],
+  ["financeiro", "custos", "orcamento", "controladoria"],
+  ["atendimento", "suporte", "servico", "relacionamento"]
+]
