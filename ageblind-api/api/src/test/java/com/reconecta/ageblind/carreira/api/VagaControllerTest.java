@@ -109,4 +109,13 @@ class VagaControllerTest {
 		mockMvc.perform(get("/api/v1/vagas").param("modelo", "QUALQUER"))
 				.andExpect(status().isBadRequest());
 	}
+
+	/** Sprint 3, matriz item 4 (erro): página negativa → 400 RFC 7807 (não 500). */
+	@Test
+	void paginaNegativaDevolve400ProblemDetail() throws Exception {
+		mockMvc.perform(get("/api/v1/vagas").param("page", "-1"))
+				.andExpect(status().isBadRequest())
+				.andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.content()
+						.contentType(org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON));
+	}
 }

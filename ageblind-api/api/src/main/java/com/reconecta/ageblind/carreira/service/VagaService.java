@@ -27,7 +27,10 @@ public class VagaService {
 	}
 
 	public PaginaResponse<VagaResponse> listar(String area, ModeloVaga modelo, int page, int size) {
-		Pageable pageable = PageRequest.of(Math.max(page, 0), Math.min(Math.max(size, 1), TAMANHO_MAXIMO),
+		if (page < 0) {
+			throw new IllegalArgumentException("page não pode ser negativo");
+		}
+		Pageable pageable = PageRequest.of(page, Math.min(Math.max(size, 1), TAMANHO_MAXIMO),
 				Sort.by("id"));
 		Page<Vaga> resultado;
 		if (area != null && !area.isBlank() && modelo != null) {

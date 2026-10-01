@@ -72,6 +72,11 @@ public class GlobalExceptionHandler {
 		return problem(HttpStatus.BAD_REQUEST, "Corpo JSON inv�lido ou malformado", ex.getMessage());
 	}
 
+	@ExceptionHandler(IllegalArgumentException.class)
+	public ResponseEntity<ProblemDetail> handleArgumentoInvalido(IllegalArgumentException ex) {
+		return problem(HttpStatus.BAD_REQUEST, "Requisição inválida", ex.getMessage());
+	}
+
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ProblemDetail> handleGeneric(Exception ex) {
 		return problem(HttpStatus.INTERNAL_SERVER_ERROR, "Erro interno", ex.getMessage());
