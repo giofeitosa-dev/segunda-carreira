@@ -1,0 +1,152 @@
+[
+  {
+    "codigo": "R01",
+    "categoria": "REMOVER",
+    "descricao": "Data de nascimento e idade",
+    "severidade": "ALTA",
+    "acao": "remover linha com data de nascimento/idade",
+    "regex": "(?i)\\b(?:data de nascimento|nascimento|nascido em|idade\\s*[:\\-]?\\s*\\d{1,3}(?:\\s*anos?)?)[^\\n]*",
+    "substituicao": "",
+    "automatica": true
+  },
+  {
+    "codigo": "R02",
+    "categoria": "REMOVER",
+    "descricao": "Foto (em envio automatizado)",
+    "severidade": "MEDIA",
+    "acao": "remover imagem/foto do arquivo",
+    "regex": "(?i)!\\[[^\\]]*\\]\\([^\\)]*\\)|<img[^>]*>",
+    "substituicao": "",
+    "automatica": true
+  },
+  {
+    "codigo": "R03",
+    "categoria": "REMOVER",
+    "descricao": "Ano de conclusão da graduação",
+    "severidade": "ALTA",
+    "acao": "remover o ano, manter o curso",
+    "regex": "(?i)((?:conclus(?:ão|ao)|gradua(?:ção|cao|o)|bacharel(?:ado)?|p[oó]s-?gradua(?:ção|cao|o))[^\\n]{0,60}?)\\s*\\b(?:19|20)\\d{2}\\b",
+    "substituicao": "$1",
+    "automatica": true
+  },
+  {
+    "codigo": "R04",
+    "categoria": "REMOVER",
+    "descricao": "Total de anos de experiência/carreira",
+    "severidade": "ALTA",
+    "acao": "remover contagem de anos",
+    "regex": "(?i)\\b\\d{1,3}\\s*\\+?\\s*anos?\\s+de\\s+(?:experi[eê]ncia|carreira|mercado)[^\\n.,;]*",
+    "substituicao": "",
+    "automatica": true
+  },
+  {
+    "codigo": "R05",
+    "categoria": "OCULTAR",
+    "descricao": "Histórico cronológico antigo (linha inteira)",
+    "severidade": "MEDIA",
+    "acao": "remover experiências anteriores a 2015",
+    "regex": "(?m)^\\s*(?:19\\d{2}|200\\d|201[0-4])\\s*[–\\-—]\\s*(?:19\\d{2}|200\\d|201[0-5])[^\\n]*$",
+    "substituicao": "",
+    "automatica": true
+  },
+  {
+    "codigo": "R06",
+    "categoria": "OCULTAR",
+    "descricao": "Anos em certificações e cursos",
+    "severidade": "MEDIA",
+    "acao": "remover o ano, manter a certificação",
+    "regex": "(?i)((?:certificad\\w*|curso de|especializa(?:ção|cao|o))[^\\n]{0,70}?)\\s*\\b(?:19|20)\\d{2}\\b",
+    "substituicao": "$1",
+    "automatica": true
+  },
+  {
+    "codigo": "R07",
+    "categoria": "REMOVER",
+    "descricao": "Menções a aposentadoria/previdência/pretensão fixa",
+    "severidade": "MEDIA",
+    "acao": "remover linha inteira",
+    "regex": "(?im)^.*\\b(?:aposentadoria|aposentad[oa]|previd[eê]ncia|pretens[aã]o fixa)[^\\n]*$",
+    "substituicao": "",
+    "automatica": true
+  },
+  {
+    "codigo": "R08",
+    "categoria": "OCULTAR",
+    "descricao": "Datas fechadas antigas (intervalo completo)",
+    "severidade": "MEDIA",
+    "acao": "remover intervalo fechado; manter datas relativas abertas ('2014 – Presente')",
+    "regex": "(?<!\\d)(?:19\\d{2}|200\\d|201[0-5])\\s*[–\\-—]\\s*(?:19\\d{2}|200\\d|201[0-5])(?!\\d)",
+    "substituicao": "",
+    "automatica": true
+  },
+  {
+    "codigo": "R09",
+    "categoria": "OCULTAR",
+    "descricao": "Usar ano recente estrategicamente (sinal de atualização)",
+    "severidade": "BAIXA",
+    "acao": "ação manual: destacar curso/certificação de 2024+ no topo",
+    "regex": null,
+    "substituicao": null,
+    "automatica": false
+  },
+  {
+    "codigo": "R10",
+    "categoria": "OCULTAR",
+    "descricao": "Reordenar formação (curso recente antes dos diplomas acadêmicos)",
+    "severidade": "BAIXA",
+    "acao": "ação manual: mover formações recentes para o topo da seção",
+    "regex": null,
+    "substituicao": null,
+    "automatica": false
+  },
+  {
+    "codigo": "R11",
+    "categoria": "REFORMULAR",
+    "descricao": "Adjetivos geracionais (veterano, maduro, jovem, experiente)",
+    "severidade": "BAIXA",
+    "acao": "remover adjetivo geracional",
+    "regex": "(?i)\\b(?:veterano|maduro|jovem|experiente)\\b",
+    "substituicao": "",
+    "automatica": true
+  },
+  {
+    "codigo": "R12",
+    "categoria": "REFORMULAR",
+    "descricao": "Experiência prévia traduzida em competências transferíveis",
+    "severidade": "ALTA",
+    "acao": "ação manual: converter linha do tempo em competências (usar POST /perfis/{id}/competencias-transferiveis)",
+    "regex": null,
+    "substituicao": null,
+    "automatica": false
+  },
+  {
+    "codigo": "R13",
+    "categoria": "REFORMULAR",
+    "descricao": "Números do passado viram métricas de entrega",
+    "severidade": "BAIXA",
+    "acao": "ação manual: transformar tempo em resultado ('equipe de 20 pessoas', '45+ testes')",
+    "regex": null,
+    "substituicao": null,
+    "automatica": false
+  },
+  {
+    "codigo": "R14",
+    "categoria": "REFORMULAR",
+    "descricao": "Foco em recência tecnológica (stack atual, CI/CD)",
+    "severidade": "MEDIA",
+    "acao": "ação manual: listar tecnologias dos últimos 3 anos no topo",
+    "regex": null,
+    "substituicao": null,
+    "automatica": false
+  },
+  {
+    "codigo": "R15",
+    "categoria": "OCULTAR",
+    "descricao": "Idiomas por nível, sem ano",
+    "severidade": "BAIXA",
+    "acao": "remover ano do idioma, manter o nível",
+    "regex": "(?i)((?:idiomas?|ingl[eê]s|espanhol|franc[eê]s|alem[aã]o|italiano)[^\\n]{0,70}?)\\s*\\b(?:19|20)\\d{2}\\b",
+    "substituicao": "$1",
+    "automatica": true
+  }
+]
