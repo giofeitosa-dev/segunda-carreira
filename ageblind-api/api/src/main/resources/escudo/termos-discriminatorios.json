@@ -1,0 +1,80 @@
+[
+  {
+    "termo": "LIMITE_ETARIO",
+    "severidade": "ALTA",
+    "padroes": [
+      "até \\d{1,3} anos",
+      "máximo de \\d{1,3} anos",
+      "\\d{1,3} anos no máximo",
+      "limite de idade",
+      "menores? de \\d{1,3}",
+      "nascidos? antes de \\d{4}",
+      "faixa etária"
+    ],
+    "risco": "ALTO",
+    "baseLegal": "Lei 9.029/1995 (proíbe discriminação por idade) e CLT art. 373-A, incisos II e VI"
+  },
+  {
+    "termo": "PERFIL_JOVEM",
+    "severidade": "MEDIA",
+    "padroes": [
+      "perfil jovem",
+      "jovem e dinâmico",
+      "jovem e dinamico",
+      "espírito jovem",
+      "espirito jovem"
+    ],
+    "risco": "MEDIO",
+    "baseLegal": "Lei 9.029/1995, art. 1º — critério de idade em anúncio configura discriminação"
+  },
+  {
+    "termo": "NATIVO_DIGITAL",
+    "severidade": "MEDIA",
+    "padroes": [
+      "nativo digital",
+      "criança digital",
+      "crianca digital",
+      "geração Z",
+      "geracao Z"
+    ],
+    "risco": "MEDIO",
+    "baseLegal": "CLT art. 373-A e Lei 9.029/1995 — proxy de idade por familiaridade tecnológica"
+  },
+  {
+    "termo": "RECEM_FORMADO",
+    "severidade": "MEDIA",
+    "padroes": [
+      "recém-formado",
+      "recem-formado",
+      "recém formado",
+      "recem formado",
+      "formado há menos de"
+    ],
+    "risco": "MEDIO",
+    "baseLegal": "Lei 9.029/1995 — se somado a limite de experiência, configura indiretamente idade"
+  },
+  {
+    "termo": "ANOS_MAX_EXPERIENCIA",
+    "severidade": "ALTA",
+    "padroes": [
+      "máximo \\d{1,2} anos de experi",
+      "maximo \\d{1,2} anos de experi",
+      "até \\d{1,2} anos de experi",
+      "no máximo \\d{1,2} anos de experiência",
+      "\\d{1,2} anos de experiência no máximo"
+    ],
+    "risco": "ALTO",
+    "baseLegal": "Lei 9.029/1995 — teto de anos de experiência é proxy clássico de limite etário (art. 1º, parágrafo único, II)"
+  },
+  {
+    "termo": "FIT_CULTURAL",
+    "severidade": "BAIXA",
+    "padroes": [
+      "fit cultural",
+      "encaixa no time",
+      "perfil da equipe"
+    ],
+    "risco": "MEDIO",
+    "baseLegal": "CLT art. 373-A — subjetividade pode mascarar preferência etária; exigir critérios objetivos"
+  }
+]

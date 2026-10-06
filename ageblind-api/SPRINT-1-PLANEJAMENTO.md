@@ -17,7 +17,7 @@
 | 6 | Dados demo em **H2**, ideal **PostgreSQL** | sprint sem Docker |
 | 7 | Idade **nunca entra no ranking de vagas** — só competências | é o princípio do produto |
 
-**Detalhamento completo:** [`../07-ARQUITETURA.md`](../07-ARQUITETURA.md) (pacotes, modelo de dados, riscos)
+ **Detalhamento completo:** `07-ARQUITETURA.md` (pacotes, modelo de dados, riscos — no repo Reconecta pai)
 
 ## 2. Definição das rotas (15)
 
@@ -46,7 +46,7 @@
 | 14 | `GET` | `/api/v1/funil/metricas` | Aprovação por faixa + adverse impact (razão < 0,80) |
 | 15 | `POST` | `/api/v1/revisao/solicitacao` | Revisão humana (LGPD art. 20) |
 
-**Exemplos de request/response e deltas:** [`../08-ROTAS.md`](../08-ROTAS.md) (seções B e C)
+ **Exemplos de request/response e deltas:** `08-ROTAS.md` (seções B e C — no repo Reconecta pai)
 **Especificação máquina:** [`../openapi.yaml`](../openapi.yaml) — filtrar pelas tags `Carreira` e `Escudo Anti-Etarismo`
 
 ## 3. Entregáveis da Sprint 1

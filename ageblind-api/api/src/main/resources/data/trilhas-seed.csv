@@ -1,0 +1,6 @@
+area|nome|duracaoSemanas|custo|instituicao|certificado|modulos
+Logistica|Logistica Aplicada|8|299|SENAI|true|Fundamentos da Cadeia de Suprimentos:12;Gestao de Estoque:10
+Administracao|Excel para Gestao|6|199|Coursera|true|Pivot Tables:8;Dashboards no Excel:8
+TI|Suporte N1 na Pratica|10|0|Reconecta|false|Atendimento Tecnico:16;Redes Basicas:12
+Vendas|Vendas Consultivas|6|249|Reconecta|true|Prospeccao:10;Negociacao:12;CRM:8
+Atendimento|Atendimento e Pos-vendas|4|0|Reconecta|false|Relacionamento:10;CRM:8;Pos-vendas:8
