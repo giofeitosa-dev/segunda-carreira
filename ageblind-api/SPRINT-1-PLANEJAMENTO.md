@@ -1,6 +1,6 @@
 # 🔹 Sprint 1 — Planejamento: Arquitetura e definição das rotas
 
-**Status:** ✅ concluída em 30/09/2026 · **aprovada pela equipe em 03/10/2026** (cards S1-10 e S1-13 fechados)
+**Status:** ✅ concluída em 30/09/2026 · **aprovada pela equipe em 06/10/2026** (cards S1-10 e S1-13 fechados)
 **Ferramentas usadas:** docs Markdown + `kanban.md` (equivalente a Notion/Trello — `../kanban\trello-import.csv` importa no Trello)
 
 ---
@@ -55,13 +55,13 @@
 - [x] Rotas definidas (`08-ROTAS.md`)
 - [x] OpenAPI 3.0 validado (15 das 29 rotas pertencem ao AgeBlind)
 - [x] Kanban (`kanban.md` + CSV importável no Trello/Notion)
-- [x] Aprovação da equipe → libera a Sprint 2 (aprovada em 03/10/2026, ver §5)
+- [x] Aprovação da equipe → libera a Sprint 2 (aprovada em 06/10/2026, ver §5)
 
 ## 4. Critério para sair da Sprint 1
 
 > Equipe aprova arquitetura + rotas; `openapi.yaml` importa sem erro; backlog da Sprint 2 refinado com estimativas.
 
-## 5. Registro de aprovação (03/10/2026) — S1-10 e S1-13
+## 5. Registro de aprovação (06/10/2026) — S1-10 e S1-13
 
 Revisão cruzada: docs de planejamento × código entregue (Sprint 2/3) × `openapi.yaml`.
 

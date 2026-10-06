@@ -1,7 +1,7 @@
 # 🗂️ Kanban — AgeBlind API (3 sprints)
 
-> Quadro único do projeto · atualizado em 03/10/2026
-> **WIP: 0 cards em "Em Andamento"** — S1-10 e S1-13 (aprovações da equipe) fechados em 03/10/2026 · import para Trello/Notion: [`../kanban/trello-import.csv`](../kanban/trello-import.csv) (sprint 1) ou copie as listas abaixo
+> Quadro único do projeto · atualizado em 06/10/2026
+> **WIP: 0 cards em "Em Andamento"** — S1-10 e S1-13 (aprovações da equipe) fechados em 06/10/2026 · import para Trello/Notion: [`../kanban/trello-import.csv`](../kanban/trello-import.csv) (sprint 1) ou copie as listas abaixo
 
 ---
 
@@ -17,9 +17,9 @@
 | S1-06 | Catálogo de rotas (29 / 15 do AgeBlind) | `08-ROTAS.md` |
 | S1-07 | OpenAPI 3.0 validado | `openapi.yaml` |
 | S1-09 | Kanban das sprints | este arquivo + CSV |
-| S1-10 | Aprovar arquitetura (`07-ARQUITETURA.md`) | ✅ aprovada 03/10/2026 — registro em [`SPRINT-1-PLANEJAMENTO.md`](SPRINT-1-PLANEJAMENTO.md) §5 (6 deltas) |
+| S1-10 | Aprovar arquitetura (`07-ARQUITETURA.md`) | ✅ aprovada 06/10/2026 — registro em [`SPRINT-1-PLANEJAMENTO.md`](SPRINT-1-PLANEJAMENTO.md) §5 (6 deltas) |
 | S1-11 | Dataset seed mínimo (10 perfis, 20 vagas, 5 trilhas, fixtures) | entregue como **D-20** |
-| S1-13 | Aprovar rotas (`08-ROTAS.md` + deltas) | ✅ aprovada 03/10/2026 — registro em [`SPRINT-1-PLANEJAMENTO.md`](SPRINT-1-PLANEJAMENTO.md) §5 (4 deltas) |
+| S1-13 | Aprovar rotas (`08-ROTAS.md` + deltas) | ✅ aprovada 06/10/2026 — registro em [`SPRINT-1-PLANEJAMENTO.md`](SPRINT-1-PLANEJAMENTO.md) §5 (4 deltas) |
 
 ## 🔄 Em Andamento
 
@@ -116,7 +116,7 @@ _Nenhum card em andamento (WIP 0)._
 | T-08 | README final + tag `v1.0.0` no GitHub | git |
 | T-09 | Ensaio da demo (5 passos) | demo |
 
-**Status Sprint 3 (03/10/2026):** T-01 ✅ · T-02 ✅ · T-03 ✅ · T-04 ✅ · T-05 ✅ (94,2%) · T-06 ✅ · T-07 ✅ (`/pull/1#issuecomment-5942304800`) · T-08 ✅ (README + tag `v1.0.0` + release) · T-09 ✅ (5/5).
+**Status Sprint 3 (06/10/2026):** T-01 ✅ · T-02 ✅ · T-03 ✅ · T-04 ✅ · T-05 ✅ (94,2%) · T-06 ✅ · T-07 ✅ (`/pull/1#issuecomment-5942304800`) · T-08 ✅ (README + tag `v1.0.0` + release) · T-09 ✅ (5/5).
 
 ---
 
