@@ -102,10 +102,10 @@
   {
     "codigo": "R11",
     "categoria": "REFORMULAR",
-    "descricao": "Adjetivos geracionais (veterano, maduro, jovem, experiente)",
+    "descricao": "Adjetivos geracionais (veterano/a, maduro/a, jovem, experiente)",
     "severidade": "BAIXA",
     "acao": "remover adjetivo geracional",
-    "regex": "(?i)\\b(?:veterano|maduro|jovem|experiente)\\b",
+    "regex": "(?i)\\b(?:veteran[oa]|madur[oa]|jovem|experiente)\\b",
     "substituicao": "",
     "automatica": true
   },

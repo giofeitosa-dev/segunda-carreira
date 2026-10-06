@@ -67,6 +67,8 @@ class FixtureCurriculoRegressionTest {
 				.andExpect(jsonPath("$.conteudo").value(not(containsString("25 anos de experiência"))))
 				.andExpect(jsonPath("$.conteudo").value(not(containsString("aposentadoria"))))
 				.andExpect(jsonPath("$.conteudo").value(not(containsString("veterano"))))
+				.andExpect(jsonPath("$.conteudo").value(not(containsString("veterana"))))
+				.andExpect(jsonPath("$.conteudo").value(not(containsString("madura"))))
 				.andExpect(jsonPath("$.conteudo").value(not(containsString("foto-maria"))))
 				.andExpect(jsonPath("$.conteudo").value(not(containsString("idade: 51"))))
 				.andExpect(jsonPath("$.conteudo").value(
