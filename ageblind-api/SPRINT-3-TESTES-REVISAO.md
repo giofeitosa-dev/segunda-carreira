@@ -69,7 +69,7 @@ main ──► feat/d-07-perfis ──► PR #1 ──► main
 - [x] Cobertura ≥ 70% nos services dos módulos `carreira` e `escudo` — **94,2% linhas / 76% branches** (JaCoCo)
 - [x] `GET /actuator/health` → `UP` (smoke com jar seed, porta 8099)
 - [x] README com `./mvnw spring-boot:run` + 3 curl de exemplo (age-blind, auditoria, funil)
-- [ ] Tag `v1.0.0` no GitHub + release notes
+- [x] Tag `v1.0.0` no GitHub + release notes (criada em 03/10/2026 sobre o merge `fd2005d`)
 
 ## 3. Demo final (entrega) — ✔ ensaiada em 03/10/2026 (jar `--profiles active=seed`, porta 8099)
 
@@ -81,4 +81,4 @@ main ──► feat/d-07-perfis ──► PR #1 ──► main
 
 ---
 
-**✔ Sprint 3 pronta quando:** `clean verify` verde + checklist do PR completo + demo dos 5 passos gravada/ensaíada. — **ATINGIDO em 03/10/2026** (`clean verify` → BUILD SUCCESS 58/58; checklist T-07 completo; demo 5/5 ensaiada). *Pendência única: tag `v1.0.0` + release notes (T-08), aguardando confirmação.*
+**✔ Sprint 3 pronta quando:** `clean verify` verde + checklist do PR completo + demo dos 5 passos gravada/ensaíada. — **ATINGIDO em 03/10/2026** (`clean verify` → BUILD SUCCESS 58/58; checklist T-07 completo; demo 5/5 ensaiada). **T-08 concluído:** tag `v1.0.0` + release notes publicadas; PR #1 merged em `main` (`fd2005d`).
