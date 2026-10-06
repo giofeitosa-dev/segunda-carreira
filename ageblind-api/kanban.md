@@ -53,7 +53,7 @@
 | D-21 | README da API | `api/README.md` — 15 rotas, como rodar (dev/seed/jar), 15 exemplos curl, seed, regras de ouro |
 | D-22 | Branch `feat/*` + PR inicial | Repo `giofeitosa-dev/segunda-carreira` (15 commits Conventional) + PR #1 `feat/ageblind-api` → `main` |
 
-> **Suite atual: 50/50 testes verdes** (`mvnw test` → BUILD SUCCESS) · **Sprint 2 CONCLUÍDA (D-01…D-22)** · smoke com jar + `--spring.profiles.active=seed`: 10 perfis, 20 vagas, 5 trilhas, recomendadas OK · **D-22:** repo GitHub `giofeitosa-dev/segunda-carreira` (privado), `main` = docs base, `feat/ageblind-api` = 11 commits da Sprint 2, PR #1 aberto → passa para Sprint 3
+> **Suite atual: 58/58 testes verdes** (`mvnw clean verify` → BUILD SUCCESS) · cobertura services carreira+escudo **94,2% linhas / 76% branches** (JaCoCo, meta ≥70%) · **Sprint 2 CONCLUÍDA (D-01…D-22)** · **Sprint 3 CONCLUÍDA (T-01…T-07, T-09)** — demo 5/5 ensaiada em 03/10, checklist no PR, `openapi.yaml` sincronizado · *pendência única: T-08 tag `v1.0.0` (aguarda confirmação)*
 
 ---
 
@@ -116,6 +116,8 @@
 | T-07 | PRs revisados com checklist (revisor ≠ autor) | git |
 | T-08 | README final + tag `v1.0.0` no GitHub | git |
 | T-09 | Ensaio da demo (5 passos) | demo |
+
+**Status Sprint 3 (03/10/2026):** T-01 ✅ · T-02 ✅ · T-03 ✅ · T-04 ✅ · T-05 ✅ (94,2%) · T-06 ✅ · T-07 ✅ (`/pull/1#issuecomment-5942304800`) · T-08 ⏳ README ✅ / **tag `v1.0.0` pendente** · T-09 ✅ (5/5).
 
 ---
 

@@ -71,14 +71,14 @@ main ──► feat/d-07-perfis ──► PR #1 ──► main
 - [x] README com `./mvnw spring-boot:run` + 3 curl de exemplo (age-blind, auditoria, funil)
 - [ ] Tag `v1.0.0` no GitHub + release notes
 
-## 3. Demo final (entrega)
+## 3. Demo final (entrega) — ✔ ensaiada em 03/10/2026 (jar `--profiles active=seed`, porta 8099)
 
-1. Swagger → criar perfil → ver 3 vagas recomendadas (justificativa visível).
-2. Enviar currículo fixture → **auditoria marca sinais** → **gerar age-blind** → diff antes/depois.
-3. Enviar vaga com "perfil jovem" → auditoria responde risco legal.
-4. `/funil/metricas` → alerta de adverse impact.
-5. Abrir PR no GitHub e mostrar a revisão.
+1. ✔ Perfil 1 (Ana Souza) → seed 10 perfis + 20 vagas → **6 vagas recomendadas** com `score`, `competenciasAtendidas`, `competenciasFaltantes` e `caminhoParaRevisao` (LGPD art. 20).
+2. ✔ Currículo fixture → **15 sinais** (scoreAts 0) → age-blind → diff confirma remoção de 1974/idade:51/1998/"25 anos de"/aposentadoria/foto-maria **e das formas femininas "veterana"/"madura"** (fix R11) conservando nome, e-mail e formação.
+3. ✔ Vaga "perfil jovem" → `PERFIL_JOVEM` + `RECEM_FORMADO` + `ANOS_MAX_EXPERIENCIA`, `riscoLegal: ALTO`, base Lei 9.029/1995.
+4. ✔ `/funil/metricas?vagaId=1&periodo=2026-09` → Triagem razão **0,43** e Entrevista **0,50** → `alerta: true` + `caminhoParaRevisao`.
+5. ✔ PR #1 aberto com checklist comentado (`/pull/1#issuecomment-5942304800`).
 
 ---
 
-**✔ Sprint 3 pronta quando:** `clean verify` verde + checklist do PR completo + demo dos 5 passos gravada/ensaíada.
+**✔ Sprint 3 pronta quando:** `clean verify` verde + checklist do PR completo + demo dos 5 passos gravada/ensaíada. — **ATINGIDO em 03/10/2026** (`clean verify` → BUILD SUCCESS 58/58; checklist T-07 completo; demo 5/5 ensaiada). *Pendência única: tag `v1.0.0` + release notes (T-08), aguardando confirmação.*
