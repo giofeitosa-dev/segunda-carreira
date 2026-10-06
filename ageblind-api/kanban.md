@@ -1,7 +1,7 @@
 # 🗂️ Kanban — AgeBlind API (3 sprints)
 
-> Quadro único do projeto · atualizado em 30/09/2026
-> **WIP:** 2 cards em "Em Andamento" (S1-10, S1-13 — aprovações da equipe) · import para Trello/Notion: [`../kanban/trello-import.csv`](../kanban/trello-import.csv) (sprint 1) ou copie as listas abaixo
+> Quadro único do projeto · atualizado em 03/10/2026
+> **WIP: 0 cards em "Em Andamento"** — S1-10 e S1-13 (aprovações da equipe) fechados em 03/10/2026 · import para Trello/Notion: [`../kanban/trello-import.csv`](../kanban/trello-import.csv) (sprint 1) ou copie as listas abaixo
 
 ---
 
@@ -17,14 +17,13 @@
 | S1-06 | Catálogo de rotas (29 / 15 do AgeBlind) | `08-ROTAS.md` |
 | S1-07 | OpenAPI 3.0 validado | `openapi.yaml` |
 | S1-09 | Kanban das sprints | este arquivo + CSV |
+| S1-10 | Aprovar arquitetura (`07-ARQUITETURA.md`) | ✅ aprovada 03/10/2026 — registro em [`SPRINT-1-PLANEJAMENTO.md`](SPRINT-1-PLANEJAMENTO.md) §5 (6 deltas) |
 | S1-11 | Dataset seed mínimo (10 perfis, 20 vagas, 5 trilhas, fixtures) | entregue como **D-20** |
+| S1-13 | Aprovar rotas (`08-ROTAS.md` + deltas) | ✅ aprovada 03/10/2026 — registro em [`SPRINT-1-PLANEJAMENTO.md`](SPRINT-1-PLANEJAMENTO.md) §5 (4 deltas) |
 
 ## 🔄 Em Andamento
 
-| ID | Card | Responsável | h |
-|---|---|---|---|
-| S1-10 | Aprovar arquitetura (`07-ARQUITETURA.md`) | equipe | 2 |
-| S1-13 | Aprovar rotas (`08-ROTAS.md` + deltas) | equipe | 2 |
+_Nenhum card em andamento (WIP 0)._
 
 ## ✅ Sprint 2 — CONCLUÍDA em 30/09/2026 (D-01…D-22)
 
