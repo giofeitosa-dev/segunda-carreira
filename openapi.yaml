@@ -368,7 +368,7 @@ paths:
   /api/v1/curriculo/auditoria:
     post:
       tags: [Escudo Anti-Etarismo]
-      summary: Score ATS e sinais que revelam idade
+      summary: Pontuação anti-proxy de idade e sinais (não é ATS)
       operationId: auditarCurriculo
       requestBody:
         required: true
@@ -816,7 +816,7 @@ components:
       required: [curriculo]
       properties:
         curriculo: { type: string, description: Texto do currículo ou JSON estruturado }
-        vagaAlvo: { type: string, description: Descrição da vaga (melhora score ATS) }
+        vagaAlvo: { type: string, description: Descrição da vaga (apenas sugestão de keywords — não altera a pontuação) }
 
     VersaoCurriculo:
       type: object

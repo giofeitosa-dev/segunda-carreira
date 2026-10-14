@@ -13,7 +13,8 @@ import com.reconecta.ageblind.escudo.enums.Severidade;
 import org.springframework.stereotype.Service;
 
 /**
- * Auditoria de currículo: score ATS + lista de sinais que permitem inferir idade.
+ * Auditoria de currículo: pontuação anti-proxy de idade (não é ATS) +
+ * lista de sinais que permitem inferir idade.
  * Base: 05-ETARISMO.md §1 (proxies) e §5.5 (checklist ATS).
  */
 @Service
