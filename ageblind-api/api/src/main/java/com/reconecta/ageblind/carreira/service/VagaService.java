@@ -57,7 +57,7 @@ public class VagaService {
 				page.getTotalElements(), page.getTotalPages());
 	}
 
-	private VagaResponse paraResponse(Vaga vaga) {
+	VagaResponse paraResponse(Vaga vaga) {
 		List<String> requisitos = vaga.getRequisitos().stream()
 				.map(r -> r.getNome())
 				.sorted()
