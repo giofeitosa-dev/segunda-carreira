@@ -204,6 +204,24 @@ paths:
             application/json:
               schema: { $ref: '#/components/schemas/Perfil' }
         '404': { $ref: '#/components/responses/NotFound' }
+    put:
+      tags: [Carreira]
+      summary: Edita perfil profissional (sem data de nascimento)
+      operationId: atualizarPerfil
+      parameters: [{ $ref: '#/components/parameters/Id' }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/PerfilRequest' }
+      responses:
+        '200':
+          description: Perfil atualizado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Perfil' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '404': { $ref: '#/components/responses/NotFound' }
 
   /api/v1/perfis/{id}/competencias-transferiveis:
     post:
@@ -306,6 +324,33 @@ paths:
             application/json:
               schema: { $ref: '#/components/schemas/Inscricao' }
         '400': { $ref: '#/components/responses/BadRequest' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    get:
+      tags: [Carreira]
+      summary: Lista inscrições de um perfil (cancelamento e lembrete)
+      operationId: listarInscricoes
+      parameters:
+        - { name: perfilId, in: query, required: true, schema: { type: integer, format: int64 } }
+      responses:
+        '200':
+          description: Inscrições do perfil
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Inscricao' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /api/v1/inscricoes/{id}:
+    delete:
+      tags: [Carreira]
+      summary: Cancela uma inscrição (DELETE)
+      operationId: cancelarInscricao
+      parameters: [{ $ref: '#/components/parameters/Id' }]
+      responses:
+        '204':
+          description: Inscrição cancelada (removida)
         '404': { $ref: '#/components/responses/NotFound' }
 
   /api/v1/webhooks/lembretes:

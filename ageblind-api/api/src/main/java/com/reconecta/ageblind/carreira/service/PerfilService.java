@@ -40,6 +40,22 @@ public class PerfilService {
 				.orElseThrow(() -> new RecursoNaoEncontradoException("Perfil", id)));
 	}
 
+	@Transactional
+	public PerfilResponse atualizar(Long id, PerfilRequest req) {
+		Perfil p = perfilRepository.findById(id)
+				.orElseThrow(() -> new RecursoNaoEncontradoException("Perfil", id));
+		p.setNome(req.nome());
+		p.setEmail(req.email());
+		p.setAreaAtual(req.areaAtual());
+		p.setAreaAlvo(req.areaAlvo());
+		p.setPretensaoSalarial(req.pretensaoSalarial());
+		if (req.disponibilidade() != null) {
+			p.getDisponibilidade().clear();
+			p.getDisponibilidade().addAll(req.disponibilidade());
+		}
+		return toResponse(perfilRepository.save(p));
+	}
+
 	private PerfilResponse toResponse(Perfil p) {
 		return new PerfilResponse(
 				p.getId(),

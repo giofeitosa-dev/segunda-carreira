@@ -71,7 +71,7 @@ reconecta-recode\
     ├── SPRINT-2-DESENVOLVIMENTO.md   ← backlog de código D-01…D-22
     ├── SPRINT-3-TESTES-REVISAO.md    ← matriz de testes, DoD e demo final
     └── api\                          ← ⭐⭐ código-fonte Spring Boot
-        ├── README.md                 ← as 15 rotas + 15 exemplos de curl
+        ├── README.md                 ← as 18 rotas + 18 exemplos de curl
         ├── pom.xml · mvnw · mvnw.cmd ← Maven wrapper (Java 17)
         └── src\
             ├── main\java\com\reconecta\ageblind\
@@ -100,7 +100,7 @@ reconecta-recode\
 | `ageblind-api\README.md` | Visão geral da entrega AgeBlind | Primeiro contato com a API |
 | `ageblind-api\kanban.md` | Quadro único (Sprints 1–3, todos os cards) | Status do projeto |
 | `ageblind-api\SPRINT-*.md` | Detalhe de cada sprint (planejamento, código, testes) | Aprofundar em uma sprint |
-| `ageblind-api\api\README.md` | As 15 rotas documentadas + exemplos de curl | Usar/testar a API |
+| `ageblind-api\api\README.md` | As 18 rotas documentadas + exemplos de curl | Usar/testar a API |
 | `ageblind-api\api\src\main\` | Código de produção (carreira, escudo, shared) | Desenvolver |
 | `ageblind-api\api\src\test\` | 58 testes (unit, integração, regressão anti-viés) | Rodar `mvnw clean verify` |
 

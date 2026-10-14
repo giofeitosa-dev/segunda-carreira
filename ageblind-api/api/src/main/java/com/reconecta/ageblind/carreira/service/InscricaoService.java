@@ -1,5 +1,7 @@
 package com.reconecta.ageblind.carreira.service;
 
+import java.util.List;
+
 import com.reconecta.ageblind.carreira.domain.Inscricao;
 import com.reconecta.ageblind.carreira.domain.Perfil;
 import com.reconecta.ageblind.carreira.dto.InscricaoRequest;
@@ -74,6 +76,23 @@ public class InscricaoService {
 		inscricao.setLembreteAgendado(true);
 		inscricao.setLembreteAntecedenciaHoras(req.antecedenciaEfetiva());
 		inscricaoRepository.save(inscricao);
+	}
+
+	@Transactional(readOnly = true)
+	public List<InscricaoResponse> listarPorPerfil(Long perfilId) {
+		if (!perfilRepository.existsById(perfilId)) {
+			throw new RecursoNaoEncontradoException("Perfil", perfilId);
+		}
+		return inscricaoRepository.findByPerfilId(perfilId).stream()
+				.map(this::paraResponse)
+				.toList();
+	}
+
+	@Transactional
+	public void cancelar(Long id) {
+		Inscricao inscricao = inscricaoRepository.findById(id)
+				.orElseThrow(() -> new RecursoNaoEncontradoException("Inscrição", id));
+		inscricaoRepository.delete(inscricao);
 	}
 
 	private InscricaoResponse paraResponse(Inscricao i) {
