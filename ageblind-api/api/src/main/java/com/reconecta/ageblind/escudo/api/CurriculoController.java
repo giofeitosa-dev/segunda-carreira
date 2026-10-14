@@ -37,7 +37,7 @@ public class CurriculoController {
 	}
 
 	@PostMapping("/auditoria")
-	@Operation(summary = "Score ATS + sinais que revelam idade + sugestões de correção")
+	@Operation(summary = "Pontua\u00e7\u00e3o anti-proxy de idade + sinais + sugest\u00f5es (n\u00e3o \u00e9 ATS)")
 	public AuditoriaCurriculoResponse auditar(@Valid @RequestBody AuditoriaCurriculoRequest req) {
 		return auditoria.auditar(req.curriculo(), req.vagaAlvo());
 	}
