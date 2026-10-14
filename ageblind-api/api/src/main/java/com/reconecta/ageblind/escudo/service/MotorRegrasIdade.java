@@ -22,11 +22,15 @@ import org.springframework.stereotype.Service;
 public class MotorRegrasIdade {
 
 	private final List<RegraIdade> regras;
+	private final List<Pattern> regexes;
 
 	public MotorRegrasIdade() {
 		try (InputStream in = getClass().getResourceAsStream("/escudo/regras-idade.json")) {
 			RegraIdade[] carregadas = new ObjectMapper().readValue(in, RegraIdade[].class);
 			this.regras = List.of(carregadas);
+			this.regexes = regras.stream()
+					.map(r -> r.regex() == null ? null : Pattern.compile(r.regex()))
+					.toList();
 		} catch (Exception e) {
 			throw new IllegalStateException("Falha ao carregar escudo/regras-idade.json", e);
 		}
@@ -39,11 +43,13 @@ public class MotorRegrasIdade {
 	/** Detecta proxies de idade sem alterar o texto (base da auditoria). */
 	public List<SinalIdade> detectar(String texto) {
 		List<SinalIdade> sinais = new ArrayList<>();
-		for (RegraIdade r : regras) {
-			if (!r.automatica() || r.regex() == null) {
+		for (int i = 0; i < regras.size(); i++) {
+			RegraIdade r = regras.get(i);
+			Pattern p = regexes.get(i);
+			if (!r.automatica() || p == null) {
 				continue;
 			}
-			Matcher m = Pattern.compile(r.regex()).matcher(texto);
+			Matcher m = p.matcher(texto);
 			while (m.find()) {
 				String trecho = m.group().trim();
 				if (!trecho.isEmpty()) {
@@ -59,13 +65,14 @@ public class MotorRegrasIdade {
 	public ResultadoAgeBlind aplicar(String curriculo) {
 		String conteudo = curriculo;
 		List<RegraAplicada> aplicadas = new ArrayList<>();
-		for (RegraIdade r : regras) {
+		for (int i = 0; i < regras.size(); i++) {
+			RegraIdade r = regras.get(i);
+			Pattern p = regexes.get(i);
 			String rotulo = r.codigo() + " — " + r.descricao();
-			if (!r.automatica() || r.regex() == null) {
+			if (!r.automatica() || p == null) {
 				aplicadas.add(new RegraAplicada(rotulo, "ação manual (revisão humana)"));
 				continue;
 			}
-			Pattern p = Pattern.compile(r.regex());
 			Matcher m = p.matcher(conteudo);
 			if (m.find()) {
 				conteudo = m.replaceAll(r.substituicao());
