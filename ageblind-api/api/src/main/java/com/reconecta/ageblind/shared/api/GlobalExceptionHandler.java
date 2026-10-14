@@ -2,8 +2,11 @@ package com.reconecta.ageblind.shared.api;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ProblemDetail;
@@ -20,13 +23,15 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+	private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ResponseEntity<ProblemDetail> handleValidation(MethodArgumentNotValidException ex) {
 		ProblemDetail pd = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST,
 				"Violação de validação");
-		List<java.util.Map<String, String>> fieldErrors = new ArrayList<>();
+		List<Map<String, String>> fieldErrors = new ArrayList<>();
 		ex.getBindingResult().getFieldErrors().forEach(f -> fieldErrors.add(
-				java.util.Map.of("field", f.getField(),
+				Map.of("field", f.getField(),
 						"message", Objects.toString(f.getDefaultMessage(), ""))));
 		pd.setProperty("fieldErrors", fieldErrors);
 		return badRequest(pd);
@@ -79,7 +84,11 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ProblemDetail> handleGeneric(Exception ex) {
-		return problem(HttpStatus.INTERNAL_SERVER_ERROR, "Erro interno", ex.getMessage());
+		log.error("Erro interno nao tratado", ex);
+		ProblemDetail pd = ProblemDetail.forStatusAndDetail(
+				HttpStatus.INTERNAL_SERVER_ERROR, "Erro interno");
+		pd.setTitle("Erro interno");
+		return respond(HttpStatus.INTERNAL_SERVER_ERROR, pd);
 	}
 
 	private ResponseEntity<ProblemDetail> badRequest(ProblemDetail pd) {
