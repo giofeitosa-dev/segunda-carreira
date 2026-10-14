@@ -92,4 +92,17 @@ class MotorRegrasIdadeTest {
 		assertFalse(r.conteudo().contains("2010"), "sem acento deve casar R15");
 		assertTrue(r.conteudo().contains("Graduacao em Administracao"), "mantém o curso");
 	}
+
+	@Test
+	void r11CobreSeniorRecemFormadoETerceiraIdade() {
+		MotorRegrasIdade.ResultadoAgeBlind r = motor.aplicar("""
+				Profissional sênior
+				Candidato recém-formado
+				Pessoa da terceira idade
+				""");
+		String saida = r.conteudo();
+		assertFalse(saida.contains("sênior"), "R11 deve remover sênior");
+		assertFalse(saida.contains("recém-formado"), "R11 deve remover recém-formado");
+		assertFalse(saida.contains("terceira idade"), "R11 deve remover terceira idade");
+	}
 }
