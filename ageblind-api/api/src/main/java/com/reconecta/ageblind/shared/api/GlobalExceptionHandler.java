@@ -63,13 +63,13 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(HttpRequestMethodNotSupportedException.class)
 	public ResponseEntity<ProblemDetail> handleMetodoNaoSuportado(HttpRequestMethodNotSupportedException ex) {
 		return problem(HttpStatus.METHOD_NOT_ALLOWED,
-				"M�todo n�o suportado: " + ex.getMethod(),
+				"M\u00e9todo n\u00e3o suportado: " + ex.getMethod(),
 				ex.getMessage());
 	}
 
 	@ExceptionHandler(HttpMessageNotReadableException.class)
 	public ResponseEntity<ProblemDetail> handleJsonInvalido(HttpMessageNotReadableException ex) {
-		return problem(HttpStatus.BAD_REQUEST, "Corpo JSON inv�lido ou malformado", ex.getMessage());
+		return problem(HttpStatus.BAD_REQUEST, "Corpo JSON inválido ou malformado", ex.getMessage());
 	}
 
 	@ExceptionHandler(IllegalArgumentException.class)
