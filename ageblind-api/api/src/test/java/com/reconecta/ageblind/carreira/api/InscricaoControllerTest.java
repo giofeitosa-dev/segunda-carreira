@@ -105,10 +105,17 @@ class InscricaoControllerTest {
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(vagaInexistente))
 				.andExpect(status().isNotFound());
+
+		String referenciaNaoNumerica = objectMapper.writeValueAsString(java.util.Map.of(
+				"perfilId", perfilId, "tipo", "VAGA", "referenciaId", "abc"));
+		mockMvc.perform(post("/api/v1/inscricoes")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(referenciaNaoNumerica))
+				.andExpect(status().isBadRequest());
 	}
 
 	@Test
-	void agendarLembreteDevolve202EJobDisparaNoPrazo() throws Exception {
+	void agendarLembreteDevolve202EJobIdentificaNoPrazoSemRecontar() throws Exception {
 		long perfilId = criarPerfil();
 		Vaga vaga = criarVagaComPrazo(LocalDateTime.now().plusHours(12));
 		String body = objectMapper.writeValueAsString(java.util.Map.of(
@@ -146,7 +153,9 @@ class InscricaoControllerTest {
 						.content("{invalido"))
 				.andExpect(status().isBadRequest());
 
-		// prazo em 12h < antecedência 24h → dispara
+		// prazo em 12h < antecedência 24h → identificado na janela (uma única vez)
 		org.junit.jupiter.api.Assertions.assertEquals(1, lembreteJob.disparar());
+		org.junit.jupiter.api.Assertions.assertEquals(0, lembreteJob.disparar(),
+				"lembrete já encerrado não deve ser recontado");
 	}
 }

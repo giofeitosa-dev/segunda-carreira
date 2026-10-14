@@ -16,7 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Job de lembretes de prazo de inscrição (POST /webhooks/lembretes agenda;
- * este job dispara os que vencem na janela de antecedência).
+ * este job identifica os que vencem na janela de antecedência e os encerra
+ * para não recontar). Não envia notificação — despacho externo é evolução.
  */
 @Component
 public class LembreteJob {
@@ -33,17 +34,17 @@ public class LembreteJob {
 
 	@Scheduled(fixedDelayString = "${ageblind.lembrete.intervalo-ms:60000}")
 	public void executar() {
-		int disparados = disparar();
-		if (disparados > 0) {
-			log.info("Lembretes de prazo disparados: {}", disparados);
+		int identificados = disparar();
+		if (identificados > 0) {
+			log.info("Lembretes de prazo identificados na janela: {}", identificados);
 		}
 	}
 
-	/** Dispara lembretes cujo prazo da vaga está dentro da antecedência. */
+	/** Encerra lembretes cujo prazo da vaga está dentro da antecedência (uma única vez). */
 	@Transactional
 	public int disparar() {
 		LocalDateTime agora = LocalDateTime.now();
-		int disparados = 0;
+		int identificados = 0;
 		List<Inscricao> agendadas = inscricaoRepository.findByLembreteAgendadoTrue();
 		for (Inscricao inscricao : agendadas) {
 			if (inscricao.getTipo() != TipoInscricao.VAGA) {
@@ -61,9 +62,11 @@ public class LembreteJob {
 			}
 			LocalDateTime limite = agora.plusHours(inscricao.getLembreteAntecedenciaHoras());
 			if (vaga.getPrazoInscricao().isAfter(agora) && !vaga.getPrazoInscricao().isAfter(limite)) {
-				disparados++;
+				inscricao.setLembreteAgendado(false);
+				inscricaoRepository.save(inscricao);
+				identificados++;
 			}
 		}
-		return disparados;
+		return identificados;
 	}
 }
