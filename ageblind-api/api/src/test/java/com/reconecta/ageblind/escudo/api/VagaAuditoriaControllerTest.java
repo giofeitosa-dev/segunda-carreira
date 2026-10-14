@@ -51,7 +51,8 @@ class VagaAuditoriaControllerTest {
 						.content(body))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.riscoLegal").value("BAIXO"))
-				.andExpect(jsonPath("$.termosEncontrados.length()").value(0));
+				.andExpect(jsonPath("$.termosEncontrados.length()").value(0))
+				.andExpect(jsonPath("$.baseLegal").value(org.hamcrest.Matchers.containsString("parecer jur")));
 	}
 
 	@Test

@@ -47,7 +47,7 @@ public class AuditoriaVagaService {
 		String alvo = texto.toLowerCase();
 		List<String> encontrados = new ArrayList<>();
 		RiscoLegal risco = RiscoLegal.BAIXO;
-		String baseLegal = "Nenhum termo com viés etário identificado — anúncio compatível com Lei 9.029/1995";
+		String baseLegal = "Nenhum termo conhecido de vi\u00e9s et\u00e1rio detectado \u2014 n\u00e3o constitui parecer jur\u00eddico";
 
 		for (RegraTermo regra : regras) {
 			for (String padrao : regra.padroes()) {
