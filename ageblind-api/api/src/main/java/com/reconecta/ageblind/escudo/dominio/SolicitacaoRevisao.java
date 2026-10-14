@@ -47,7 +47,7 @@ public class SolicitacaoRevisao {
 		this.criadoEm = LocalDateTime.now();
 		if (protocolo == null) {
 			this.protocolo = "REV-" + LocalDateTime.now().getYear() + "-"
-					+ UUID.randomUUID().toString().substring(0, 6).toUpperCase();
+					+ UUID.randomUUID().toString().replace("-", "").substring(0, 10).toUpperCase();
 		}
 	}
 
