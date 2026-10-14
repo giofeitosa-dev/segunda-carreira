@@ -25,7 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * Ranking de vagas SOLO por competências — regra de ouro do projeto.
  * score = Σ(nível das competências casadas) / (5 × nº de requisitos da vaga),
- * desempate por nível total e depois por id. Nenhum dado pessoal
+ * desempate por nº de competências atendidas e depois por id. Nenhum dado pessoal
  * (idade, faixa, salário, tempo de casa) entra na fórmula.
  */
 @Service
@@ -46,7 +46,7 @@ public class RecomendacaoVagaService {
 		this.vagaService = vagaService;
 	}
 
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<VagaRecomendadaResponse> recomendar(Long perfilId) {
 		Perfil perfil = perfilRepository.findById(perfilId)
 				.orElseThrow(() -> new RecursoNaoEncontradoException("Perfil", perfilId));
@@ -96,7 +96,7 @@ public class RecomendacaoVagaService {
 		List<String> faltantes = requisitos.stream()
 				.filter(r -> !atendidas.contains(r))
 				.toList();
-		return new VagaRecomendadaResponse(vagaService.obter(vaga.getId()), score,
+		return new VagaRecomendadaResponse(vagaService.paraResponse(vaga), score,
 				List.copyOf(atendidas), faltantes, CaminhosLgpd.REVISAO_SOLICITACAO);
 	}
 
