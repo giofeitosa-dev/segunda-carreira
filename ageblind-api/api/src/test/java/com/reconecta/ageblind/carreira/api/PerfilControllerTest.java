@@ -3,6 +3,7 @@ package com.reconecta.ageblind.carreira.api;
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -86,5 +87,56 @@ class PerfilControllerTest {
 				.andExpect(status().isNotFound())
 				.andExpect(jsonPath("$.title").value("Não encontrado"))
 				.andExpect(jsonPath("$.detail").isNotEmpty());
+	}
+
+	@Test
+	void atualizaPerfilCom200ESemCamposDeIdade() throws Exception {
+		MvcResult criado = mockMvc.perform(post("/api/v1/perfis")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(jsonNovoPerfil()))
+				.andExpect(status().isCreated())
+				.andReturn();
+		long id = objectMapper.readTree(criado.getResponse().getContentAsString()).get("id").asLong();
+
+		String atualizacao = """
+				{
+				  "nome": "Jo\u00e3o Editado",
+				  "email": "joao.novo@example.com",
+				  "areaAtual": "Produ\u00e7\u00e3o",
+				  "areaAlvo": "SUPRIMENTOS",
+				  "pretensaoSalarial": 6000,
+				  "disponibilidade": ["HIBRIDO", "PRESENCIAL"]
+				}
+				""";
+		mockMvc.perform(put("/api/v1/perfis/{id}", id)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(atualizacao))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.id").value(id))
+				.andExpect(jsonPath("$.nome").value("Jo\u00e3o Editado"))
+				.andExpect(jsonPath("$.areaAlvo").value("SUPRIMENTOS"))
+				.andExpect(jsonPath("$.pretensaoSalarial").value(6000))
+				.andExpect(jsonPath("$.disponibilidade", hasSize(2)))
+				.andExpect(jsonPath("$.dataNascimento").doesNotExist())
+				.andExpect(jsonPath("$.idade").doesNotExist());
+
+		mockMvc.perform(get("/api/v1/perfis/{id}", id))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.nome").value("Jo\u00e3o Editado"));
+	}
+
+	@Test
+	void atualizarRetorna404InexistenteE400Invalido() throws Exception {
+		mockMvc.perform(put("/api/v1/perfis/{id}", 999_999L)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(jsonNovoPerfil()))
+				.andExpect(status().isNotFound())
+				.andExpect(jsonPath("$.title").value("Não encontrado"));
+
+		mockMvc.perform(put("/api/v1/perfis/{id}", 999_999L)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content("{\"nome\":\"\", \"email\":\"invalido\", \"areaAlvo\":\"\"}"))
+				.andExpect(status().isBadRequest())
+				.andExpect(jsonPath("$.fieldErrors").isArray());
 	}
 }

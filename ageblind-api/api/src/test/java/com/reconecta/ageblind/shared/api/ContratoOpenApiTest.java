@@ -28,7 +28,7 @@ import org.springframework.test.web.servlet.MvcResult;
  * Sprint 3, T-04 (contrato): os paths do openapi.yaml da raiz do repo
  * escopados às tags Carreira + Escudo Anti-Etarismo devem bater exatamente
  * com a spec em runtime (/v3/api-docs) — sem rota órfã nem rota ausente.
- * (O openapi.yaml traz as 29 rotas do Reconecta pai; a AgeBlind implementa 15.)
+ * (O openapi.yaml traz as 29 rotas do Reconecta pai; a AgeBlind implementa 16.)
  */
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -83,8 +83,8 @@ class ContratoOpenApiTest {
 		});
 
 		Assertions.assertFalse(specPaths.isEmpty(), "nenhum path lido do openapi.yaml");
-		Assertions.assertEquals(15, escopoAgeBlind.size(),
-				"o escopo AgeBlind deve ter exatamente 15 paths no openapi.yaml");
+		Assertions.assertEquals(16, escopoAgeBlind.size(),
+				"o escopo AgeBlind deve ter exatamente 16 paths no openapi.yaml");
 		Assertions.assertTrue(specPaths.containsAll(runtimePaths),
 				"toda rota em runtime precisa existir no openapi.yaml (sem rota órfã): "
 						+ runtimePaths.stream().filter(r -> !specPaths.contains(r)).toList());

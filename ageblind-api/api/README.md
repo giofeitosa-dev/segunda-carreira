@@ -42,7 +42,7 @@ java -jar target\ageblind-api-0.0.1-SNAPSHOT.jar --spring.profiles.active=seed
 
 ---
 
-## Endpoints (15 rotas AgeBlind)
+## Endpoints (18 endpoints AgeBlind · 16 paths)
 
 ### Módulo Carreira — ODS 10+5
 
@@ -50,24 +50,27 @@ java -jar target\ageblind-api-0.0.1-SNAPSHOT.jar --spring.profiles.active=seed
 |---|---|---|---|
 | 1 | POST | `/api/v1/perfis` | Cadastra perfil (**sem data de nascimento**) → 201 |
 | 2 | GET | `/api/v1/perfis/{id}` | Consulta perfil → 200 / 404 |
-| 3 | POST | `/api/v1/perfis/{id}/competencias-transferiveis` | Experiência antiga → competências da área alvo (R12) |
-| 4 | GET | `/api/v1/vagas` | Explora vagas (`?area=&modelo=&page=&size=`) |
-| 5 | GET | `/api/v1/vagas/{id}` | Detalhe da vaga |
-| 6 | GET | `/api/v1/vagas/recomendadas?perfilId=` | Ranking **só por competências** (sem idade) |
-| 7 | GET | `/api/v1/trilhas/{area}` | Trilhas da área (modulos ordenados) |
-| 8 | POST | `/api/v1/inscricoes` | Inscrição em vaga/trilha → 201 |
-| 9 | POST | `/api/v1/webhooks/lembretes` | Agenda lembrete de prazo → 202 |
-| 10 | GET | `/api/v1/mentorias` | Encaixe de mentoria (`?perfilId=&area=`) |
+| 3 | PUT | `/api/v1/perfis/{id}` | Edita perfil (**sem data de nascimento**) → 200 / 404 |
+| 4 | POST | `/api/v1/perfis/{id}/competencias-transferiveis` | Experiência antiga → competências da área alvo (R12) |
+| 5 | GET | `/api/v1/vagas` | Explora vagas (`?area=&modelo=&page=&size=`) |
+| 6 | GET | `/api/v1/vagas/{id}` | Detalhe da vaga |
+| 7 | GET | `/api/v1/vagas/recomendadas?perfilId=` | Ranking **só por competências** (sem idade) |
+| 8 | GET | `/api/v1/trilhas/{area}` | Trilhas da área (modulos ordenados) |
+| 9 | POST | `/api/v1/inscricoes` | Inscrição em vaga/trilha → 201 |
+| 10 | GET | `/api/v1/inscricoes?perfilId=` | Lista inscrições do perfil (cancelamento/lembrete) |
+| 11 | DELETE | `/api/v1/inscricoes/{id}` | Cancela inscrição → 204 / 404 |
+| 12 | POST | `/api/v1/webhooks/lembretes` | Agenda lembrete de prazo → 202 |
+| 13 | GET | `/api/v1/mentorias` | Encaixe de mentoria (`?perfilId=&area=`) |
 
 ### Módulo Escudo Anti-Etarismo ⭐ — ODS 10+5
 
 | # | Método | Rota | Descrição |
 |---|---|---|---|
-| 11 | POST | `/api/v1/curriculo/age-blind` | Aplica 15 regras etaristas (10 automáticas) |
-| 12 | POST | `/api/v1/curriculo/auditoria` | Score ATS + sinais de viés + severidade |
-| 13 | POST | `/api/v1/vagas/auditoria-linguagem` | Termos discriminatorios + risco legal (CLT 373-A, Lei 9.029) |
-| 14 | GET | `/api/v1/funil/metricas?vagaId=` | Funil por faixa + `razaoAdverseImpact < 0,80` |
-| 15 | POST | `/api/v1/revisao/solicitacao` | Revisão de decisão automatizada (LGPD art. 20) → protocolo `REV-` |
+| 14 | POST | `/api/v1/curriculo/age-blind` | Aplica 15 regras etaristas (10 automáticas) |
+| 15 | POST | `/api/v1/curriculo/auditoria` | Pontuação anti-proxy de idade + sinais de viés |
+| 16 | POST | `/api/v1/vagas/auditoria-linguagem` | Termos discriminatorios + risco legal (CLT 373-A, Lei 9.029) |
+| 17 | GET | `/api/v1/funil/metricas?vagaId=` | Funil por faixa + `razaoAdverseImpact < 0,80` |
+| 18 | POST | `/api/v1/revisao/solicitacao` | Revisão de decisão automatizada (LGPD art. 20) → protocolo `REV-` |
 
 Erros em **RFC 7807** (`application/problem+json`): 400 validação, 404 recurso,
 405 método, 500 interno.
@@ -88,6 +91,11 @@ curl -X POST http://localhost:8080/api/v1/perfis \
 # 2) consultar perfil
 curl http://localhost:8080/api/v1/perfis/1
 
+# 2b) editar perfil (PUT — sem idade/data de nascimento)
+curl -X PUT http://localhost:8080/api/v1/perfis/1 \
+  -H "Content-Type: application/json" \
+  -d '{"nome":"Ana Souza","email":"ana@recode.demo","areaAtual":"Logistica","areaAlvo":"Logistica","pretensaoSalarial":6500,"disponibilidade":["REMOTO"]}'
+
 # 3) competências transferíveis (regra R12)
 curl -X POST http://localhost:8080/api/v1/perfis/1/competencias-transferiveis
 
@@ -107,6 +115,12 @@ curl http://localhost:8080/api/v1/trilhas/LOGISTICA
 curl -X POST http://localhost:8080/api/v1/inscricoes \
   -H "Content-Type: application/json" \
   -d '{"perfilId":1,"tipo":"VAGA","referenciaId":"1"}'
+
+# 8b) listar inscrições do perfil (para cancelar/lembrete)
+curl "http://localhost:8080/api/v1/inscricoes?perfilId=1"
+
+# 8c) cancelar inscrição → 204
+curl -X DELETE http://localhost:8080/api/v1/inscricoes/1
 
 # 9) lembrete de prazo → 202
 curl -X POST http://localhost:8080/api/v1/webhooks/lembretes \

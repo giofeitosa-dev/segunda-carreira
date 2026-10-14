@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -48,6 +49,12 @@ public class PerfilController {
 	@Operation(summary = "Consulta perfil")
 	public PerfilResponse obter(@PathVariable Long id) {
 		return perfilService.obter(id);
+	}
+
+	@PutMapping("/{id}")
+	@Operation(summary = "Edita perfil profissional (sem data de nascimento)")
+	public PerfilResponse atualizar(@PathVariable Long id, @Valid @RequestBody PerfilRequest req) {
+		return perfilService.atualizar(id, req);
 	}
 
 	@PostMapping("/{id}/competencias-transferiveis")

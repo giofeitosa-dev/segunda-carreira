@@ -1,5 +1,7 @@
 package com.reconecta.ageblind.carreira.api;
 
+import static org.hamcrest.Matchers.hasSize;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -157,5 +159,58 @@ class InscricaoControllerTest {
 		org.junit.jupiter.api.Assertions.assertEquals(1, lembreteJob.disparar());
 		org.junit.jupiter.api.Assertions.assertEquals(0, lembreteJob.disparar(),
 				"lembrete já encerrado não deve ser recontado");
+	}
+
+	@Test
+	void listaInscricoesDoPerfilCom404E400() throws Exception {
+		long perfilId = criarPerfil();
+		Vaga vaga1 = criarVagaComPrazo(LocalDateTime.now().plusDays(30));
+		Vaga vaga2 = criarVagaComPrazo(LocalDateTime.now().plusDays(45));
+
+		for (Vaga vaga : new Vaga[] { vaga1, vaga2 }) {
+			String body = objectMapper.writeValueAsString(java.util.Map.of(
+					"perfilId", perfilId, "tipo", "VAGA", "referenciaId", String.valueOf(vaga.getId())));
+			mockMvc.perform(post("/api/v1/inscricoes")
+							.contentType(MediaType.APPLICATION_JSON)
+							.content(body))
+					.andExpect(status().isCreated());
+		}
+
+		mockMvc.perform(get("/api/v1/inscricoes").param("perfilId", String.valueOf(perfilId)))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$", hasSize(2)))
+				.andExpect(jsonPath("$[0].perfilId").value(perfilId))
+				.andExpect(jsonPath("$[0].id").isNumber());
+
+		mockMvc.perform(get("/api/v1/inscricoes").param("perfilId", "999999"))
+				.andExpect(status().isNotFound());
+
+		mockMvc.perform(get("/api/v1/inscricoes"))
+				.andExpect(status().isBadRequest());
+	}
+
+	@Test
+	void cancelarInscricaoDevolve204ESomeDaListaDepoisDe404() throws Exception {
+		long perfilId = criarPerfil();
+		Vaga vaga = criarVagaComPrazo(LocalDateTime.now().plusDays(30));
+		String body = objectMapper.writeValueAsString(java.util.Map.of(
+				"perfilId", perfilId, "tipo", "VAGA", "referenciaId", String.valueOf(vaga.getId())));
+		String resposta = mockMvc.perform(post("/api/v1/inscricoes")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(body))
+				.andExpect(status().isCreated())
+				.andReturn().getResponse().getContentAsString();
+		long inscricaoId = objectMapper.readTree(resposta).get("id").asLong();
+
+		mockMvc.perform(delete("/api/v1/inscricoes/{id}", inscricaoId))
+				.andExpect(status().isNoContent());
+
+		mockMvc.perform(get("/api/v1/inscricoes").param("perfilId", String.valueOf(perfilId)))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$", hasSize(0)));
+
+		mockMvc.perform(delete("/api/v1/inscricoes/{id}", inscricaoId))
+				.andExpect(status().isNotFound())
+				.andExpect(jsonPath("$.title").value("Não encontrado"));
 	}
 }
