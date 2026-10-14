@@ -5,6 +5,7 @@ import com.reconecta.ageblind.carreira.domain.Perfil;
 import com.reconecta.ageblind.carreira.dto.InscricaoRequest;
 import com.reconecta.ageblind.carreira.dto.InscricaoResponse;
 import com.reconecta.ageblind.carreira.dto.LembreteRequest;
+import com.reconecta.ageblind.carreira.enums.TipoInscricao;
 import com.reconecta.ageblind.carreira.repository.InscricaoRepository;
 import com.reconecta.ageblind.carreira.repository.PerfilRepository;
 import com.reconecta.ageblind.carreira.repository.TrilhaRepository;
@@ -49,21 +50,20 @@ public class InscricaoService {
 
 	private void validarReferencia(InscricaoRequest req) {
 		String referencia = req.referenciaId().trim();
+		String rotulo = req.tipo() == TipoInscricao.VAGA ? "Vaga" : "Trilha";
+		Long id;
 		try {
-			Long id = Long.parseLong(referencia);
-			boolean existe = switch (req.tipo()) {
-				case VAGA -> vagaRepository.existsById(id);
-				case TRILHA -> trilhaRepository.existsById(id);
-			};
-			if (!existe) {
-				throw new RecursoNaoEncontradoException(
-						req.tipo() == com.reconecta.ageblind.carreira.enums.TipoInscricao.VAGA
-								? "Vaga" : "Trilha", referencia);
-			}
+			id = Long.parseLong(referencia);
 		} catch (NumberFormatException e) {
-			throw new RecursoNaoEncontradoException(
-					req.tipo() == com.reconecta.ageblind.carreira.enums.TipoInscricao.VAGA
-							? "Vaga" : "Trilha", referencia);
+			throw new IllegalArgumentException(
+					"referenciaId deve ser num\u00e9rico para tipo " + req.tipo());
+		}
+		boolean existe = switch (req.tipo()) {
+			case VAGA -> vagaRepository.existsById(id);
+			case TRILHA -> trilhaRepository.existsById(id);
+		};
+		if (!existe) {
+			throw new RecursoNaoEncontradoException(rotulo, referencia);
 		}
 	}
 
