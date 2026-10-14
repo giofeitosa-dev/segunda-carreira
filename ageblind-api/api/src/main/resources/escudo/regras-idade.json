@@ -105,7 +105,7 @@
     "descricao": "Adjetivos geracionais (veterano/a, maduro/a, jovem, experiente)",
     "severidade": "BAIXA",
     "acao": "remover adjetivo geracional",
-    "regex": "(?i)\\b(?:veteran[oa]|madur[oa]|jovem|experiente)\\b",
+    "regex": "(?i)\\b(?:veteran[oa]|madur[oa]|jovem|experiente|s[eê]nior|rec[eé]m-?formado|terceira idade)\\b",
     "substituicao": "",
     "automatica": true
   },
