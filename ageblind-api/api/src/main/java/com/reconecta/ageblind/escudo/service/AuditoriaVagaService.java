@@ -33,11 +33,17 @@ public class AuditoriaVagaService {
 	}
 
 	private final List<RegraTermo> regras;
+	private final List<List<Pattern>> padroesCompilados;
 	private final ObjectMapper objectMapper = new ObjectMapper();
 
 	public AuditoriaVagaService() {
 		try (InputStream in = new ClassPathResource("escudo/termos-discriminatorios.json").getInputStream()) {
 			this.regras = List.of(objectMapper.readValue(in, RegraTermo[].class));
+			this.padroesCompilados = regras.stream()
+					.map(r -> r.padroes().stream()
+							.map(p -> Pattern.compile(p, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE))
+							.toList())
+					.toList();
 		} catch (IOException e) {
 			throw new UncheckedIOException("Falha ao carregar termos-discriminatorios.json", e);
 		}
@@ -49,9 +55,10 @@ public class AuditoriaVagaService {
 		RiscoLegal risco = RiscoLegal.BAIXO;
 		String baseLegal = "Nenhum termo conhecido de vi\u00e9s et\u00e1rio detectado \u2014 n\u00e3o constitui parecer jur\u00eddico";
 
-		for (RegraTermo regra : regras) {
-			for (String padrao : regra.padroes()) {
-				if (Pattern.compile(padrao, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE).matcher(alvo).find()) {
+		for (int i = 0; i < regras.size(); i++) {
+			RegraTermo regra = regras.get(i);
+			for (Pattern padrao : padroesCompilados.get(i)) {
+				if (padrao.matcher(alvo).find()) {
 					encontrados.add(regra.termo());
 					RiscoLegal doRegra = RiscoLegal.valueOf(regra.risco());
 					if (doRegra.ordinal() > risco.ordinal()) {
