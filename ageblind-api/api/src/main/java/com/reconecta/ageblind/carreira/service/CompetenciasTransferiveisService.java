@@ -36,6 +36,8 @@ public class CompetenciasTransferiveisService {
 
 	private static final double LIMITE_ACEITACAO = 0.60;
 	private static final double TETO_SINONIMO = 0.90;
+	private static final double PISO_JACCARD_PARA_SINONIMO = 0.20;
+	private static final int TAMANHO_MAXIMO_ACRONIMO = 5;
 
 	private final PerfilRepository perfilRepository;
 	private final CompetenciaRepository competenciaRepository;
@@ -100,8 +102,11 @@ public class CompetenciasTransferiveisService {
 	}
 
 	/**
-	 * Jaccard sobre tokens normalizados; se tokens de grupos de sinônimos
-	 * se casam, o piso é 0,90 (vocabulário antigo ≈ vocabulário novo).
+	 * Jaccard sobre tokens normalizados. O piso de 0,90 por grupos de sinônimos
+	 * só vale quando há sobreposição real de tokens (Jaccard ≥ 0,20) ou quando
+	 * um dos nomes é curto tipo sigla (ex.: "PCP" → "Planejamento de Rotas") —
+	 * evita mapear palavras genéricas do mesmo grupo sem relação ("planejamento"
+	 * ≉ "controle").
 	 */
 	double similaridade(String a, String b) {
 		Set<String> tokensA = tokens(a);
@@ -116,10 +121,17 @@ public class CompetenciasTransferiveisService {
 		uniao.addAll(tokensB);
 		double jaccard = (double) intersecao.size() / uniao.size();
 
-		if (temSinonimo(tokensA, tokensB)) {
+		boolean pisoPermitido = jaccard >= PISO_JACCARD_PARA_SINONIMO
+				|| ehAcuronimo(a) || ehAcuronimo(b);
+		if (pisoPermitido && temSinonimo(tokensA, tokensB)) {
 			return Math.max(TETO_SINONIMO, jaccard);
 		}
 		return jaccard;
+	}
+
+	private boolean ehAcuronimo(String nome) {
+		String t = nome == null ? "" : nome.trim();
+		return t.length() > 1 && t.length() <= TAMANHO_MAXIMO_ACRONIMO && !t.contains(" ");
 	}
 
 	private boolean temSinonimo(Set<String> a, Set<String> b) {
