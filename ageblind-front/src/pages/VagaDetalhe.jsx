@@ -24,10 +24,15 @@ export default function VagaDetalhe() {
   const [erroAcao, setErroAcao] = useState(null)
   const perfilId = getPerfilAtivaId()
 
-  useEffect(() => {
-    let ativo = true
+  const [idAnterior, setIdAnterior] = useState(id)
+  if (id !== idAnterior) {
+    setIdAnterior(id)
     setCarregando(true)
     setErro(null)
+  }
+
+  useEffect(() => {
+    let ativo = true
     obterVaga(id)
       .then((r) => {
         if (ativo) setVaga(r)

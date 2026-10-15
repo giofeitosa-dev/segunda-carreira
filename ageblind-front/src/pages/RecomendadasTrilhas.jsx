@@ -29,27 +29,28 @@ const brl = (v) =>
   Number(v).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
 
 export default function RecomendadasTrilhas() {
+  const perfilId = getPerfilAtivaId()
   const [aba, setAba] = useState('recomendadas')
   const [area, setArea] = useState(AREAS[0])
   const [dados, setDados] = useState(null)
-  const [carregando, setCarregando] = useState(true)
+  const [carregando, setCarregando] = useState(Boolean(perfilId))
   const [erro, setErro] = useState(null)
   const [recarga, setRecarga] = useState(0)
-  const perfilId = getPerfilAtivaId()
 
   const precisaPerfil = aba !== 'trilhas'
 
-  useEffect(() => {
-    if (precisaPerfil && !perfilId) {
-      setDados(null)
-      setCarregando(false)
-      return
-    }
-    let ativo = true
-    setCarregando(true)
-    setErro(null)
+  const chave = `${aba}|${area}|${perfilId}|${precisaPerfil}|${recarga}`
+  const [chaveAnterior, setChaveAnterior] = useState(chave)
+  if (chave !== chaveAnterior) {
+    setChaveAnterior(chave)
     setDados(null)
+    setErro(null)
+    setCarregando(precisaPerfil && !perfilId ? false : true)
+  }
 
+  useEffect(() => {
+    if (precisaPerfil && !perfilId) return undefined
+    let ativo = true
     const chamada =
       aba === 'recomendadas'
         ? vagasRecomendadas(perfilId)

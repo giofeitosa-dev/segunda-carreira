@@ -26,10 +26,16 @@ export default function VagasLista() {
   const [pagina, setPagina] = useState(0)
   const [recarga, setRecarga] = useState(0)
 
-  useEffect(() => {
-    let ativo = true
+  const chave = `${area}|${modelo}|${pagina}|${recarga}`
+  const [chaveAnterior, setChaveAnterior] = useState(chave)
+  if (chave !== chaveAnterior) {
+    setChaveAnterior(chave)
     setCarregando(true)
     setErro(null)
+  }
+
+  useEffect(() => {
+    let ativo = true
     listarVagas({ area, modelo, page: pagina, size: 12 })
       .then((r) => {
         if (ativo) setDados(r)
