@@ -3,6 +3,7 @@ package com.reconecta.ageblind.carreira.seed;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.reconecta.ageblind.carreira.repository.MentoriaRepository;
 import com.reconecta.ageblind.carreira.repository.PerfilRepository;
 import com.reconecta.ageblind.carreira.repository.TrilhaRepository;
 import com.reconecta.ageblind.carreira.repository.VagaRepository;
@@ -28,15 +29,20 @@ class SeedDemoTest {
 	@Autowired
 	private TrilhaRepository trilhaRepository;
 
+	@Autowired
+	private MentoriaRepository mentoriaRepository;
+
 	@Test
 	@Transactional
-	void seedDemoCarregaPerfisVagasTrilhasECompetencias() {
+	void seedDemoCarregaPerfisVagasTrilhasEMentorias() {
 		assertTrue(perfilRepository.count() >= 10,
 				"esperava >= 10 perfis, veio " + perfilRepository.count());
 		assertTrue(vagaRepository.count() >= 20,
 				"esperava >= 20 vagas, veio " + vagaRepository.count());
 		assertTrue(trilhaRepository.count() >= 5,
 				"esperava >= 5 trilhas, veio " + trilhaRepository.count());
+		assertTrue(mentoriaRepository.count() >= 5,
+				"esperava >= 5 mentorias, veio " + mentoriaRepository.count());
 
 		boolean algumComCompetencias = perfilRepository.findAll().stream()
 				.anyMatch(p -> !p.getCompetencias().isEmpty());
