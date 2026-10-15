@@ -39,6 +39,14 @@ export default function PainelRH() {
   const [metricas, setMetricas] = useState(null)
   const [carregandoFunil, setCarregandoFunil] = useState(false)
 
+  const [vagaAnterior, setVagaAnterior] = useState(vagaId)
+  if (vagaId !== vagaAnterior) {
+    setVagaAnterior(vagaId)
+    setMetricas(null)
+    setCarregandoFunil(Boolean(vagaId))
+    setErro(null)
+  }
+
   useEffect(() => {
     let ativo = true
     listarVagas({ size: 100 })
@@ -54,13 +62,8 @@ export default function PainelRH() {
   }, [])
 
   useEffect(() => {
-    if (!vagaId) {
-      setMetricas(null)
-      return
-    }
+    if (!vagaId) return undefined
     let ativo = true
-    setCarregandoFunil(true)
-    setErro(null)
     funilMetricas(vagaId)
       .then((r) => {
         if (ativo) setMetricas(r)
