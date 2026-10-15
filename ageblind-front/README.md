@@ -1,16 +1,61 @@
-# React + Vite
+# Reconecta — Front-end (Segunda Carreira + Escudo Anti-Etarismo)
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+> UI de demo para a API [`ageblind-api`](../ageblind-api) — "a API que contrata por
+> competência, não por ano de nascimento". Público: profissionais 40+ em
+> recolocação e RH que audita vagas.
 
-Currently, two official plugins are available:
+**Stack:** React 19 · Vite · Tailwind CSS 4 · react-router-dom 7 · JavaScript (sem TS) · oxlint.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## Rodando a demo
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```bash
+# 1. API em :8080 (com seed de dados, incluindo mentorias)
+cd ../ageblind-api/api
+./mvnw spring-boot:run -Dspring-boot.run.profiles=seed
 
-## Expanding the Oxlint configuration
+# 2. Front em :5173 (proxy /api → :8080, ver vite.config.js)
+cd ../../ageblind-front
+npm install
+npm run dev
+```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+| Script | O que faz |
+|---|---|
+| `npm run dev` | dev server com HMR em `http://localhost:5173` |
+| `npm run build` | build de produção em `dist/` |
+| `npm run lint` | oxlint (meta: 0 warnings) |
+| `npm run preview` | serve o build de produção |
+
+## Rotas
+
+| Rota | Tela | Endpoints usados |
+|---|---|---|
+| `/` | Home (jornada candidato × RH) | — |
+| `/perfil` | Cadastro/edição de perfil + competências transferíveis | `POST/GET/PUT /perfis`, `POST /perfis/{id}/competencias-transferiveis` |
+| `/vagas` | Exploração com filtros (área/modelo) e paginação | `GET /vagas` |
+| `/vagas/:id` | Detalhe + inscrição + lembrete + atalho para o escudo | `GET /vagas/{id}`, `POST /inscricoes`, `POST /webhooks/lembretes` |
+| `/recomendadas` | Abas: recomendadas (ranking só por competências), trilhas, mentorias | `GET /vagas/recomendadas`, `GET /trilhas/{area}`, `GET /mentorias` |
+| `/escudo` | Blindar currículo (15 regras), auditar, pedido de revisão LGPD art. 20 | `POST /curriculo/age-blind`, `POST /curriculo/auditoria`, `POST /revisao/solicitacao` |
+| `/rh/painel` | Auditoria de linguagem de vaga + funil com alerta de adverse impact | `POST /vagas/auditoria-linguagem`, `GET /funil/metricas` |
+
+## Estrutura
+
+```
+src/
+├── components/    CardVaga, Carregando, EstadoVazio, Feedback, Layout
+├── pages/         uma página por rota (acima)
+├── services/      api.js (fetch + problem+json), carreiraService.js, escudoService.js
+├── App.jsx        rotas
+└── index.css      tema Tailwind (@theme): primaria, sucesso, perigo, texto…
+```
+
+## Regras do projeto (respeitadas no código)
+
+1. **Nenhum campo de idade / data de nascimento** — nem formulário, nem filtro, nem entidade.
+2. "Pontuação anti-proxy de idade (**não é ATS**)" — o JSON `scoreAts` mantém o nome (zero breaking), mas a UI nunca chama de ATS.
+3. Auditoria de vaga exibe termos + base legal (Lei 9.029) e **não promete conformidade**.
+4. Todo dado vem da API — zero mock/estático.
+5. Erros vêm do `application/problem+json` (RFC 7807: `title`, `detail`, `fieldErrors`), nunca mensagem genérica.
+6. Acessibilidade 40+: contraste AA, alvos de clique ≥ 48px (`min-h-12`), labels sempre visíveis.
