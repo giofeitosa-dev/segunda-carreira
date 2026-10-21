@@ -96,11 +96,6 @@ export default function EscudoAntiEtarismo() {
       <h1 className="text-2xl font-semibold text-primaria">
         Escudo Anti-Etarismo
       </h1>
-      <p className="mt-2 max-w-3xl text-texto-suave">
-        Remova proxies de idade do seu currículo (15 regras), veja a pontuação
-        anti-proxy de idade (não é ATS) e peça revisão humana quando quiser —
-        conforme o art. 20 da LGPD.
-      </p>
 
       <div
         role="tablist"
@@ -148,7 +143,7 @@ export default function EscudoAntiEtarismo() {
               rows={8}
               value={curriculo}
               onChange={(e) => setCurriculo(e.target.value)}
-              placeholder="Cole aqui o texto do currículo — sem dados de idade, se puder."
+              placeholder="Cole aqui o texto do currículo."
               className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 focus:border-primaria focus:outline-none"
             />
           </div>
@@ -294,17 +289,10 @@ export default function EscudoAntiEtarismo() {
 
       {aba === 'revisao' && (
         <>
-          <p className="mt-4 max-w-3xl text-sm text-texto-suave">
-            A LGPD garante o direito de pedir revisão de decisão automatizada.
-            Descreva o que você quer revisar — você receberá um protocolo de
-            acompanhamento.
-          </p>
-
           {!perfilId ? (
             <div className="mt-4">
               <EstadoVazio
                 titulo="Cadastre seu perfil primeiro"
-                texto="O pedido de revisão precisa do seu perfil para rastrear o protocolo."
                 acaoTo="/perfil"
                 acaoRotulo="Ir para meu perfil"
               />
@@ -357,8 +345,7 @@ export default function EscudoAntiEtarismo() {
         </>
       )}
 
-      <p className="mt-6 text-sm text-texto-suave">
-        Nenhum dado de idade é solicitado ou armazenado ·{' '}
+      <p className="mt-6 text-sm">
         <Link to="/rh/painel" className="font-medium text-primaria underline">
           Sou RH: auditar vaga e ver o funil
         </Link>

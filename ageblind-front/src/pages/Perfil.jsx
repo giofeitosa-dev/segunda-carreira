@@ -111,9 +111,7 @@ export default function Perfil() {
         setPerfilAtivaId(criado.id)
         preencher(criado)
         setModo('editar')
-        setSucesso(
-          `Perfil criado com sucesso (id ${criado.id}). Nenhum dado de idade foi solicitado.`,
-        )
+        setSucesso(`Perfil criado com sucesso (id ${criado.id}).`)
       } else {
         const id = getPerfilAtivaId()
         const atualizado = await atualizarPerfil(id, dados)
@@ -152,9 +150,6 @@ export default function Perfil() {
   return (
     <section className="max-w-2xl">
       <h1 className="text-2xl font-semibold text-primaria">Meu Perfil</h1>
-      <p className="mt-1 rounded-md bg-primaria/5 px-3 py-2 text-sm text-texto-suave">
-        Nenhum dado de idade ou data de nascimento é solicitado ou armazenado.
-      </p>
 
       {sucesso && <Feedback tipo="sucesso" titulo={sucesso} />}
       {erro && (
@@ -303,10 +298,6 @@ export default function Perfil() {
           <h2 className="font-semibold text-primaria">
             Competências transferíveis
           </h2>
-          <p className="mt-1 text-sm text-texto-suave">
-            Mapeia sua experiência da área atual para a área alvo — sem usar
-            idade.
-          </p>
           <button
             type="button"
             onClick={mapear}
