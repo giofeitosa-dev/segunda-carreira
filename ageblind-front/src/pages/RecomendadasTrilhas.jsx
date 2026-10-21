@@ -38,18 +38,23 @@ export default function RecomendadasTrilhas() {
   const [recarga, setRecarga] = useState(0)
 
   const precisaPerfil = aba !== 'trilhas'
+  const semPerfil = precisaPerfil && !perfilId
 
   const chave = `${aba}|${area}|${perfilId}|${precisaPerfil}|${recarga}`
   const [chaveAnterior, setChaveAnterior] = useState(chave)
-  if (chave !== chaveAnterior) {
+  const chaveMudou = chave !== chaveAnterior
+  if (chaveMudou) {
     setChaveAnterior(chave)
     setDados(null)
     setErro(null)
-    setCarregando(precisaPerfil && !perfilId ? false : true)
+    setCarregando(!semPerfil)
   }
+  const dadosVista = chaveMudou ? null : dados
+  const erroVista = chaveMudou ? null : erro
+  const carregandoVista = chaveMudou ? !semPerfil : carregando
 
   useEffect(() => {
-    if (precisaPerfil && !perfilId) return undefined
+    if (semPerfil) return undefined
     let ativo = true
     const chamada =
       aba === 'recomendadas'
@@ -71,7 +76,7 @@ export default function RecomendadasTrilhas() {
     return () => {
       ativo = false
     }
-  }, [aba, area, perfilId, precisaPerfil, recarga])
+  }, [aba, area, perfilId, precisaPerfil, recarga, semPerfil])
 
   return (
     <section>
@@ -101,10 +106,10 @@ export default function RecomendadasTrilhas() {
         ))}
       </div>
 
-      {erro && (
+      {erroVista && (
         <Feedback
-          titulo={erro.title || 'Erro ao carregar dados'}
-          detalhe={erro.detail}
+          titulo={erroVista.title || 'Erro ao carregar dados'}
+          detalhe={erroVista.detail}
           acao={
             <button
               type="button"
@@ -128,11 +133,11 @@ export default function RecomendadasTrilhas() {
         </div>
       )}
 
-      {carregando && <Carregando />}
+      {carregandoVista && <Carregando />}
 
-      {!carregando && !erro && perfilId && aba === 'recomendadas' && (
+      {!carregandoVista && !erroVista && perfilId && aba === 'recomendadas' && (
         <div className="mt-4">
-          {dados?.length === 0 ? (
+          {dadosVista?.length === 0 ? (
             <EstadoVazio
               titulo="Nenhuma recomendação no momento"
               texto="Tente ajustar sua área alvo no perfil."
@@ -141,7 +146,7 @@ export default function RecomendadasTrilhas() {
             />
           ) : (
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {dados?.map((item) => (
+              {dadosVista?.map((item) => (
                 <CardVaga
                   key={item.vaga.id}
                   vaga={item.vaga}
@@ -153,7 +158,7 @@ export default function RecomendadasTrilhas() {
         </div>
       )}
 
-      {!carregando && !erro && aba === 'trilhas' && (
+      {!carregandoVista && !erroVista && aba === 'trilhas' && (
         <div className="mt-4">
           <label htmlFor="area-trilha" className="block text-sm font-medium">
             Área da trilha
@@ -171,14 +176,14 @@ export default function RecomendadasTrilhas() {
             ))}
           </select>
 
-          {dados?.length === 0 ? (
+          {dadosVista?.length === 0 ? (
             <EstadoVazio
               titulo="Nenhuma trilha para esta área"
               texto="Escolha outra área acima."
             />
           ) : (
             <ul className="space-y-3">
-              {dados?.map((t) => (
+              {dadosVista?.map((t) => (
                 <li
                   key={t.id}
                   className="rounded-lg border border-slate-200 bg-white p-4"
@@ -210,16 +215,16 @@ export default function RecomendadasTrilhas() {
         </div>
       )}
 
-      {!carregando && !erro && perfilId && aba === 'mentorias' && (
+      {!carregandoVista && !erroVista && perfilId && aba === 'mentorias' && (
         <div className="mt-4">
-          {dados?.length === 0 ? (
+          {dadosVista?.length === 0 ? (
             <EstadoVazio
               titulo="Nenhuma mentoria disponível para sua área"
               texto="Volte mais tarde — novos mentores entram toda semana."
             />
           ) : (
             <ul className="grid gap-4 sm:grid-cols-2">
-              {dados?.map((m) => (
+              {dadosVista?.map((m) => (
                 <li
                   key={m.id}
                   className="rounded-lg border border-slate-200 bg-white p-4"
