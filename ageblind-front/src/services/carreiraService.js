@@ -1,6 +1,6 @@
 import { api } from './api'
 
-const CHAVE_PERFIL = 'reconecta.perfilAtiva'
+const CHAVE_PERFIL = 'segundaCarreira.perfilAtiva'
 
 export function getPerfilAtivaId() {
   const id = localStorage.getItem(CHAVE_PERFIL)

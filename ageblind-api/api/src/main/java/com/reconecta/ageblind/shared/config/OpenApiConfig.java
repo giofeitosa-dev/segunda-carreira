@@ -21,6 +21,6 @@ public class OpenApiConfig {
 						por competências — sem usar idade.
 						""")
 				.version("1.0.0")
-				.contact(new Contact().name("Equipe Reconecta (ReCode)")));
+				.contact(new Contact().name("Segunda Carreira")));
 	}
 }

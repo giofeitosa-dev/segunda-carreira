@@ -49,7 +49,7 @@ class CompetenciasTransferiveisTest {
 		trilha.setNome("Logistica Pratica");
 		trilha.setDuracaoSemanas(8);
 		trilha.setCusto(BigDecimal.ZERO);
-		trilha.setInstituicao("Reconecta");
+		trilha.setInstituicao("Segunda Carreira");
 		trilha.setCertificado(true);
 		trilhaRepository.save(trilha);
 
