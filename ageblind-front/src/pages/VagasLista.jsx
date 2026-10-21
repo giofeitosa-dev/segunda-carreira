@@ -147,10 +147,7 @@ export default function VagasLista() {
 
       {!carregando && !erro && itens.length === 0 && (
         <div className="mt-4">
-          <EstadoVazio
-            titulo="Nenhuma vaga encontrada"
-            texto="Ajuste os filtros ou limpe a busca para ver mais resultados."
-          />
+          <EstadoVazio titulo="Nenhuma vaga encontrada" />
         </div>
       )}
 

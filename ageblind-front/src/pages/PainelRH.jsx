@@ -101,10 +101,6 @@ export default function PainelRH() {
   return (
     <section>
       <h1 className="text-2xl font-semibold text-primaria">Painel RH</h1>
-      <p className="mt-2 max-w-3xl text-texto-suave">
-        Audite a linguagem da vaga antes de publicar e acompanhe o funil de
-        contratação com alerta de adverse impact (razão &lt; 0,80).
-      </p>
 
       <div
         role="tablist"
@@ -147,12 +143,6 @@ export default function PainelRH() {
 
       {aba === 'linguagem' && (
         <>
-          <p className="mt-4 max-w-3xl text-sm text-texto-suave">
-            A auditoria aponta termos com viés etário, o risco legal
-            identificado e uma sugestão de reescrita. Não constitui parecer
-            jurídico.
-          </p>
-
           <form
             onSubmit={auditar}
             className="mt-4 space-y-4 rounded-lg border border-slate-200 bg-white p-5"
@@ -278,10 +268,7 @@ export default function PainelRH() {
 
           {!vagaId && !carregandoFunil && !erroVagas && (
             <div className="mt-4">
-              <EstadoVazio
-                titulo="Escolha uma vaga"
-                texto="As métricas agregadas por faixa e o alerta de adverse impact aparecem aqui. Nenhum dado individual de idade é exibido."
-              />
+              <EstadoVazio titulo="Escolha uma vaga" />
             </div>
           )}
 

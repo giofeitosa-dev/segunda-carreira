@@ -122,11 +122,10 @@ export default function RecomendadasTrilhas() {
         />
       )}
 
-      {precisaPerfil && !perfilId && (
+      {semPerfil && (
         <div className="mt-4">
           <EstadoVazio
             titulo="Cadastre seu perfil primeiro"
-            texto="Recomendações e mentorias usam seu perfil (sem idade) para buscar as melhores correspondências."
             acaoTo="/perfil"
             acaoRotulo="Ir para meu perfil"
           />
@@ -140,7 +139,6 @@ export default function RecomendadasTrilhas() {
           {dadosVista?.length === 0 ? (
             <EstadoVazio
               titulo="Nenhuma recomendação no momento"
-              texto="Tente ajustar sua área alvo no perfil."
               acaoTo="/perfil"
               acaoRotulo="Revisar perfil"
             />
@@ -177,10 +175,7 @@ export default function RecomendadasTrilhas() {
           </select>
 
           {dadosVista?.length === 0 ? (
-            <EstadoVazio
-              titulo="Nenhuma trilha para esta área"
-              texto="Escolha outra área acima."
-            />
+            <EstadoVazio titulo="Nenhuma trilha para esta área" />
           ) : (
             <ul className="space-y-3">
               {dadosVista?.map((t) => (
@@ -218,10 +213,7 @@ export default function RecomendadasTrilhas() {
       {!carregandoVista && !erroVista && perfilId && aba === 'mentorias' && (
         <div className="mt-4">
           {dadosVista?.length === 0 ? (
-            <EstadoVazio
-              titulo="Nenhuma mentoria disponível para sua área"
-              texto="Volte mais tarde — novos mentores entram toda semana."
-            />
+            <EstadoVazio titulo="Nenhuma mentoria disponível para sua área" />
           ) : (
             <ul className="grid gap-4 sm:grid-cols-2">
               {dadosVista?.map((m) => (
