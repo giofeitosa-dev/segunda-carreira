@@ -33,7 +33,7 @@ class FunilMetricasControllerTest {
 	private long criarVaga() {
 		Vaga vaga = new Vaga();
 		vaga.setTitulo("Analista de Logistica");
-		vaga.setEmpresa("Reconecta Demo");
+		vaga.setEmpresa("Segunda Carreira Demo");
 		vaga.setArea("Logistica");
 		vaga.setDescricao("Vaga publica sem requisito de idade");
 		return vagaRepository.save(vaga).getId();

@@ -15,7 +15,7 @@ export default function Layout() {
       <header className="bg-primaria text-white sticky top-0 z-10 shadow">
         <div className="mx-auto max-w-6xl px-4 py-3 flex flex-wrap items-center gap-x-6 gap-y-2">
           <NavLink to="/" className="text-lg font-semibold tracking-tight">
-            Reconecta
+            Segunda Carreira
           </NavLink>
           <nav className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
             {links.map((link) => (
@@ -46,7 +46,7 @@ export default function Layout() {
 
       <footer className="bg-primaria text-slate-300 text-sm">
         <div className="mx-auto max-w-6xl px-4 py-4 flex flex-wrap gap-x-6 gap-y-1 justify-between">
-          <span>Reconecta · Segunda Carreira — contratação por competência</span>
+          <span>Segunda Carreira — contratação por competência</span>
           <span>ODS 5 e ODS 10 · LGPD art. 20 — revisão de decisão automatizada</span>
         </div>
       </footer>
