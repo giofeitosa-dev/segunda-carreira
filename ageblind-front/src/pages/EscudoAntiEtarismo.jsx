@@ -24,7 +24,9 @@ const severidadeCores = {
 export default function EscudoAntiEtarismo() {
   const [params] = useSearchParams()
   const [aba, setAba] = useState('blindar')
-  const [curriculo, setCurriculo] = useState('')
+  const [curriculo, setCurriculo] = useState(
+    () => sessionStorage.getItem('segundaCarreira.rascunhoCurriculo') || '',
+  )
   const [vagaAlvo, setVagaAlvo] = useState(params.get('vagaAlvo') || '')
   const [enviando, setEnviando] = useState(false)
   const [erro, setErro] = useState(null)

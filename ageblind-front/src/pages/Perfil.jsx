@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import {
   atualizarPerfil,
   competenciasTransferiveis,
@@ -7,8 +8,11 @@ import {
   limparPerfilAtiva,
   obterPerfil,
   setPerfilAtivaId,
+  vagasRecomendadas,
 } from '../services/carreiraService'
+import { blindarCurriculo } from '../services/escudoService'
 import Carregando from '../components/Carregando'
+import EstadoVazio from '../components/EstadoVazio'
 import Feedback from '../components/Feedback'
 
 const AREAS = [
@@ -21,6 +25,9 @@ const AREAS = [
 ]
 
 const DISPONIBILIDADES = ['REMOTO', 'HIBRIDO', 'PRESENCIAL', 'TURNO_NOITE']
+
+const brl = (v) =>
+  Number(v).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
 
 const FORM_INICIAL = {
   nome: '',
@@ -40,6 +47,13 @@ export default function Perfil() {
   const [erro, setErro] = useState(null)
   const [transferiveis, setTransferiveis] = useState(null)
   const [mapeando, setMapeando] = useState(false)
+  const [curriculoTexto, setCurriculoTexto] = useState('')
+  const [recomendadas, setRecomendadas] = useState(null)
+  const [carregandoRec, setCarregandoRec] = useState(false)
+  const [vagaAberta, setVagaAberta] = useState(null)
+  const [adaptando, setAdaptando] = useState(false)
+  const [versao, setVersao] = useState(null)
+  const [erroCurriculo, setErroCurriculo] = useState(null)
 
   useEffect(() => {
     const id = getPerfilAtivaId()
@@ -52,6 +66,14 @@ export default function Perfil() {
       .then((perfil) => {
         preencher(perfil)
         setModo('editar')
+        return competenciasTransferiveis(perfil.id)
+          .then((t) => {
+            setTransferiveis(t)
+            setCurriculoTexto((atual) => atual || comporCurriculo(perfil, t))
+          })
+          .catch(() => {
+            setCurriculoTexto((atual) => atual || comporCurriculo(perfil, null))
+          })
       })
       .catch((e) => {
         if (e.status === 404) {
@@ -141,6 +163,78 @@ export default function Perfil() {
     } finally {
       setMapeando(false)
     }
+  }
+
+  function comporCurriculo(perfil, transfer) {
+    const linhas = [
+      perfil.nome,
+      perfil.email,
+      '',
+      `Área atual: ${perfil.areaAtual || '—'}`,
+      `Área alvo: ${perfil.areaAlvo || '—'}`,
+      `Pretensão salarial: ${
+        perfil.pretensaoSalarial ? brl(perfil.pretensaoSalarial) : '—'
+      }`,
+      `Disponibilidade: ${
+        (perfil.disponibilidade || []).join(', ') || '—'
+      }`,
+    ]
+    if (transfer?.competenciasTransferiveis?.length) {
+      linhas.push('', 'Competências transferíveis:')
+      transfer.competenciasTransferiveis.forEach((m) => {
+        linhas.push(
+          `- ${m.de} → ${m.para} (${Math.round(m.similaridade * 100)}%)`,
+        )
+      })
+    }
+    return linhas.join('\n')
+  }
+
+  function gerarDoPerfil() {
+    setCurriculoTexto(
+      comporCurriculo(
+        {
+          nome: form.nome,
+          email: form.email,
+          areaAtual: form.areaAtual,
+          areaAlvo: form.areaAlvo,
+          pretensaoSalarial: form.pretensaoSalarial
+            ? Number(form.pretensaoSalarial)
+            : null,
+          disponibilidade: form.disponibilidade,
+        },
+        transferiveis,
+      ),
+    )
+  }
+
+  async function carregarRecomendadas() {
+    setCarregandoRec(true)
+    setErroCurriculo(null)
+    try {
+      setRecomendadas(await vagasRecomendadas(getPerfilAtivaId()))
+    } catch (e) {
+      setErroCurriculo(e)
+    } finally {
+      setCarregandoRec(false)
+    }
+  }
+
+  async function adaptar(vagaTitulo) {
+    setAdaptando(true)
+    setErroCurriculo(null)
+    setVersao(null)
+    try {
+      setVersao(await blindarCurriculo(curriculoTexto, vagaTitulo || null))
+    } catch (e) {
+      setErroCurriculo(e)
+    } finally {
+      setAdaptando(false)
+    }
+  }
+
+  function guardarRascunho() {
+    sessionStorage.setItem('segundaCarreira.rascunhoCurriculo', curriculoTexto)
   }
 
   if (carregando) return <Carregando texto="Carregando perfil..." />
@@ -333,6 +427,227 @@ export default function Perfil() {
                 </p>
               )}
             </div>
+          )}
+        </div>
+      )}
+
+      {modo === 'editar' && (
+        <div className="mt-6 rounded-lg border border-slate-200 bg-white p-5">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <h2 className="font-semibold text-primaria">Meu currículo</h2>
+            <div className="flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={gerarDoPerfil}
+                className="min-h-12 rounded-lg border-2 border-primaria px-4 py-2 text-sm font-semibold text-primaria hover:bg-primaria hover:text-white"
+              >
+                Gerar do perfil
+              </button>
+              <button
+                type="button"
+                onClick={() => navigator.clipboard?.writeText(curriculoTexto)}
+                className="min-h-12 rounded-lg border-2 border-primaria px-4 py-2 text-sm font-semibold text-primaria hover:bg-primaria hover:text-white"
+              >
+                Copiar
+              </button>
+            </div>
+          </div>
+
+          <label
+            htmlFor="curriculoTexto"
+            className="mt-3 block text-sm font-medium"
+          >
+            Texto do currículo (editável)
+          </label>
+          <textarea
+            id="curriculoTexto"
+            rows={10}
+            value={curriculoTexto}
+            onChange={(e) => setCurriculoTexto(e.target.value)}
+            className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 focus:border-primaria focus:outline-none"
+          />
+
+          <button
+            type="button"
+            onClick={() => adaptar(null)}
+            disabled={adaptando || !curriculoTexto.trim()}
+            className="mt-3 min-h-12 rounded-lg bg-sucesso px-5 py-2 font-semibold text-white hover:bg-sucesso/90 disabled:opacity-60"
+          >
+            {adaptando ? 'Adaptando...' : 'Adaptar currículo'}
+          </button>
+        </div>
+      )}
+
+      {modo === 'editar' && (
+        <div className="mt-6 rounded-lg border border-slate-200 bg-white p-5">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <h2 className="font-semibold text-primaria">Comparar com vagas</h2>
+            <button
+              type="button"
+              onClick={carregarRecomendadas}
+              disabled={carregandoRec}
+              className="min-h-12 rounded-lg border-2 border-primaria px-4 py-2 text-sm font-semibold text-primaria hover:bg-primaria hover:text-white disabled:opacity-60"
+            >
+              {carregandoRec
+                ? 'Carregando...'
+                : recomendadas
+                  ? 'Atualizar lista'
+                  : 'Ver vagas recomendadas'}
+            </button>
+          </div>
+
+          {erroCurriculo && (
+            <div className="mt-3">
+              <Feedback
+                titulo={erroCurriculo.title || 'Erro na operação'}
+                detalhe={erroCurriculo.detail}
+              />
+            </div>
+          )}
+
+          {carregandoRec && (
+            <div className="mt-3">
+              <Carregando texto="Carregando vagas..." />
+            </div>
+          )}
+
+          {!carregandoRec && recomendadas?.length === 0 && (
+            <div className="mt-3">
+              <EstadoVazio titulo="Nenhuma vaga recomendada para o seu perfil" />
+            </div>
+          )}
+
+          {!carregandoRec &&
+            recomendadas?.map((r) => (
+              <article
+                key={r.vaga.id}
+                className="mt-3 rounded-md border border-slate-200 p-4"
+              >
+                <div className="flex flex-wrap items-start justify-between gap-2">
+                  <div>
+                    <h3 className="font-semibold text-primaria">
+                      {r.vaga.titulo}
+                    </h3>
+                    <p className="text-sm text-texto-suave">
+                      {[r.vaga.empresa, r.vaga.area, r.vaga.modelo]
+                        .filter(Boolean)
+                        .join(' · ')}
+                      {r.vaga.salario != null && ` · ${brl(r.vaga.salario)}`}
+                    </p>
+                  </div>
+                  <span className="rounded-full bg-primaria/10 px-3 py-1 text-sm font-semibold text-primaria">
+                    {Math.round(r.score * 100)}% de aderência
+                  </span>
+                </div>
+
+                <ul className="mt-2 flex flex-wrap gap-2 text-sm">
+                  {r.competenciasAtendidas.map((c) => (
+                    <li
+                      key={`ok-${c}`}
+                      className="rounded-full bg-sucesso/10 px-2 py-0.5 text-sucesso"
+                    >
+                      {c}
+                    </li>
+                  ))}
+                  {r.competenciasFaltantes.map((c) => (
+                    <li
+                      key={`falta-${c}`}
+                      className="rounded-full bg-perigo/10 px-2 py-0.5 text-perigo"
+                    >
+                      {c}
+                    </li>
+                  ))}
+                </ul>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    setVagaAberta((atual) =>
+                      atual === r.vaga.id ? null : r.vaga.id,
+                    )
+                  }
+                  className="mt-3 min-h-12 rounded border-2 border-primaria px-4 py-1 text-sm font-semibold text-primaria"
+                >
+                  {vagaAberta === r.vaga.id ? 'Fechar' : 'Ver detalhes'}
+                </button>
+
+                {vagaAberta === r.vaga.id && (
+                  <div className="mt-3 border-t border-slate-100 pt-3">
+                    <p className="text-sm">{r.vaga.descricao}</p>
+                    <p className="mt-2 text-sm font-medium">Requisitos</p>
+                    <ul className="mt-1 list-disc space-y-1 pl-5 text-sm text-texto-suave">
+                      {r.vaga.requisitos.map((req) => (
+                        <li key={req}>{req}</li>
+                      ))}
+                    </ul>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      <button
+                        type="button"
+                        onClick={() => adaptar(r.vaga.titulo)}
+                        disabled={adaptando || !curriculoTexto.trim()}
+                        className="min-h-12 rounded-lg bg-sucesso px-4 py-2 text-sm font-semibold text-white hover:bg-sucesso/90 disabled:opacity-60"
+                      >
+                        {adaptando ? 'Adaptando...' : 'Adaptar currículo'}
+                      </button>
+                      <Link
+                        to={`/escudo?vagaAlvo=${encodeURIComponent(r.vaga.titulo)}`}
+                        onClick={guardarRascunho}
+                        className="min-h-12 rounded-lg border-2 border-primaria px-4 py-2 text-sm font-semibold text-primaria hover:bg-primaria hover:text-white"
+                      >
+                        Abrir no Escudo
+                      </Link>
+                    </div>
+                  </div>
+                )}
+              </article>
+            ))}
+        </div>
+      )}
+
+      {modo === 'editar' && versao && (
+        <div className="mt-6 rounded-lg border border-slate-200 bg-white p-5">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <h2 className="font-semibold text-primaria">
+              Versão {versao.tipo} do seu currículo
+            </h2>
+            <div className="flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={() => navigator.clipboard?.writeText(versao.conteudo)}
+                className="min-h-12 rounded-lg border-2 border-primaria px-4 py-2 text-sm font-semibold text-primaria hover:bg-primaria hover:text-white"
+              >
+                Copiar texto
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setCurriculoTexto(versao.conteudo)
+                  setVersao(null)
+                }}
+                className="min-h-12 rounded-lg bg-sucesso px-4 py-2 text-sm font-semibold text-white hover:bg-sucesso/90"
+              >
+                Usar esta versão
+              </button>
+            </div>
+          </div>
+
+          <p className="mt-2 text-sm text-texto-suave">
+            {versao.regrasAplicadas.length} regra(s) aplicada(s) nesta versão.
+          </p>
+
+          <pre className="mt-3 whitespace-pre-wrap rounded-md bg-slate-50 p-4 text-sm text-texto">
+            {versao.conteudo}
+          </pre>
+
+          {versao.regrasAplicadas.length > 0 && (
+            <ul className="mt-4 space-y-1 text-sm text-texto-suave">
+              {versao.regrasAplicadas.map((rg) => (
+                <li key={rg.regra}>
+                  <span className="font-medium text-texto">{rg.regra}</span> —{' '}
+                  {rg.acao}
+                </li>
+              ))}
+            </ul>
           )}
         </div>
       )}
