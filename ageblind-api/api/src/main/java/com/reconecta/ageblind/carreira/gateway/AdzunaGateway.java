@@ -1,6 +1,6 @@
 package com.reconecta.ageblind.carreira.gateway;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import tools.jackson.databind.JsonNode;
 import com.reconecta.ageblind.carreira.dto.VagaExternaResponse;
 import com.reconecta.ageblind.shared.api.BuscaExternaException;
 import com.reconecta.ageblind.shared.config.AdzunaProperties;
@@ -57,15 +57,15 @@ public class AdzunaGateway {
 		if (resultados != null && resultados.isArray()) {
 			for (JsonNode item : resultados) {
 				vagas.add(new VagaExternaResponse(
-						item.path("id").asText(null),
-						item.path("title").asText(null),
-						item.path("company").path("display_name").asText(null),
-						item.path("location").path("display_name").asText(null),
-						item.path("redirect_url").asText(null),
-						item.path("created").asText(null),
+						item.path("id").asString(null),
+						item.path("title").asString(null),
+						item.path("company").path("display_name").asString(null),
+						item.path("location").path("display_name").asString(null),
+						item.path("redirect_url").asString(null),
+						item.path("created").asString(null),
 						salario(item.path("salary_min")),
 						salario(item.path("salary_max")),
-						item.path("description").asText(null),
+						item.path("description").asString(null),
 						"Adzuna"));
 			}
 		}
