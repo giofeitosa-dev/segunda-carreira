@@ -47,6 +47,13 @@ class SeedDemoTest {
 		boolean algumComCompetencias = perfilRepository.findAll().stream()
 				.anyMatch(p -> !p.getCompetencias().isEmpty());
 		assertTrue(algumComCompetencias, "pelo menos um perfil com competências vinculadas");
+
+		boolean algumComCurriculo = perfilRepository.findAll().stream()
+				.anyMatch(p -> !p.getExperiencias().isEmpty()
+						&& !p.getFormacoes().isEmpty()
+						&& !p.getProjetos().isEmpty());
+		assertTrue(algumComCurriculo, "pelo menos um perfil com currículo estruturado (seed)");
+
 		assertFalse(perfilRepository.findAll().stream().anyMatch(p -> p.getNome() == null));
 	}
 }

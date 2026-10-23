@@ -2,10 +2,13 @@ package com.reconecta.ageblind.carreira.api;
 
 import java.net.URI;
 
+import com.reconecta.ageblind.carreira.dto.CurriculoRequest;
+import com.reconecta.ageblind.carreira.dto.CurriculoResponse;
 import com.reconecta.ageblind.carreira.dto.PerfilRequest;
 import com.reconecta.ageblind.carreira.dto.PerfilResponse;
 import com.reconecta.ageblind.carreira.dto.TransferiveisResponse;
 import com.reconecta.ageblind.carreira.service.CompetenciasTransferiveisService;
+import com.reconecta.ageblind.carreira.service.CurriculoService;
 import com.reconecta.ageblind.carreira.service.PerfilService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,10 +34,13 @@ public class PerfilController {
 
 	private final PerfilService perfilService;
 	private final CompetenciasTransferiveisService transferiveisService;
+	private final CurriculoService curriculoService;
 
-	public PerfilController(PerfilService perfilService, CompetenciasTransferiveisService transferiveisService) {
+	public PerfilController(PerfilService perfilService, CompetenciasTransferiveisService transferiveisService,
+			CurriculoService curriculoService) {
 		this.perfilService = perfilService;
 		this.transferiveisService = transferiveisService;
+		this.curriculoService = curriculoService;
 	}
 
 	@PostMapping
@@ -61,5 +67,17 @@ public class PerfilController {
 	@Operation(summary = "Mapeia experiência antiga para competências da área alvo (R12)")
 	public TransferiveisResponse competenciasTransferiveis(@PathVariable Long id) {
 		return transferiveisService.mapear(id);
+	}
+
+	@GetMapping("/{id}/curriculo")
+	@Operation(summary = "Consulta o currículo estruturado do perfil (experiências, formações, projetos)")
+	public CurriculoResponse curriculo(@PathVariable Long id) {
+		return curriculoService.obter(id);
+	}
+
+	@PutMapping("/{id}/curriculo")
+	@Operation(summary = "Substitui o currículo estruturado do perfil (sem data de nascimento)")
+	public CurriculoResponse substituirCurriculo(@PathVariable Long id, @Valid @RequestBody CurriculoRequest req) {
+		return curriculoService.substituir(id, req);
 	}
 }
