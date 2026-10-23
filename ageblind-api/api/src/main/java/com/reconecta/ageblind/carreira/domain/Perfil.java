@@ -2,7 +2,9 @@ package com.reconecta.ageblind.carreira.domain;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import com.reconecta.ageblind.carreira.enums.Disponibilidade;
@@ -59,6 +61,16 @@ public class Perfil {
 	@OneToMany(mappedBy = "perfil", cascade = jakarta.persistence.CascadeType.ALL, orphanRemoval = true)
 	private Set<PerfilCompetencia> competencias = new HashSet<>();
 
+	/** Currículo estruturado (experiências, formações, projetos) — nunca idade. */
+	@OneToMany(mappedBy = "perfil", cascade = jakarta.persistence.CascadeType.ALL, orphanRemoval = true)
+	private List<Experiencia> experiencias = new ArrayList<>();
+
+	@OneToMany(mappedBy = "perfil", cascade = jakarta.persistence.CascadeType.ALL, orphanRemoval = true)
+	private List<Formacao> formacoes = new ArrayList<>();
+
+	@OneToMany(mappedBy = "perfil", cascade = jakarta.persistence.CascadeType.ALL, orphanRemoval = true)
+	private List<Projeto> projetos = new ArrayList<>();
+
 	private LocalDateTime criadoEm;
 
 	@PrePersist
@@ -90,5 +102,8 @@ public class Perfil {
 	public StatusCuradoria getStatusCuradoria() { return statusCuradoria; }
 	public void setStatusCuradoria(StatusCuradoria s) { this.statusCuradoria = s; }
 	public Set<PerfilCompetencia> getCompetencias() { return competencias; }
+	public List<Experiencia> getExperiencias() { return experiencias; }
+	public List<Formacao> getFormacoes() { return formacoes; }
+	public List<Projeto> getProjetos() { return projetos; }
 	public LocalDateTime getCriadoEm() { return criadoEm; }
 }

@@ -42,7 +42,7 @@ java -jar target\ageblind-api-0.0.1-SNAPSHOT.jar --spring.profiles.active=seed
 
 ---
 
-## Endpoints (19 endpoints AgeBlind · 17 paths)
+## Endpoints (21 endpoints AgeBlind · 18 paths)
 
 ### Módulo Carreira — ODS 10+5
 
@@ -62,16 +62,18 @@ java -jar target\ageblind-api-0.0.1-SNAPSHOT.jar --spring.profiles.active=seed
 | 12 | POST | `/api/v1/webhooks/lembretes` | Agenda lembrete de prazo → 202 |
 | 13 | GET | `/api/v1/mentorias` | Encaixe de mentoria (`?perfilId=&area=`) |
 | 14 | GET | `/api/v1/vagas/busca-externa?termo=&local=&pagina=` | Busca real de vagas na internet (Adzuna) → 200 / 400 / 502 / 503 sem chave |
+| 15 | GET | `/api/v1/perfis/{id}/curriculo` | Currículo estruturado (experiências/formações/projetos) → 200 / 404 |
+| 16 | PUT | `/api/v1/perfis/{id}/curriculo` | Substitui o currículo estruturado (sem idade) → 200 / 400 / 404 |
 
 ### Módulo Escudo Anti-Etarismo ⭐ — ODS 10+5
 
 | # | Método | Rota | Descrição |
 |---|---|---|---|
-| 15 | POST | `/api/v1/curriculo/age-blind` | Aplica 15 regras etaristas (10 automáticas) |
-| 16 | POST | `/api/v1/curriculo/auditoria` | Pontuação anti-proxy de idade + sinais de viés |
-| 17 | POST | `/api/v1/vagas/auditoria-linguagem` | Termos discriminatorios + risco legal (CLT 373-A, Lei 9.029) |
-| 18 | GET | `/api/v1/funil/metricas?vagaId=` | Funil por faixa + `razaoAdverseImpact < 0,80` |
-| 19 | POST | `/api/v1/revisao/solicitacao` | Revisão de decisão automatizada (LGPD art. 20) → protocolo `REV-` |
+| 17 | POST | `/api/v1/curriculo/age-blind` | Aplica 15 regras etaristas (10 automáticas) |
+| 18 | POST | `/api/v1/curriculo/auditoria` | Pontuação anti-proxy de idade + sinais de viés |
+| 19 | POST | `/api/v1/vagas/auditoria-linguagem` | Termos discriminatorios + risco legal (CLT 373-A, Lei 9.029) |
+| 20 | GET | `/api/v1/funil/metricas?vagaId=` | Funil por faixa + `razaoAdverseImpact < 0,80` |
+| 21 | POST | `/api/v1/revisao/solicitacao` | Revisão de decisão automatizada (LGPD art. 20) → protocolo `REV-` |
 
 Erros em **RFC 7807** (`application/problem+json`): 400 validação, 404 recurso,
 405 método, 500 interno.
@@ -134,6 +136,14 @@ curl "http://localhost:8080/api/v1/mentorias?perfilId=1"
 # 10b) busca externa de vagas (Adzuna; sem ADZUNA_APP_ID/KEY → 503)
 curl "http://localhost:8080/api/v1/vagas/busca-externa?termo=desenvolvedor%20java&local=S%C3%A3o%20Paulo&pagina=1"
 
+# 10c) currículo estruturado — consulta (seed: perfil 1 já vem com dados)
+curl http://localhost:8080/api/v1/perfis/1/curriculo
+
+# 10d) currículo estruturado — substitui a estrutura inteira (sem idade)
+curl -X PUT http://localhost:8080/api/v1/perfis/1/curriculo \
+  -H "Content-Type: application/json" \
+  -d '{"experiencias":[{"cargo":"Supervisora de Producao","empresa":"Industria Alfa","anoInicio":2016,"anoFim":2023,"descricao":"Lideranca de equipe"}],"formacoes":[{"curso":"Tecnico em Logistica","instituicao":"Etec Municipal","anoConclusao":2019}],"projetos":[]}'
+
 # 11) curriculo age-blind — aplica as regras etaristas
 curl -X POST http://localhost:8080/api/v1/curriculo/age-blind \
   -H "Content-Type: application/json" \
@@ -166,6 +176,9 @@ curl -X POST http://localhost:8080/api/v1/revisao/solicitacao \
 |---|---|
 | `src/main/resources/data/vagas-seed.csv` | 20 vagas em 6 áreas, prazos e competências |
 | `src/main/resources/data/perfis-seed.csv` | 10 perfis com níveis de competência |
+| `src/main/resources/data/experiencias-seed.csv` | Experiências dos perfis 1–3 (currículo estruturado) |
+| `src/main/resources/data/formacoes-seed.csv` | Formações dos perfis 1–3 |
+| `src/main/resources/data/projetos-seed.csv` | Projetos dos perfis 1–3 |
 | `src/main/resources/data/trilhas-seed.csv` | 5 trilhas com módulos e cargas horárias |
 | `src/main/resources/data/curriculos/sinalizado.txt` | Currículo com sinais etaristas (fixture) |
 | `src/main/resources/data/curriculos/otimizado.txt` | Versão age-blind do mesmo currículo |
@@ -173,7 +186,8 @@ curl -X POST http://localhost:8080/api/v1/revisao/solicitacao \
 | `src/main/resources/escudo/termos-discriminatorios.json` | 6 termos + base legal |
 | `src/main/resources/carreira/sinonimos.json` | 10 grupos de sinônimos (transferíveis) |
 
-Runners (`VagaSeedRunner`, `TrilhaSeedRunner`, `PerfilSeedRunner`) são
+Runners (`VagaSeedRunner`, `TrilhaSeedRunner`, `PerfilSeedRunner`,
+`CurriculoSeedRunner` — este em `ApplicationReadyEvent`, após os perfis) são
 idempotentes (pulam se já houver dados) e só rodam com `--spring.profiles.active=seed`.
 
 ---
