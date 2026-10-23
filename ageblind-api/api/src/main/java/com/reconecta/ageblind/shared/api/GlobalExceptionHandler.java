@@ -82,6 +82,13 @@ public class GlobalExceptionHandler {
 		return problem(HttpStatus.BAD_REQUEST, "Requisição inválida", ex.getMessage());
 	}
 
+	@ExceptionHandler(BuscaExternaException.class)
+	public ResponseEntity<ProblemDetail> handleBuscaExterna(BuscaExternaException ex) {
+		ProblemDetail pd = ProblemDetail.forStatusAndDetail(ex.getStatus(), ex.getMessage());
+		pd.setTitle("Busca externa indisponível");
+		return respond(ex.getStatus(), pd);
+	}
+
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ProblemDetail> handleGeneric(Exception ex) {
 		log.error("Erro interno nao tratado", ex);

@@ -37,6 +37,12 @@ export const obterVaga = (id) => api.get(`/vagas/${id}`)
 export const vagasRecomendadas = (perfilId) =>
   api.get(`/vagas/recomendadas?perfilId=${perfilId}`)
 
+export function buscarVagasExternas({ termo, local = '', pagina = 1 } = {}) {
+  const params = new URLSearchParams({ termo, pagina: String(pagina) })
+  if (local) params.set('local', local)
+  return api.get(`/vagas/busca-externa?${params.toString()}`)
+}
+
 // --- Trilhas ---
 export const listarTrilhas = (area) =>
   api.get(`/trilhas/${encodeURIComponent(area)}`)
