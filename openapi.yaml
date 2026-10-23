@@ -257,6 +257,46 @@ paths:
               schema: { $ref: '#/components/schemas/PaginaVaga' }
         '400': { $ref: '#/components/responses/BadRequest' }
 
+  /api/v1/vagas/busca-externa:
+    get:
+      tags: [Carreira]
+      summary: Busca vagas reais na internet via Adzuna (exibição com atribuição)
+      operationId: buscaExternaVagas
+      parameters:
+        - { name: termo, in: query, required: true, schema: { type: string, minLength: 2 } }
+        - { name: local, in: query, schema: { type: string } }
+        - { name: pagina, in: query, schema: { type: integer, minimum: 1, default: 1 } }
+      responses:
+        '200':
+          description: Vagas externas mapeadas (fonte Adzuna)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  termo: { type: string }
+                  local: { type: string }
+                  pagina: { type: integer }
+                  totalElementos: { type: integer, format: int64 }
+                  content:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id: { type: string }
+                        titulo: { type: string }
+                        empresa: { type: string }
+                        local: { type: string }
+                        link: { type: string, format: uri }
+                        publicadoEm: { type: string }
+                        salarioMinimo: { type: number }
+                        salarioMaximo: { type: number }
+                        descricao: { type: string }
+                        fonte: { type: string, example: Adzuna }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '502': { $ref: '#/components/responses/BadRequest' }
+        '503': { $ref: '#/components/responses/BadRequest' }
+
   /api/v1/vagas/recomendadas:
     get:
       tags: [Carreira]

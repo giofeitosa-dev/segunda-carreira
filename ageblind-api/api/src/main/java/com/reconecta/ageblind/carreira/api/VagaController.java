@@ -1,10 +1,12 @@
 package com.reconecta.ageblind.carreira.api;
 
+import com.reconecta.ageblind.carreira.dto.RespostaBuscaExternaResponse;
 import com.reconecta.ageblind.carreira.dto.VagaRecomendadaResponse;
 import com.reconecta.ageblind.carreira.dto.VagaResponse;
 import com.reconecta.ageblind.carreira.enums.ModeloVaga;
 import com.reconecta.ageblind.carreira.service.RecomendacaoVagaService;
 import com.reconecta.ageblind.carreira.service.VagaService;
+import com.reconecta.ageblind.carreira.service.VagasExternasService;
 import com.reconecta.ageblind.shared.dto.PaginaResponse;
 
 import java.util.List;
@@ -25,10 +27,22 @@ public class VagaController {
 
 	private final VagaService vagaService;
 	private final RecomendacaoVagaService recomendacaoService;
+	private final VagasExternasService vagasExternasService;
 
-	public VagaController(VagaService vagaService, RecomendacaoVagaService recomendacaoService) {
+	public VagaController(VagaService vagaService, RecomendacaoVagaService recomendacaoService,
+			VagasExternasService vagasExternasService) {
 		this.vagaService = vagaService;
 		this.recomendacaoService = recomendacaoService;
+		this.vagasExternasService = vagasExternasService;
+	}
+
+	@GetMapping("/busca-externa")
+	@Operation(summary = "Busca vagas reais na internet via Adzuna (API oficial; exibição com atribuição)")
+	public RespostaBuscaExternaResponse buscaExterna(
+			@RequestParam String termo,
+			@RequestParam(defaultValue = "") String local,
+			@RequestParam(defaultValue = "1") int pagina) {
+		return vagasExternasService.buscar(termo, local, pagina);
 	}
 
 	@GetMapping("/recomendadas")

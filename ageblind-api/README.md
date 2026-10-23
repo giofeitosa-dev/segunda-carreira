@@ -24,10 +24,10 @@ ageblind-api\
 ├── SPRINT-3-TESTES-REVISAO.md     ← matriz de testes + checklist Git/GitHub
 ├── kanban.md                      ← quadro único com as 3 sprints
 └── api\                           ← ⭐ projeto Spring Boot (Sprint 2 concluída ✅)
-    ├── README.md                  ← como rodar + 18 endpoints + exemplos curl
+    ├── README.md                  ← como rodar + 19 endpoints + exemplos curl
     ├── pom.xml                    ← Spring Boot 4.1.1 + SpringDoc
     └── src\main\java\com\reconecta\ageblind\
-        ├── carreira\  escudo\      ← módulos implementados (13 + 5 endpoints)
+        ├── carreira\  escudo\      ← módulos implementados (14 + 5 endpoints)
         └── shared\                 ← GlobalExceptionHandler + OpenApiConfig
 ```
 
@@ -38,9 +38,9 @@ ageblind-api\
 
 ## Escopo da API
 
-**18 endpoints** (16 paths — de 30 do Reconecta: só os módulos Carreira + Escudo):
+**19 endpoints** (17 paths — de 30 do Reconecta: só os módulos Carreira + Escudo):
 
-- **Carreira (13):** perfis (consulta/edição), competências transferíveis, vagas + recomendação, trilhas, inscrições (criar/listar/cancelar), lembretes, mentorias
+- **Carreira (14):** perfis (consulta/edição), competências transferíveis, vagas + recomendação, busca externa (Adzuna), trilhas, inscrições (criar/listar/cancelar), lembretes, mentorias
 - **Escudo (5):** `/curriculo/age-blind`, `/curriculo/auditoria`, `/vagas/auditoria-linguagem`, `/funil/metricas`, `/revisao/solicitacao`
 
 **Público:** candidato 40+ · empresa/RH · app parceiro
