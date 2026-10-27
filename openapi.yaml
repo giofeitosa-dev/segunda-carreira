@@ -269,6 +269,30 @@ paths:
         '400': { $ref: '#/components/responses/BadRequest' }
         '404': { $ref: '#/components/responses/NotFound' }
 
+  /api/v1/perfis/{id}/curriculo/arquivo:
+    post:
+      tags: [Carreira]
+      summary: Substitui o currículo por upload de PDF, DOCX ou TXT (parse automático, descarta idade)
+      operationId: substituirCurriculoArquivo
+      parameters: [{ $ref: '#/components/parameters/Id' }]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [arquivo]
+              properties:
+                arquivo: { type: string, format: binary }
+      responses:
+        '200':
+          description: Currículo estruturado a partir do arquivo
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CurriculoResponse' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
   /api/v1/vagas:
     get:
       tags: [Carreira]

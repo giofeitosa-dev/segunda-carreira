@@ -17,6 +17,7 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
@@ -41,6 +42,14 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<ProblemDetail> handleParametroAusente(MissingServletRequestParameterException ex) {
 		ProblemDetail pd = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST,
 				"Parâmetro obrigatório ausente: " + ex.getParameterName());
+		pd.setTitle("Requisição inválida");
+		return badRequest(pd);
+	}
+
+	@ExceptionHandler(MissingServletRequestPartException.class)
+	public ResponseEntity<ProblemDetail> handleParteAusente(MissingServletRequestPartException ex) {
+		ProblemDetail pd = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST,
+				"Parte obrigat\u00f3ria do request ausente: " + ex.getRequestPartName());
 		pd.setTitle("Requisição inválida");
 		return badRequest(pd);
 	}
