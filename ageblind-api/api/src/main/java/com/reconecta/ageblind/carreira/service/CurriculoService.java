@@ -1,5 +1,6 @@
 package com.reconecta.ageblind.carreira.service;
 
+import java.io.IOException;
 import java.util.Comparator;
 import java.util.List;
 
@@ -14,19 +15,37 @@ import com.reconecta.ageblind.shared.api.RecursoNaoEncontradoException;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class CurriculoService {
 
 	private final PerfilRepository perfilRepository;
+	private final CurriculoParserService parserService;
 
-	public CurriculoService(PerfilRepository perfilRepository) {
+	public CurriculoService(PerfilRepository perfilRepository, CurriculoParserService parserService) {
 		this.perfilRepository = perfilRepository;
+		this.parserService = parserService;
 	}
 
 	@Transactional(readOnly = true)
 	public CurriculoResponse obter(Long perfilId) {
 		return toResponse(buscarPerfil(perfilId));
+	}
+
+	/** Substitui o currículo a partir de um arquivo enviado (PDF, DOCX ou TXT). */
+	@Transactional
+	public CurriculoResponse substituirPorArquivo(Long perfilId, MultipartFile arquivo) {
+		if (arquivo == null || arquivo.isEmpty()) {
+			throw new IllegalArgumentException("Arquivo vazio ou ausente");
+		}
+		CurriculoRequest req;
+		try {
+			req = parserService.parse(arquivo.getBytes(), arquivo.getOriginalFilename());
+		} catch (IOException e) {
+			throw new IllegalArgumentException("N\u00e3o foi poss\u00edvel ler o arquivo enviado");
+		}
+		return substituir(perfilId, req);
 	}
 
 	@Transactional

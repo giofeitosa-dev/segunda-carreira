@@ -42,7 +42,7 @@ java -jar target\ageblind-api-0.0.1-SNAPSHOT.jar --spring.profiles.active=seed
 
 ---
 
-## Endpoints (21 endpoints AgeBlind · 18 paths)
+## Endpoints (22 endpoints AgeBlind · 19 paths)
 
 ### Módulo Carreira — ODS 10+5
 
@@ -64,16 +64,17 @@ java -jar target\ageblind-api-0.0.1-SNAPSHOT.jar --spring.profiles.active=seed
 | 14 | GET | `/api/v1/vagas/busca-externa?termo=&local=&pagina=` | Busca real de vagas na internet (Adzuna) → 200 / 400 / 502 / 503 sem chave |
 | 15 | GET | `/api/v1/perfis/{id}/curriculo` | Currículo estruturado (experiências/formações/projetos) → 200 / 404 |
 | 16 | PUT | `/api/v1/perfis/{id}/curriculo` | Substitui o currículo estruturado (sem idade) → 200 / 400 / 404 |
+| 17 | POST | `/api/v1/perfis/{id}/curriculo/arquivo` | Upload de PDF/DOCX/TXT → parse em seções (descarta idade) → 200 / 400 / 404 |
 
 ### Módulo Escudo Anti-Etarismo ⭐ — ODS 10+5
 
 | # | Método | Rota | Descrição |
 |---|---|---|---|
-| 17 | POST | `/api/v1/curriculo/age-blind` | Aplica 15 regras etaristas (10 automáticas) |
-| 18 | POST | `/api/v1/curriculo/auditoria` | Pontuação anti-proxy de idade + sinais de viés |
-| 19 | POST | `/api/v1/vagas/auditoria-linguagem` | Termos discriminatorios + risco legal (CLT 373-A, Lei 9.029) |
-| 20 | GET | `/api/v1/funil/metricas?vagaId=` | Funil por faixa + `razaoAdverseImpact < 0,80` |
-| 21 | POST | `/api/v1/revisao/solicitacao` | Revisão de decisão automatizada (LGPD art. 20) → protocolo `REV-` |
+| 18 | POST | `/api/v1/curriculo/age-blind` | Aplica 15 regras etaristas (10 automáticas) |
+| 19 | POST | `/api/v1/curriculo/auditoria` | Pontuação anti-proxy de idade + sinais de viés |
+| 20 | POST | `/api/v1/vagas/auditoria-linguagem` | Termos discriminatorios + risco legal (CLT 373-A, Lei 9.029) |
+| 21 | GET | `/api/v1/funil/metricas?vagaId=` | Funil por faixa + `razaoAdverseImpact < 0,80` |
+| 22 | POST | `/api/v1/revisao/solicitacao` | Revisão de decisão automatizada (LGPD art. 20) → protocolo `REV-` |
 
 Erros em **RFC 7807** (`application/problem+json`): 400 validação, 404 recurso,
 405 método, 500 interno.
@@ -143,6 +144,10 @@ curl http://localhost:8080/api/v1/perfis/1/curriculo
 curl -X PUT http://localhost:8080/api/v1/perfis/1/curriculo \
   -H "Content-Type: application/json" \
   -d '{"experiencias":[{"cargo":"Supervisora de Producao","empresa":"Industria Alfa","anoInicio":2016,"anoFim":2023,"descricao":"Lideranca de equipe"}],"formacoes":[{"curso":"Tecnico em Logistica","instituicao":"Etec Municipal","anoConclusao":2019}],"projetos":[]}'
+
+# 10e) upload de currículo (PDF, DOCX ou TXT) — parse em seções, descarta idade
+curl -X POST http://localhost:8080/api/v1/perfis/1/curriculo/arquivo \
+  -F "arquivo=@curriculo-ana.txt"
 
 # 11) curriculo age-blind — aplica as regras etaristas
 curl -X POST http://localhost:8080/api/v1/curriculo/age-blind \
