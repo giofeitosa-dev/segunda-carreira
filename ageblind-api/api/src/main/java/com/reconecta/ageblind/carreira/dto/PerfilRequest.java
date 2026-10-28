@@ -15,5 +15,10 @@ public record PerfilRequest(
 		String areaAtual,
 		@NotBlank(message = "areaAlvo é obrigatória") String areaAlvo,
 		@PositiveOrZero(message = "pretensaoSalarial deve ser ≥ 0") BigDecimal pretensaoSalarial,
-		List<Disponibilidade> disponibilidade) {
+		List<Disponibilidade> disponibilidade,
+		String telefone,
+		String cidade,
+		String resumo,
+		String linkedin,
+		String github) {
 }

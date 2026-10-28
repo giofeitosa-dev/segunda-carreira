@@ -28,6 +28,11 @@ public class PerfilService {
 		p.setAreaAtual(req.areaAtual());
 		p.setAreaAlvo(req.areaAlvo());
 		p.setPretensaoSalarial(req.pretensaoSalarial());
+		p.setTelefone(req.telefone());
+		p.setCidade(req.cidade());
+		p.setResumo(req.resumo());
+		p.setLinkedin(req.linkedin());
+		p.setGithub(req.github());
 		if (req.disponibilidade() != null) {
 			p.getDisponibilidade().addAll(req.disponibilidade());
 		}
@@ -49,6 +54,11 @@ public class PerfilService {
 		p.setAreaAtual(req.areaAtual());
 		p.setAreaAlvo(req.areaAlvo());
 		p.setPretensaoSalarial(req.pretensaoSalarial());
+		p.setTelefone(req.telefone());
+		p.setCidade(req.cidade());
+		p.setResumo(req.resumo());
+		p.setLinkedin(req.linkedin());
+		p.setGithub(req.github());
 		if (req.disponibilidade() != null) {
 			p.getDisponibilidade().clear();
 			p.getDisponibilidade().addAll(req.disponibilidade());
@@ -66,6 +76,11 @@ public class PerfilService {
 				p.getPretensaoSalarial(),
 				List.copyOf(p.getDisponibilidade()),
 				p.getStatusCuradoria(),
-				p.getCriadoEm());
+				p.getCriadoEm(),
+				p.getTelefone(),
+				p.getCidade(),
+				p.getResumo(),
+				p.getLinkedin(),
+				p.getGithub());
 	}
 }

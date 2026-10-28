@@ -11,6 +11,7 @@ import com.reconecta.ageblind.carreira.enums.Disponibilidade;
 import com.reconecta.ageblind.carreira.enums.StatusCuradoria;
 
 import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -44,6 +45,22 @@ public class Perfil {
 	@Email
 	private String email;
 
+	/** Contato do candidato (telefone fixo ou móvel). */
+	private String telefone;
+
+	/** Cidade/UF de residência. */
+	private String cidade;
+
+	/** Resumo profissional (headline). */
+	@Column(length = 1500)
+	private String resumo;
+
+	/** URL do perfil no LinkedIn. */
+	private String linkedin;
+
+	/** URL do perfil no GitHub / portfólio. */
+	private String github;
+
 	/** CBO simplificado. */
 	private String areaAtual;
 	private String areaAlvo;
@@ -71,6 +88,12 @@ public class Perfil {
 	@OneToMany(mappedBy = "perfil", cascade = jakarta.persistence.CascadeType.ALL, orphanRemoval = true)
 	private List<Projeto> projetos = new ArrayList<>();
 
+	@OneToMany(mappedBy = "perfil", cascade = jakarta.persistence.CascadeType.ALL, orphanRemoval = true)
+	private List<Idioma> idiomas = new ArrayList<>();
+
+	@OneToMany(mappedBy = "perfil", cascade = jakarta.persistence.CascadeType.ALL, orphanRemoval = true)
+	private List<Certificacao> certificacoes = new ArrayList<>();
+
 	private LocalDateTime criadoEm;
 
 	@PrePersist
@@ -92,6 +115,16 @@ public class Perfil {
 	public void setNome(String nome) { this.nome = nome; }
 	public String getEmail() { return email; }
 	public void setEmail(String email) { this.email = email; }
+	public String getTelefone() { return telefone; }
+	public void setTelefone(String telefone) { this.telefone = telefone; }
+	public String getCidade() { return cidade; }
+	public void setCidade(String cidade) { this.cidade = cidade; }
+	public String getResumo() { return resumo; }
+	public void setResumo(String resumo) { this.resumo = resumo; }
+	public String getLinkedin() { return linkedin; }
+	public void setLinkedin(String linkedin) { this.linkedin = linkedin; }
+	public String getGithub() { return github; }
+	public void setGithub(String github) { this.github = github; }
 	public String getAreaAtual() { return areaAtual; }
 	public void setAreaAtual(String areaAtual) { this.areaAtual = areaAtual; }
 	public String getAreaAlvo() { return areaAlvo; }
@@ -105,5 +138,7 @@ public class Perfil {
 	public List<Experiencia> getExperiencias() { return experiencias; }
 	public List<Formacao> getFormacoes() { return formacoes; }
 	public List<Projeto> getProjetos() { return projetos; }
+	public List<Idioma> getIdiomas() { return idiomas; }
+	public List<Certificacao> getCertificacoes() { return certificacoes; }
 	public LocalDateTime getCriadoEm() { return criadoEm; }
 }

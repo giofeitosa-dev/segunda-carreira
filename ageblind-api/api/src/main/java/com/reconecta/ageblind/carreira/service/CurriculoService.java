@@ -4,8 +4,10 @@ import java.io.IOException;
 import java.util.Comparator;
 import java.util.List;
 
+import com.reconecta.ageblind.carreira.domain.Certificacao;
 import com.reconecta.ageblind.carreira.domain.Experiencia;
 import com.reconecta.ageblind.carreira.domain.Formacao;
+import com.reconecta.ageblind.carreira.domain.Idioma;
 import com.reconecta.ageblind.carreira.domain.Perfil;
 import com.reconecta.ageblind.carreira.domain.Projeto;
 import com.reconecta.ageblind.carreira.dto.CurriculoRequest;
@@ -91,6 +93,31 @@ public class CurriculoService {
 			}
 		}
 
+		perfil.getIdiomas().clear();
+		if (req.idiomas() != null) {
+			for (CurriculoRequest.IdiomaRequest i : req.idiomas()) {
+				Idioma idioma = new Idioma();
+				idioma.setPerfil(perfil);
+				idioma.setIdioma(i.idioma());
+				idioma.setNivel(i.nivel());
+				perfil.getIdiomas().add(idioma);
+			}
+		}
+
+		perfil.getCertificacoes().clear();
+		if (req.certificacoes() != null) {
+			for (CurriculoRequest.CertificacaoRequest c : req.certificacoes()) {
+				Certificacao certificacao = new Certificacao();
+				certificacao.setPerfil(perfil);
+				certificacao.setNome(c.nome());
+				certificacao.setInstituicao(c.instituicao());
+				certificacao.setAnoConclusao(c.anoConclusao());
+				certificacao.setDescricao(c.descricao());
+				certificacao.setLink(c.link());
+				perfil.getCertificacoes().add(certificacao);
+			}
+		}
+
 		return toResponse(perfilRepository.save(perfil));
 	}
 
@@ -115,6 +142,17 @@ public class CurriculoService {
 				.map(pr -> new CurriculoResponse.ProjetoResponse(
 						pr.getId(), pr.getNome(), pr.getDescricao(), pr.getLink()))
 				.toList();
-		return new CurriculoResponse(experiencias, formacoes, projetos);
+		List<CurriculoResponse.IdiomaResponse> idiomas = p.getIdiomas().stream()
+				.map(i -> new CurriculoResponse.IdiomaResponse(
+						i.getId(), i.getIdioma(), i.getNivel()))
+				.toList();
+		List<CurriculoResponse.CertificacaoResponse> certificacoes = p.getCertificacoes().stream()
+				.sorted(Comparator.comparing(Certificacao::getAnoConclusao,
+						Comparator.nullsLast(Comparator.reverseOrder())))
+				.map(c -> new CurriculoResponse.CertificacaoResponse(
+						c.getId(), c.getNome(), c.getInstituicao(), c.getAnoConclusao(),
+						c.getDescricao(), c.getLink()))
+				.toList();
+		return new CurriculoResponse(experiencias, formacoes, projetos, idiomas, certificacoes);
 	}
 }

@@ -7,10 +7,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
+import com.reconecta.ageblind.carreira.domain.Certificacao;
 import com.reconecta.ageblind.carreira.domain.Experiencia;
 import com.reconecta.ageblind.carreira.domain.Formacao;
+import com.reconecta.ageblind.carreira.domain.Idioma;
 import com.reconecta.ageblind.carreira.domain.Perfil;
 import com.reconecta.ageblind.carreira.domain.Projeto;
+import com.reconecta.ageblind.carreira.enums.NivelIdioma;
 import com.reconecta.ageblind.carreira.repository.PerfilRepository;
 
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -48,6 +51,8 @@ public class CurriculoSeedRunner {
 		carregarArquivo("data/experiencias-seed.csv", perfis, this::experiencia);
 		carregarArquivo("data/formacoes-seed.csv", perfis, this::formacao);
 		carregarArquivo("data/projetos-seed.csv", perfis, this::projeto);
+		carregarArquivo("data/idiomas-seed.csv", perfis, this::idioma);
+		carregarArquivo("data/certificacoes-seed.csv", perfis, this::certificacao);
 		perfilRepository.saveAll(perfis.values());
 	}
 
@@ -96,5 +101,24 @@ public class CurriculoSeedRunner {
 		p.setDescricao(c[2]);
 		p.setLink(c[3].isBlank() ? null : c[3]);
 		perfil.getProjetos().add(p);
+	}
+
+	private void idioma(Perfil perfil, String[] c) {
+		Idioma i = new Idioma();
+		i.setPerfil(perfil);
+		i.setIdioma(c[1]);
+		i.setNivel(NivelIdioma.valueOf(c[2]));
+		perfil.getIdiomas().add(i);
+	}
+
+	private void certificacao(Perfil perfil, String[] c) {
+		Certificacao cert = new Certificacao();
+		cert.setPerfil(perfil);
+		cert.setNome(c[1]);
+		cert.setInstituicao(c[2]);
+		cert.setAnoConclusao(c[3].isBlank() ? null : Integer.valueOf(c[3]));
+		cert.setDescricao(c[4]);
+		cert.setLink(c[5].isBlank() ? null : c[5]);
+		perfil.getCertificacoes().add(cert);
 	}
 }

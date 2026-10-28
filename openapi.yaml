@@ -240,7 +240,7 @@ paths:
   /api/v1/perfis/{id}/curriculo:
     get:
       tags: [Carreira]
-      summary: Consulta currículo estruturado (experiências, formações, projetos)
+      summary: Consulta currículo estruturado (experiências, formações, projetos, idiomas, certificações)
       operationId: obterCurriculo
       parameters: [{ $ref: '#/components/parameters/Id' }]
       responses:
@@ -497,7 +497,7 @@ paths:
         required: true
         content:
           application/json:
-            schema: { $ref: '#/components/schemas/CurriculoRequest' }
+            schema: { $ref: '#/components/schemas/CurriculoEscudoRequest' }
       responses:
         '200':
           description: Versão age-blind com regras aplicadas
@@ -515,7 +515,7 @@ paths:
         required: true
         content:
           application/json:
-            schema: { $ref: '#/components/schemas/CurriculoRequest' }
+            schema: { $ref: '#/components/schemas/CurriculoEscudoRequest' }
       responses:
         '200':
           description: Auditoria
@@ -840,6 +840,11 @@ components:
         competencias:
           type: array
           items: { type: string }
+        telefone: { type: string, description: Telefone fixo ou móvel }
+        cidade: { type: string, description: Cidade/UF de residência }
+        resumo: { type: string, description: Resumo profissional (headline), máx 1500 }
+        linkedin: { type: string, description: URL do perfil no LinkedIn }
+        github: { type: string, description: URL do perfil no GitHub / portfólio }
 
     Perfil:
       allOf:
@@ -882,6 +887,25 @@ components:
               nome: { type: string }
               descricao: { type: string }
               link: { type: string }
+        idiomas:
+          type: array
+          items:
+            type: object
+            required: [idioma, nivel]
+            properties:
+              idioma: { type: string }
+              nivel: { type: string, enum: [BASICO, INTERMEDIARIO, AVANCADO, NATIVO] }
+        certificacoes:
+          type: array
+          items:
+            type: object
+            required: [nome]
+            properties:
+              nome: { type: string }
+              instituicao: { type: string }
+              anoConclusao: { type: integer, nullable: true, description: null = em andamento }
+              descricao: { type: string }
+              link: { type: string }
 
     CurriculoResponse:
       type: object
@@ -914,6 +938,25 @@ components:
             properties:
               id: { type: integer, format: int64 }
               nome: { type: string }
+              descricao: { type: string }
+              link: { type: string }
+        idiomas:
+          type: array
+          items:
+            type: object
+            properties:
+              id: { type: integer, format: int64 }
+              idioma: { type: string }
+              nivel: { type: string, enum: [BASICO, INTERMEDIARIO, AVANCADO, NATIVO] }
+        certificacoes:
+          type: array
+          items:
+            type: object
+            properties:
+              id: { type: integer, format: int64 }
+              nome: { type: string }
+              instituicao: { type: string }
+              anoConclusao: { type: integer, nullable: true }
               descricao: { type: string }
               link: { type: string }
 
@@ -1020,7 +1063,7 @@ components:
         disponibilidade: { type: string }
         agendamento: { type: string, nullable: true }
 
-    CurriculoRequest:
+    CurriculoEscudoRequest:
       type: object
       required: [curriculo]
       properties:

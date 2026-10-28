@@ -1,11 +1,11 @@
-nome|email|areaAtual|areaAlvo|pretensao|disponibilidades|status|competencias
-Ana Souza|ana.souza@recode.demo|Producao|Logistica|4500|REMOTO;HIBRIDO|APROVADO|Logistica:4;PCP:3;Roteirizacao:3
-Carlos Lima|carlos.lima@recode.demo|Vendas|Administracao|5200|PRESENCIAL|APROVADO|Gestao de Equipes:4;Negociacao:3;Excel Avancado:3
-Marta Reis|marta.reis@recode.demo|Atendimento|TI|6000|REMOTO;TURNO_NOITE|EM_CURADORIA|Suporte:4;Redes:3;Sistemas:3
-Josefa Alves|josefa.alves@recode.demo|Producao|Vendas|3800|HIBRIDO;PRESENCIAL|APROVADO|Comercial:4;Clientes:4;Prospeccao:3
-Ricardo Pinto|ricardo.pinto@recode.demo|Atendimento|Logistica|5000|REMOTO|REVISAR|Logistica:4;Roteirizacao:3;Qualidade de Processos:3
-Lucia Ferreira|lucia.ferreira@recode.demo|Administracao|TI|7000|REMOTO;HIBRIDO|APROVADO|Dados:4;Power BI:4;Sistemas:3
-Paulo Nunes|paulo.nunes@recode.demo|Logistica|Producao|4200|PRESENCIAL;TURNO_NOITE|EM_CURADORIA|Producao:3;PCP:3;Processos:3
-Rosangela Dias|rosangela.dias@recode.demo|Vendas|Atendimento|3500|REMOTO|APROVADO|Atendimento:4;Relacionamento:4;CRM:3
-Edmilson Rocha|edmilson.rocha@recode.demo|Producao|Administracao|6800|HIBRIDO|REVISAR|Administracao:4;Orcamento:3;Controladoria:3
-Beatriz Cardoso|beatriz.cardoso@recode.demo|Atendimento|Vendas|5500|REMOTO;PRESENCIAL|APROVADO|Comercial:4;Negociacao:4;Clientes:3
+nome|email|areaAtual|areaAlvo|pretensao|disponibilidades|status|competencias|telefone|cidade|resumo|linkedin|github
+Ana Souza|ana.souza@recode.demo|Producao|Logistica|4500|REMOTO;HIBRIDO|APROVADO|Logistica:4;PCP:3;Roteirizacao:3|(11) 98888-1001|Sao Paulo - SP|Coordenadora de producao com 12 anos em chao de fabrica, especialista em PCP e melhoria de processos.|https://linkedin.com/in/ana-souza-demo|
+Carlos Lima|carlos.lima@recode.demo|Vendas|Administracao|5200|PRESENCIAL|APROVADO|Gestao de Equipes:4;Negociacao:3;Excel Avancado:3|(21) 97777-1002|Rio de Janeiro - RJ|Gerente comercial com foco em equipes de alta performance e negociacao B2B.|https://linkedin.com/in/carlos-lima-demo|https://github.com/carlos-lima-demo
+Marta Reis|marta.reis@recode.demo|Atendimento|TI|6000|REMOTO;TURNO_NOITE|EM_CURADORIA|Suporte:4;Redes:3;Sistemas:3|(31) 96666-1003|Belo Horizonte - MG|Analista de suporte N2 com experiencia em redes e atendimento a usuarios.|https://linkedin.com/in/marta-reis-demo|
+Josefa Alves|josefa.alves@recode.demo|Producao|Vendas|3800|HIBRIDO;PRESENCIAL|APROVADO|Comercial:4;Clientes:4;Prospeccao:3|(41) 95555-1004|Curitiba - PR|Vendedora consultiva com carteira propria de clientes e historico de meta atingida.|https://linkedin.com/in/josefa-alves-demo|
+Ricardo Pinto|ricardo.pinto@recode.demo|Atendimento|Logistica|5000|REMOTO|REVISAR|Logistica:4;Roteirizacao:3;Qualidade de Processos:3|(51) 94444-1005|Porto Alegre - RS|Supervisor logistico com dominio de roteirizacao e controle de indicadores de qualidade.|https://linkedin.com/in/ricardo-pinto-demo|
+Lucia Ferreira|lucia.ferreira@recode.demo|Administracao|TI|7000|REMOTO;HIBRIDO|APROVADO|Dados:4;Power BI:4;Sistemas:3|(11) 93333-1006|Sao Paulo - SP|Analista de dados com Power BI e SQL, experiencia em automacao de relatorios gerenciais.|https://linkedin.com/in/lucia-ferreira-demo|https://github.com/lucia-ferreira-demo
+Paulo Nunes|paulo.nunes@recode.demo|Logistica|Producao|4200|PRESENCIAL;TURNO_NOITE|EM_CURADORIA|Producao:3;PCP:3;Processos:3|(19) 92222-1007|Campinas - SP|Encarregado de producao com conhecimento em PCP e gestao de escalas de turno.|https://linkedin.com/in/paulo-nunes-demo|
+Rosangela Dias|rosangela.dias@recode.demo|Vendas|Atendimento|3500|REMOTO|APROVADO|Atendimento:4;Relacionamento:4;CRM:3|(71) 91111-1008|Salvador - BA|Especialista em relacionamento com clientes e uso de CRM para retencao.|https://linkedin.com/in/rosangela-dias-demo|
+Edmilson Rocha|edmilson.rocha@recode.demo|Producao|Administracao|6800|HIBRIDO|REVISAR|Administracao:4;Orcamento:3;Controladoria:3|(85) 90000-1009|Fortaleza - CE|Coordenador administrativo com orcamento, controladoria e gestao de contratos.|https://linkedin.com/in/edmilson-rocha-demo|
+Beatriz Cardoso|beatriz.cardoso@recode.demo|Atendimento|Vendas|5500|REMOTO;PRESENCIAL|APROVADO|Comercial:4;Negociacao:4;Clientes:3|(62) 98888-1010|Goiania - GO|Executiva de contas com negociacao consultiva e carteira de clientes recorrentes.|https://linkedin.com/in/beatriz-cardoso-demo|https://github.com/beatriz-cardoso-demo

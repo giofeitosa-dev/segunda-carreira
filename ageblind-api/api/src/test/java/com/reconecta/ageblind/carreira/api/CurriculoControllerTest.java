@@ -39,6 +39,14 @@ class CurriculoControllerTest {
 				  ],
 				  "projetos": [
 				    {"nome": "Reducao de perdas", "descricao": "Checklist visual", "link": null}
+				  ],
+				  "idiomas": [
+				    {"idioma": "Ingles", "nivel": "INTERMEDIARIO"},
+				    {"idioma": "Espanhol", "nivel": "BASICO"}
+				  ],
+				  "certificacoes": [
+				    {"nome": "Logistica Lean", "instituicao": "FIESP", "anoConclusao": 2022,
+				     "descricao": "Reducao de desperdicios", "link": null}
 				  ]
 				}
 				""";
@@ -67,18 +75,26 @@ class CurriculoControllerTest {
 				.andExpect(jsonPath("$.experiencias", hasSize(2)))
 				.andExpect(jsonPath("$.formacoes", hasSize(1)))
 				.andExpect(jsonPath("$.projetos", hasSize(1)))
+				.andExpect(jsonPath("$.idiomas", hasSize(2)))
+				.andExpect(jsonPath("$.certificacoes", hasSize(1)))
 				.andExpect(jsonPath("$.experiencias[0].cargo").value("Supervisora de Producao"))
 				.andExpect(jsonPath("$.experiencias[0].anoInicio").value(2016))
 				.andExpect(jsonPath("$.experiencias[0].anoFim").value(2023))
 				.andExpect(jsonPath("$.experiencias[1].anoFim").doesNotExist())
 				.andExpect(jsonPath("$.formacoes[0].instituicao").value("Etec Municipal"))
 				.andExpect(jsonPath("$.projetos[0].nome").value("Reducao de perdas"))
+				.andExpect(jsonPath("$.idiomas[0].idioma").value("Ingles"))
+				.andExpect(jsonPath("$.idiomas[0].nivel").value("INTERMEDIARIO"))
+				.andExpect(jsonPath("$.certificacoes[0].nome").value("Logistica Lean"))
+				.andExpect(jsonPath("$.certificacoes[0].anoConclusao").value(2022))
 				.andExpect(jsonPath("$.dataNascimento").doesNotExist())
 				.andExpect(jsonPath("$.idade").doesNotExist());
 
 		mockMvc.perform(get("/api/v1/perfis/" + id + "/curriculo"))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.experiencias", hasSize(2)))
+				.andExpect(jsonPath("$.idiomas", hasSize(2)))
+				.andExpect(jsonPath("$.certificacoes", hasSize(1)))
 				.andExpect(jsonPath("$.experiencias[0].anoInicio").value(2016));
 	}
 
@@ -95,12 +111,14 @@ class CurriculoControllerTest {
 						.contentType(MediaType.APPLICATION_JSON)
 						.content("""
 								{"experiencias": [{"cargo": "Analista", "empresa": "Nova", "anoInicio": 2020}],
-								 "formacoes": [], "projetos": []}
+								 "formacoes": [], "projetos": [], "idiomas": [], "certificacoes": []}
 								"""))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.experiencias", hasSize(1)))
 				.andExpect(jsonPath("$.formacoes", hasSize(0)))
-				.andExpect(jsonPath("$.projetos", hasSize(0)));
+				.andExpect(jsonPath("$.projetos", hasSize(0)))
+				.andExpect(jsonPath("$.idiomas", hasSize(0)))
+				.andExpect(jsonPath("$.certificacoes", hasSize(0)));
 	}
 
 	@Test
