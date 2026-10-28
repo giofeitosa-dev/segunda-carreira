@@ -22,6 +22,14 @@ export const atualizarPerfil = (id, dados) => api.put(`/perfis/${id}`, dados)
 export const competenciasTransferiveis = (id) =>
   api.post(`/perfis/${id}/competencias-transferiveis`)
 
+// --- Currículo estruturado ---
+export const obterCurriculo = (perfilId) =>
+  api.get(`/perfis/${perfilId}/curriculo`)
+export const salvarCurriculo = (perfilId, dados) =>
+  api.put(`/perfis/${perfilId}/curriculo`, dados)
+export const enviarArquivoCurriculo = (perfilId, formData) =>
+  api.postForm(`/perfis/${perfilId}/curriculo/arquivo`, formData)
+
 // --- Vagas ---
 export function listarVagas({ area, modelo, page = 0, size = 12 } = {}) {
   const params = new URLSearchParams()

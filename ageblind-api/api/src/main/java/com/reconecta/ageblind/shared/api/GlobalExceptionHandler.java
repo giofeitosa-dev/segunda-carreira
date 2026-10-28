@@ -17,6 +17,7 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
@@ -89,6 +90,12 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(IllegalArgumentException.class)
 	public ResponseEntity<ProblemDetail> handleArgumentoInvalido(IllegalArgumentException ex) {
 		return problem(HttpStatus.BAD_REQUEST, "Requisição inválida", ex.getMessage());
+	}
+
+	@ExceptionHandler(MaxUploadSizeExceededException.class)
+	public ResponseEntity<ProblemDetail> handleUploadGrande(MaxUploadSizeExceededException ex) {
+		return problem(HttpStatus.PAYLOAD_TOO_LARGE,
+				"Arquivo acima do limite permitido de 10MB", ex.getMessage());
 	}
 
 	@ExceptionHandler(BuscaExternaException.class)

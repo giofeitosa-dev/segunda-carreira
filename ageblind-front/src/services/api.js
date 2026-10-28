@@ -12,13 +12,12 @@ export class ApiError extends Error {
 }
 
 async function request(path, options = {}) {
-  const res = await fetch(BASE + path, {
-    headers: {
-      'Content-Type': 'application/json',
-      ...(options.headers || {}),
-    },
-    ...options,
-  })
+  const { headers: opcoesHeaders, ...resto } = options
+  const headers = { ...opcoesHeaders }
+  if (!(resto.body instanceof FormData) && !headers['Content-Type']) {
+    headers['Content-Type'] = 'application/json'
+  }
+  const res = await fetch(BASE + path, { ...resto, headers })
 
   if (res.status === 204) return null
 
@@ -45,4 +44,5 @@ export const api = {
   put: (path, data) =>
     request(path, { method: 'PUT', body: JSON.stringify(data) }),
   del: (path) => request(path, { method: 'DELETE' }),
+  postForm: (path, formData) => request(path, { method: 'POST', body: formData }),
 }
