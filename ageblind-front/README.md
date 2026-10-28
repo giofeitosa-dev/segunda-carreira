@@ -33,7 +33,7 @@ npm run dev
 | Rota | Tela | Endpoints usados |
 |---|---|---|
 | `/` | Home (jornada candidato × RH) | — |
-| `/perfil` | Cadastro/edição de perfil + competências transferíveis | `POST/GET/PUT /perfis`, `POST /perfis/{id}/competencias-transferiveis` |
+| `/perfil` | Cadastro/edição de perfil, competências transferíveis, currículo estruturado (formulário + upload PDF/DOCX/TXT) e comparação com recomendadas | `POST/GET/PUT /perfis`, `POST /perfis/{id}/competencias-transferiveis`, `GET/PUT /perfis/{id}/curriculo`, `POST /perfis/{id}/curriculo/arquivo`, `GET /vagas/recomendadas` |
 | `/vagas` | Exploração com filtros (área/modelo) e paginação | `GET /vagas` |
 | `/vagas/:id` | Detalhe + inscrição + lembrete + atalho para o escudo | `GET /vagas/{id}`, `POST /inscricoes`, `POST /webhooks/lembretes` |
 | `/recomendadas` | Abas: recomendadas (ranking só por competências), trilhas, mentorias | `GET /vagas/recomendadas`, `GET /trilhas/{area}`, `GET /mentorias` |
@@ -44,7 +44,7 @@ npm run dev
 
 ```
 src/
-├── components/    CardVaga, Carregando, EstadoVazio, Feedback, Layout
+├── components/    CardVaga, Carregando, CurriculoEstruturado, EstadoVazio, Feedback, Layout
 ├── pages/         uma página por rota (acima)
 ├── services/      api.js (fetch + problem+json), carreiraService.js, escudoService.js
 ├── App.jsx        rotas

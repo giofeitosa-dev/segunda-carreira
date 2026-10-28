@@ -12,6 +12,7 @@ import {
 } from '../services/carreiraService'
 import { blindarCurriculo } from '../services/escudoService'
 import Carregando from '../components/Carregando'
+import CurriculoEstruturado from '../components/CurriculoEstruturado'
 import EstadoVazio from '../components/EstadoVazio'
 import Feedback from '../components/Feedback'
 
@@ -429,6 +430,13 @@ export default function Perfil() {
             </div>
           )}
         </div>
+      )}
+
+      {modo === 'editar' && (
+        <CurriculoEstruturado
+          perfilId={getPerfilAtivaId()}
+          onUsarTexto={setCurriculoTexto}
+        />
       )}
 
       {modo === 'editar' && (
