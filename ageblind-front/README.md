@@ -40,6 +40,10 @@ npm run dev
 | `/escudo` | Blindar currículo (15 regras), auditar, pedido de revisão LGPD art. 20 | `POST /curriculo/age-blind`, `POST /curriculo/auditoria`, `POST /revisao/solicitacao` |
 | `/rh/painel` | Auditoria de linguagem de vaga + funil com alerta de adverse impact | `POST /vagas/auditoria-linguagem`, `GET /funil/metricas` |
 
+> **Painel RH (HTTP Basic):** os dois endpoints acima exigem credencial de RH
+> (demo: `rh` / `rh-demo`). O browser abre o prompt nativo de Basic auth na
+> primeira chamada — informe as credenciais e a tela passa a funcionar.
+
 ## Estrutura
 
 ```

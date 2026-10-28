@@ -14,7 +14,7 @@ Actuator · SpringDoc 3.1.1
 ## Rodar
 
 ```bash
-# build + testes (50/50)
+# build + testes (90/90)
 mvnw.cmd clean package            # Linux/macOS: ./mvnw clean package
 
 # API em http://localhost:8080 (H2 em memória, sem seed)
@@ -39,6 +39,30 @@ java -jar target\ageblind-api-0.0.1-SNAPSHOT.jar --spring.profiles.active=seed
 | http://localhost:8080/v3/api-docs | JSON OpenAPI (spec completa em [`../openapi.yaml`](../openapi.yaml)) |
 | http://localhost:8080/actuator/health | Health (`UP`) |
 | http://localhost:8080/h2-console | H2 (JDBC: `jdbc:h2:mem:ageblind`) |
+
+### Segurança (HTTP Basic — MVP)
+
+Os endpoints **do painel RH** exigem autenticação Basic com role `RH`:
+
+| Endpoint | Acesso |
+|---|---|
+| `POST /api/v1/vagas/auditoria-linguagem` | 🔒 `ROLE_RH` |
+| `GET /api/v1/funil/metricas` | 🔒 `ROLE_RH` |
+| Demais endpoints da API | público |
+
+Credenciais demo (variáveis de ambiente `RH_USER`/`RH_PASSWORD`, padrão `rh`/`rh-demo`):
+
+```bash
+# 401 problem+json sem credencial
+curl http://localhost:8080/api/v1/funil/metricas?vagaId=1
+
+# 200 com credencial
+curl -u rh:rh-demo "http://localhost:8080/api/v1/funil/metricas?vagaId=1"
+```
+
+Sem credencial a API devolve `401` com `WWW-Authenticate: Basic` e corpo
+RFC 7807 (`application/problem+json`). Config: `SecurityConfig.java` —
+CSRF desabilitado (API stateless), Swagger/H2/health liberados.
 
 ---
 
@@ -159,13 +183,14 @@ curl -X POST http://localhost:8080/api/v1/curriculo/auditoria \
   -H "Content-Type: application/json" \
   -d '{"curriculo":"Carlos, jovem nativo digital, 10 anos de experiência em vendas.","vagaAlvo":"Vendedor"}'
 
-# 13) auditoria de linguagem da vaga
+# 13) auditoria de linguagem da vaga (requer Basic RH)
 curl -X POST http://localhost:8080/api/v1/vagas/auditoria-linguagem \
+  -u rh:rh-demo \
   -H "Content-Type: application/json" \
   -d '{"titulo":"Estágio","texto":"Buscamos profissional jovem, dinâmico e com no máximo 5 anos de experiência."}'
 
-# 14) métricas do funil (adverse impact por faixa)
-curl "http://localhost:8080/api/v1/funil/metricas?vagaId=1"
+# 14) métricas do funil (adverse impact por faixa; requer Basic RH)
+curl -u rh:rh-demo "http://localhost:8080/api/v1/funil/metricas?vagaId=1"
 
 # 15) solicitação de revisão → protocolo REV-
 curl -X POST http://localhost:8080/api/v1/revisao/solicitacao \
@@ -210,11 +235,12 @@ idempotentes (pulam se já houver dados) e só rodam com `--spring.profiles.acti
 ## Testes
 
 ```bash
-mvnw.cmd test          # 50/50 verdes
+mvnw.cmd test          # 90/90 verdes
 ```
 
 Cobrem validações, anti-viés (idade fora do ranking), motor de regras,
-auditorias, funil/adverse impact, seeds e o job de lembretes.
+auditorias, funil/adverse impact, seeds, o job de lembretes e o acesso
+RH (`RhProtegidoTest`: 401/403 problem+json, credencial válida, público aberto).
 
 ## Documentação da Sprint
 
