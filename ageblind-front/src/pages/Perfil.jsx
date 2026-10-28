@@ -33,6 +33,11 @@ const brl = (v) =>
 const FORM_INICIAL = {
   nome: '',
   email: '',
+  telefone: '',
+  cidade: '',
+  resumo: '',
+  linkedin: '',
+  github: '',
   areaAtual: '',
   areaAlvo: '',
   pretensaoSalarial: '',
@@ -92,6 +97,11 @@ export default function Perfil() {
     setForm({
       nome: perfil.nome || '',
       email: perfil.email || '',
+      telefone: perfil.telefone || '',
+      cidade: perfil.cidade || '',
+      resumo: perfil.resumo || '',
+      linkedin: perfil.linkedin || '',
+      github: perfil.github || '',
       areaAtual: perfil.areaAtual || '',
       areaAlvo: perfil.areaAlvo || '',
       pretensaoSalarial:
@@ -127,6 +137,11 @@ export default function Perfil() {
         ? Number(form.pretensaoSalarial)
         : null,
       disponibilidade: form.disponibilidade,
+      telefone: form.telefone.trim() || null,
+      cidade: form.cidade.trim() || null,
+      resumo: form.resumo.trim() || null,
+      linkedin: form.linkedin.trim() || null,
+      github: form.github.trim() || null,
     }
     try {
       if (modo === 'criar') {
@@ -167,9 +182,13 @@ export default function Perfil() {
   }
 
   function comporCurriculo(perfil, transfer) {
-    const linhas = [
-      perfil.nome,
-      perfil.email,
+    const linhas = [perfil.nome, perfil.email]
+    if (perfil.telefone) linhas.push(perfil.telefone)
+    if (perfil.cidade) linhas.push(perfil.cidade)
+    if (perfil.resumo) linhas.push('', perfil.resumo)
+    if (perfil.linkedin) linhas.push(`LinkedIn: ${perfil.linkedin}`)
+    if (perfil.github) linhas.push(`GitHub: ${perfil.github}`)
+    linhas.push(
       '',
       `Área atual: ${perfil.areaAtual || '—'}`,
       `Área alvo: ${perfil.areaAlvo || '—'}`,
@@ -179,7 +198,7 @@ export default function Perfil() {
       `Disponibilidade: ${
         (perfil.disponibilidade || []).join(', ') || '—'
       }`,
-    ]
+    )
     if (transfer?.competenciasTransferiveis?.length) {
       linhas.push('', 'Competências transferíveis:')
       transfer.competenciasTransferiveis.forEach((m) => {
@@ -197,6 +216,11 @@ export default function Perfil() {
         {
           nome: form.nome,
           email: form.email,
+          telefone: form.telefone,
+          cidade: form.cidade,
+          resumo: form.resumo,
+          linkedin: form.linkedin,
+          github: form.github,
           areaAtual: form.areaAtual,
           areaAlvo: form.areaAlvo,
           pretensaoSalarial: form.pretensaoSalarial
@@ -291,6 +315,105 @@ export default function Perfil() {
           {campo('email') && (
             <p className="mt-1 text-sm text-perigo">{campo('email').message}</p>
           )}
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div>
+            <label htmlFor="telefone" className="block text-sm font-medium">
+              Telefone
+            </label>
+            <input
+              id="telefone"
+              type="tel"
+              value={form.telefone}
+              onChange={(e) => alterar('telefone', e.target.value)}
+              placeholder="Ex.: (11) 98888-1001"
+              className="mt-1 min-h-12 w-full rounded-lg border border-slate-300 px-3 focus:border-primaria focus:outline-none"
+            />
+            {campo('telefone') && (
+              <p className="mt-1 text-sm text-perigo">
+                {campo('telefone').message}
+              </p>
+            )}
+          </div>
+          <div>
+            <label htmlFor="cidade" className="block text-sm font-medium">
+              Cidade
+            </label>
+            <input
+              id="cidade"
+              type="text"
+              value={form.cidade}
+              onChange={(e) => alterar('cidade', e.target.value)}
+              placeholder="Ex.: Sao Paulo - SP"
+              className="mt-1 min-h-12 w-full rounded-lg border border-slate-300 px-3 focus:border-primaria focus:outline-none"
+            />
+            {campo('cidade') && (
+              <p className="mt-1 text-sm text-perigo">
+                {campo('cidade').message}
+              </p>
+            )}
+          </div>
+        </div>
+
+        <div>
+          <label htmlFor="resumo" className="block text-sm font-medium">
+            Resumo profissional
+          </label>
+          <textarea
+            id="resumo"
+            rows={4}
+            maxLength={1500}
+            value={form.resumo}
+            onChange={(e) => alterar('resumo', e.target.value)}
+            placeholder="Conte em poucas linhas quem voce e, sua experiencia e o que busca."
+            className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 focus:border-primaria focus:outline-none"
+          />
+          <p className="mt-1 text-xs text-texto-suave">
+            {form.resumo.length}/1500 caracteres
+          </p>
+          {campo('resumo') && (
+            <p className="mt-1 text-sm text-perigo">{campo('resumo').message}</p>
+          )}
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div>
+            <label htmlFor="linkedin" className="block text-sm font-medium">
+              LinkedIn
+            </label>
+            <input
+              id="linkedin"
+              type="url"
+              value={form.linkedin}
+              onChange={(e) => alterar('linkedin', e.target.value)}
+              placeholder="https://linkedin.com/in/seu-perfil"
+              className="mt-1 min-h-12 w-full rounded-lg border border-slate-300 px-3 focus:border-primaria focus:outline-none"
+            />
+            {campo('linkedin') && (
+              <p className="mt-1 text-sm text-perigo">
+                {campo('linkedin').message}
+              </p>
+            )}
+          </div>
+          <div>
+            <label htmlFor="github" className="block text-sm font-medium">
+              GitHub
+            </label>
+            <input
+              id="github"
+              type="url"
+              value={form.github}
+              onChange={(e) => alterar('github', e.target.value)}
+              placeholder="https://github.com/seu-usuario"
+              className="mt-1 min-h-12 w-full rounded-lg border border-slate-300 px-3 focus:border-primaria focus:outline-none"
+            />
+            {campo('github') && (
+              <p className="mt-1 text-sm text-perigo">
+                {campo('github').message}
+              </p>
+            )}
+          </div>
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
@@ -442,7 +565,7 @@ export default function Perfil() {
       {modo === 'editar' && (
         <div className="mt-6 rounded-lg border border-slate-200 bg-white p-5">
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <h2 className="font-semibold text-primaria">Meu currículo</h2>
+            <h2 className="font-semibold text-primaria">Currículo em texto</h2>
             <div className="flex flex-wrap gap-2">
               <button
                 type="button"
