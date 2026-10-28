@@ -67,6 +67,11 @@ public class PerfilSeedRunner implements ApplicationRunner {
 					pc.setNivel(Integer.parseInt(partes[1].trim()));
 					perfil.getCompetencias().add(pc);
 				}
+				perfil.setTelefone(c[8]);
+				perfil.setCidade(c[9]);
+				perfil.setResumo(c[10]);
+				perfil.setLinkedin(c[11]);
+				perfil.setGithub(c[12]);
 				perfilRepository.save(perfil);
 			}
 		}

@@ -35,7 +35,12 @@ class PerfilControllerTest {
 				  "areaAtual": "PCP",
 				  "areaAlvo": "LOGISTICA",
 				  "pretensaoSalarial": 4500,
-				  "disponibilidade": ["REMOTO"]
+				  "disponibilidade": ["REMOTO"],
+				  "telefone": "(11) 99999-0000",
+				  "cidade": "São Paulo - SP",
+				  "resumo": "Profissional de PCP com 10 anos em chão de fábrica.",
+				  "linkedin": "https://linkedin.com/in/joao-silva-demo",
+				  "github": "https://github.com/joao-silva-demo"
 				}
 				""";
 	}
@@ -50,6 +55,11 @@ class PerfilControllerTest {
 				.andExpect(jsonPath("$.id").isNumber())
 				.andExpect(jsonPath("$.nome").value("João Silva"))
 				.andExpect(jsonPath("$.areaAlvo").value("LOGISTICA"))
+				.andExpect(jsonPath("$.telefone").value("(11) 99999-0000"))
+				.andExpect(jsonPath("$.cidade").value("São Paulo - SP"))
+				.andExpect(jsonPath("$.resumo").value("Profissional de PCP com 10 anos em chão de fábrica."))
+				.andExpect(jsonPath("$.linkedin").value("https://linkedin.com/in/joao-silva-demo"))
+				.andExpect(jsonPath("$.github").value("https://github.com/joao-silva-demo"))
 				.andExpect(jsonPath("$.statusCuradoria").value("EM_CURADORIA"))
 				.andExpect(jsonPath("$.dataNascimento").doesNotExist())
 				.andExpect(jsonPath("$.idade").doesNotExist());
@@ -105,7 +115,12 @@ class PerfilControllerTest {
 				  "areaAtual": "Produ\u00e7\u00e3o",
 				  "areaAlvo": "SUPRIMENTOS",
 				  "pretensaoSalarial": 6000,
-				  "disponibilidade": ["HIBRIDO", "PRESENCIAL"]
+				  "disponibilidade": ["HIBRIDO", "PRESENCIAL"],
+				  "telefone": "(21) 98888-1111",
+				  "cidade": "Rio de Janeiro - RJ",
+				  "resumo": "Editado: coordena\u00e7\u00e3o de PCP e melhoria cont\u00ednua.",
+				  "linkedin": "https://linkedin.com/in/joao-editado",
+				  "github": "https://github.com/joao-editado"
 				}
 				""";
 		mockMvc.perform(put("/api/v1/perfis/{id}", id)
@@ -117,6 +132,11 @@ class PerfilControllerTest {
 				.andExpect(jsonPath("$.areaAlvo").value("SUPRIMENTOS"))
 				.andExpect(jsonPath("$.pretensaoSalarial").value(6000))
 				.andExpect(jsonPath("$.disponibilidade", hasSize(2)))
+				.andExpect(jsonPath("$.telefone").value("(21) 98888-1111"))
+				.andExpect(jsonPath("$.cidade").value("Rio de Janeiro - RJ"))
+				.andExpect(jsonPath("$.resumo").value("Editado: coordena\u00e7\u00e3o de PCP e melhoria cont\u00ednua."))
+				.andExpect(jsonPath("$.linkedin").value("https://linkedin.com/in/joao-editado"))
+				.andExpect(jsonPath("$.github").value("https://github.com/joao-editado"))
 				.andExpect(jsonPath("$.dataNascimento").doesNotExist())
 				.andExpect(jsonPath("$.idade").doesNotExist());
 

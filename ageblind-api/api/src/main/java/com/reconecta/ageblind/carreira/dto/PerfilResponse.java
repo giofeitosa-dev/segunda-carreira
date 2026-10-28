@@ -16,5 +16,10 @@ public record PerfilResponse(
 		BigDecimal pretensaoSalarial,
 		List<Disponibilidade> disponibilidade,
 		StatusCuradoria statusCuradoria,
-		LocalDateTime criadoEm) {
+		LocalDateTime criadoEm,
+		String telefone,
+		String cidade,
+		String resumo,
+		String linkedin,
+		String github) {
 }

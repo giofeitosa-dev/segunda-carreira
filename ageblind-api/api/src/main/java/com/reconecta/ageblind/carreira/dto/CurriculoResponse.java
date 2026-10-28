@@ -2,11 +2,15 @@ package com.reconecta.ageblind.carreira.dto;
 
 import java.util.List;
 
-/** Currículo estruturado do perfil (experiências, formações, projetos). */
+import com.reconecta.ageblind.carreira.enums.NivelIdioma;
+
+/** Currículo estruturado do perfil (experiências, formações, projetos, idiomas, certificações). */
 public record CurriculoResponse(
 		List<ExperienciaResponse> experiencias,
 		List<FormacaoResponse> formacoes,
-		List<ProjetoResponse> projetos) {
+		List<ProjetoResponse> projetos,
+		List<IdiomaResponse> idiomas,
+		List<CertificacaoResponse> certificacoes) {
 
 	public record ExperienciaResponse(
 			Long id,
@@ -28,6 +32,21 @@ public record CurriculoResponse(
 	public record ProjetoResponse(
 			Long id,
 			String nome,
+			String descricao,
+			String link) {
+	}
+
+	public record IdiomaResponse(
+			Long id,
+			String idioma,
+			NivelIdioma nivel) {
+	}
+
+	public record CertificacaoResponse(
+			Long id,
+			String nome,
+			String instituicao,
+			Integer anoConclusao,
 			String descricao,
 			String link) {
 	}

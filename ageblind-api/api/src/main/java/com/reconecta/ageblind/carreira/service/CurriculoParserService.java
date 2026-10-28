@@ -107,7 +107,7 @@ public class CurriculoParserService {
 			throw new IllegalArgumentException(
 					"N\u00e3o foi poss\u00edvel identificar experi\u00eancias, forma\u00e7\u00f5es ou projetos no arquivo");
 		}
-		return new CurriculoRequest(experiencias, formacoes, projetos);
+		return new CurriculoRequest(experiencias, formacoes, projetos, null, null);
 	}
 
 	private void fechar(Secao secao, List<String> bloco,
