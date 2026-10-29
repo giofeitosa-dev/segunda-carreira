@@ -1,0 +1,7 @@
+# Engine Linux do Docker falha com CRLF ("unknown instruction").
+# Forca LF no working copy (commit git ja guarda LF; isso protege clones no Windows).
+Dockerfile* text eol=lf
+docker-compose.yml text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+nginx.conf text eol=lf

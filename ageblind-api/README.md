@@ -46,6 +46,18 @@ ageblind-api\
 **Público:** candidato 40+ · empresa/RH · app parceiro
 **Fora do escopo:** relatos de bairro e rotas (ficam no Reconecta pai).
 
+## Perfis de execução (banco de dados)
+
+| Profile | Banco | Uso |
+|---|---|---|
+| *(nenhum — padrão)* | H2 em memória | Desenvolvimento local e testes (`mvnw verify` → 90/90) |
+| `seed` | H2 em memória | Demo local com dados (`mvnw spring-boot:run -Dspring-boot.run.profiles=seed`) |
+| `prod` | **PostgreSQL** | Container/docker-compose e qualquer ambiente com banco real |
+| `prod,seed` | PostgreSQL | Demo em Postgres com dados (default do `docker-compose.yml`) |
+
+- **Variáveis do `prod`:** `DB_URL` · `DB_USER` · `DB_PASSWORD` (default `jdbc:postgresql://localhost:5432/segunda_carreira` / `reconecta` / `reconecta`). Console H2 desabilitado.
+- **Docker:** `docker compose up -d --build` na raiz do repo sobe Postgres 16 + API (ver README raiz). Sem Flyway por ora — `ddl-auto=update` cria o schema (migração versionada é evolução).
+
 ## Os 7 diferenciais (da `06-CONCORRENCIA.md`)
 
 1. Dois lados numa API só (candidato **e** empresa)
