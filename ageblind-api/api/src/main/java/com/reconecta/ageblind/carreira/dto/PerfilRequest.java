@@ -8,6 +8,7 @@ import com.reconecta.ageblind.carreira.enums.Disponibilidade;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.Size;
 
 public record PerfilRequest(
 		@NotBlank(message = "nome é obrigatório") String nome,
@@ -18,7 +19,7 @@ public record PerfilRequest(
 		List<Disponibilidade> disponibilidade,
 		String telefone,
 		String cidade,
-		String resumo,
+		@Size(max = 1500, message = "resumo deve ter no máximo 1500 caracteres") String resumo,
 		String linkedin,
 		String github) {
 }

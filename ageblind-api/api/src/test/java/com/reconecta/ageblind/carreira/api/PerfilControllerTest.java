@@ -76,6 +76,23 @@ class PerfilControllerTest {
 	}
 
 	@Test
+	void rejeitaResumoAcimaDe1500Com400() throws Exception {
+		String resumoLongo = "x".repeat(1501);
+		mockMvc.perform(post("/api/v1/perfis")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content("""
+								{
+								  "nome": "Teste",
+								  "email": "teste@example.com",
+								  "areaAlvo": "LOGISTICA",
+								  "resumo": "%s"
+								}
+								""".formatted(resumoLongo)))
+				.andExpect(status().isBadRequest())
+				.andExpect(jsonPath("$.fieldErrors").isArray());
+	}
+
+	@Test
 	void consultaPerfilCriado() throws Exception {
 		MvcResult criado = mockMvc.perform(post("/api/v1/perfis")
 						.contentType(MediaType.APPLICATION_JSON)
