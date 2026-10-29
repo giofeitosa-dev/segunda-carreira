@@ -118,6 +118,9 @@ cd ageblind-api/api
 
 Testes: `./mvnw clean verify` → **90/90 verdes** (H2 em memória; CI roda o mesmo a cada push/PR).
 
+Testes do front: `cd ageblind-front && npm test` → **13/13** (Vitest + Testing Library) ·
+`npm run e2e` → **5/5** (Playwright, exige o stack docker de pé) — a CI roda os dois a cada push/PR.
+
 ### 🐳 Docker + PostgreSQL (profile `prod`)
 
 ```bash

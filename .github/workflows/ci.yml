@@ -44,8 +44,54 @@ jobs:
         run: npm ci
       - name: Lint
         run: npm run lint
+      - name: Testes de componente (Vitest)
+        run: npm test
       - name: Build
         run: npm run build
+
+  e2e:
+    name: E2E (Playwright + compose)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Sobe stack (db + api + front)
+        run: docker compose up -d --build
+      - name: Aguarda saúde do stack
+        run: |
+          for i in $(seq 1 60); do
+            curl -fsS http://localhost:8080/actuator/health >/dev/null 2>&1 && \
+            curl -fsS http://localhost:3000 >/dev/null 2>&1 && break
+            sleep 5
+          done
+          curl -fsS http://localhost:8080/actuator/health
+          curl -fsS -o /dev/null -w 'front %{http_code}\n' http://localhost:3000
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: ageblind-front/package-lock.json
+      - name: Dependências
+        run: npm ci
+        working-directory: ageblind-front
+      - name: Instala Chromium do Playwright
+        run: npx playwright install --with-deps chromium
+        working-directory: ageblind-front
+      - name: Testes E2E
+        run: npm run e2e
+        working-directory: ageblind-front
+      - name: Logs do stack (falha)
+        if: failure()
+        run: docker compose logs --no-color | tail -n 300
+      - name: Artefatos do Playwright
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            ageblind-front/playwright-report
+            ageblind-front/test-results
+          retention-days: 7
 
   docker:
     name: Docker (imagem da API)

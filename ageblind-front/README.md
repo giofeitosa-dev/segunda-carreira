@@ -27,6 +27,22 @@ npm run dev
 | `npm run build` | build de produção em `dist/` |
 | `npm run lint` | oxlint (meta: 0 warnings) |
 | `npm run preview` | serve o build de produção |
+| `npm test` | testes de componente (Vitest + Testing Library, jsdom) |
+| `npm run test:watch` | Vitest em watch mode |
+| `npm run e2e` | smoke E2E (Playwright) contra o stack docker |
+
+## Testes
+
+- **Componentes (Vitest):** `src/__tests__/` — `Feedback`, `CardVaga`, `api.js`
+  (problem+json/`ApiError`) e `CurriculoEstruturado` (5 seções, validações e
+  payload do `CurriculoRequest`). Roda em qualquer hora, sem backend.
+- **E2E (Playwright):** `e2e/smoke.spec.js` — home, `/vagas`, `/perfil` (com
+  perfil ativo no localStorage), `/escudo` e `/rh/painel` (funil com credencial
+  errada → 401 e `rh`/`rh-demo` → métricas). **Requer o stack de pé:**
+  `docker compose up -d --build` (front em `:3000`).
+- Local usa o Edge instalado (`channel: 'msedge'`, sem download); o CI instala
+  o Chromium (`npx playwright install --with-deps chromium`) e roda em paralelo.
+- Sem chave da Adzuna nenhum teste depende da busca externa (503 esperado).
 
 ## Rotas
 
