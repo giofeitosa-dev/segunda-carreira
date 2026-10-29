@@ -1,4 +1,4 @@
-package com.reconecta.ageblind.escudo.dominio;
+package com.reconecta.ageblind.escudo.domain;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

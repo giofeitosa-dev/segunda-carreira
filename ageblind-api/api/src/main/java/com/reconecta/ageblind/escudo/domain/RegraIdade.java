@@ -1,4 +1,4 @@
-package com.reconecta.ageblind.escudo.dominio;
+package com.reconecta.ageblind.escudo.domain;
 
 import com.reconecta.ageblind.escudo.enums.CategoriaRegra;
 import com.reconecta.ageblind.escudo.enums.Severidade;
