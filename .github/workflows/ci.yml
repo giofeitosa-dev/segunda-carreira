@@ -46,3 +46,16 @@ jobs:
         run: npm run lint
       - name: Build
         run: npm run build
+
+  docker:
+    name: Docker (imagem da API)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Valida docker-compose
+        run: docker compose config -q
+      - name: Build da imagem da API
+        run: docker build -t ageblind-api:ci ./ageblind-api/api
+      - name: Build da imagem do front
+        run: docker build -t ageblind-front:ci ./ageblind-front

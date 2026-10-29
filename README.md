@@ -102,7 +102,7 @@ reconecta-recode\
 | `ageblind-api\SPRINT-*.md` | Detalhe de cada sprint (planejamento, código, testes) | Aprofundar em uma sprint |
 | `ageblind-api\api\README.md` | As 22 rotas documentadas + exemplos de curl | Usar/testar a API |
 | `ageblind-api\api\src\main\` | Código de produção (carreira, escudo, shared) | Desenvolver |
-| `ageblind-api\api\src\test\` | 58 testes (unit, integração, regressão anti-viés) | Rodar `mvnw clean verify` |
+| `ageblind-api\api\src\test\` | 90 testes (unit, integração, regressão anti-viés) | Rodar `mvnw clean verify` |
 
 ---
 
@@ -116,7 +116,20 @@ cd ageblind-api/api
 # → Seed:     10 perfis · 20 vagas · 5 trilhas · métricas de funil
 ```
 
-Testes: `./mvnw clean verify` → **58/58 verdes** (cobertura dos services: 94,2% linhas).
+Testes: `./mvnw clean verify` → **90/90 verdes** (H2 em memória; CI roda o mesmo a cada push/PR).
+
+### 🐳 Docker + PostgreSQL (profile `prod`)
+
+```bash
+docker compose up -d --build   # Postgres 16 + API + front nginx (profiles prod,seed)
+# → App:      http://localhost:3000  (front nginx, proxy /api -> api:8080)
+# → API:      http://localhost:8080  (Swagger: /swagger-ui.html)
+# → Reset dos dados:  docker compose down -v
+# → Sem seed demo:     SPRING_PROFILES_ACTIVE=prod docker compose up -d
+# → Outras portas:     API_PORT=8081 FRONT_PORT=3001 docker compose up -d
+# → Credenciais RH:    RH_USER / RH_PASSWORD (padrão rh / rh-demo) via env
+# → A API no container usa o profile prod (Postgres); H2 segue como default local/testes
+```
 
 **Rotas principais:** `POST /api/v1/curriculo/age-blind` · `POST /api/v1/curriculo/auditoria` · `GET /api/v1/vagas/recomendadas` · `GET /api/v1/funil/metricas` · `POST /api/v1/revisao/solicitacao` — lista completa no [`ageblind-api/api/README.md`](ageblind-api/api/README.md).
 
