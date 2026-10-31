@@ -1,7 +1,7 @@
 package com.reconecta.ageblind.escudo.service;
 
 import com.reconecta.ageblind.carreira.gateway.PerfilGateway;
-import com.reconecta.ageblind.escudo.dominio.SolicitacaoRevisao;
+import com.reconecta.ageblind.escudo.domain.SolicitacaoRevisao;
 import com.reconecta.ageblind.escudo.dto.SolicitacaoRevisaoRequest;
 import com.reconecta.ageblind.escudo.dto.SolicitacaoRevisaoResponse;
 import com.reconecta.ageblind.escudo.repository.SolicitacaoRevisaoRepository;

@@ -5,7 +5,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.reconecta.ageblind.escudo.dominio.SinalIdade;
+import com.reconecta.ageblind.escudo.domain.SinalIdade;
 import com.reconecta.ageblind.escudo.dto.AuditoriaCurriculoResponse;
 import com.reconecta.ageblind.escudo.dto.SinalAuditoria;
 import com.reconecta.ageblind.escudo.enums.Severidade;

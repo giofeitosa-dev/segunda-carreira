@@ -4,7 +4,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 
-import com.reconecta.ageblind.escudo.dominio.MetricaFunil;
+import com.reconecta.ageblind.escudo.domain.MetricaFunil;
 import com.reconecta.ageblind.escudo.repository.MetricaFunilRepository;
 import com.reconecta.ageblind.shared.enums.FaixaEtaria;
 
