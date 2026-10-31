@@ -35,19 +35,18 @@ reconecta-recode\
 ├── 📦 README.md                      ← este arquivo (sumário do projeto)
 ├── 📦 .gitignore
 │
-│   ── Documentação base (Design Thinking, Sprint 0) ──
-├── 🖥️ 01-EMPATIA.md                  ← temas, personas e roteiro de entrevistas
-├── 🖥️ 02-DEFINICAO.md                ← POV, HMW e priorização de soluções
-├── 📦 03-IDEACAO.md                  ← índice das 3 soluções e sinergia
-├── 📦 03-IDEACAO\                    ← detalhe de cada solução
+│   ── Documentação base (Design Thinking, Sprint 0) — 🖥️ vive em registros\ (fora do git) ──
+├── 🖥️ registros\01-EMPATIA.md        ← temas, personas e roteiro de entrevistas
+├── 🖥️ registros\02-DEFINICAO.md      ← POV, HMW e priorização de soluções
+├── 🖥️ registros\03-IDEACAO.md        ← índice das 3 soluções e sinergia
 │   ├── segunda-carreira.md           ←    (a que virou a API)
 │   ├── relatos-bairro.md
 │   └── rotas-acessiveis.md
-├── 🖥️ 04-ROADMAP.md                  ← ordem de construção das sprints
-├── 📦 05-ETARISMO.md                 ← base técnica/legal do anti-etarismo (15 regras, Lei 9.029)
-├── 🖥️ 06-CONCORRENCIA.md             ← o que já existe, lacunas e diferenciais
-├── 🖥️ 07-ARQUITETURA.md              ← Sprint 1: decisão de arquitetura, pacotes, dados, riscos (aprovado)
-├── 🖥️ 08-ROTAS.md                    ← Sprint 1: catálogo oficial das 29 rotas (aprovado)
+├── 🖥️ registros\04-ROADMAP.md        ← ordem de construção das sprints
+├── 🖥️ registros\05-ETARISMO.md       ← base técnica/legal do anti-etarismo (15 regras, Lei 9.029)
+├── 🖥️ registros\06-CONCORRENCIA.md   ← o que já existe, lacunas e diferenciais
+├── 🖥️ registros\07-ARQUITETURA.md    ← Sprint 1: decisão de arquitetura, pacotes, dados, riscos (aprovado)
+├── 🖥️ registros\08-ROTAS.md          ← Sprint 1: catálogo oficial das 29 rotas (aprovado)
 │
 │   ── Especificação ──
 ├── 📦 openapi.yaml                   ← OpenAPI 3.0 — 29 rotas (15 são do AgeBlind; filtros: tags
@@ -76,7 +75,7 @@ reconecta-recode\
         └── src\
             ├── main\java\com\reconecta\ageblind\
             │   ├── carreira\          ← api · service · domain · repository · gateway · seed
-            │   ├── escudo\            ← api · service · dominio · dto · seed
+            │   ├── escudo\            ← api · service · domain · dto · seed
             │   └── shared\            ← GlobalExceptionHandler (RFC 7807) · CaminhosLgpd · config
             ├── main\resources\       ← application.properties · seeds (CSV) · regras-idade.json
             └── test\java\            ← 58 testes (MockMvc, regressão anti-viés, contrato, LGPD)
@@ -86,14 +85,14 @@ reconecta-recode\
 
 | Arquivo / pasta | Conteúdo | Quando abrir |
 |---|---|---|
-| `01-EMPATIA.md` | Pesquisa com personas, temas e perguntas de entrevista | Onboarding no processo de design |
-| `02-DEFINICAO.md` | Pontos de vista, "Como podemos…", priorização | Entender *por que* esta solução |
-| `03-IDEACAO.md` + `03-IDEACAO\` | Conceito das 3 soluções e sinergia entre elas | Ver a ideia original da Segunda Carreira |
-| `04-ROADMAP.md` | Ordem de construção planejada para as sprints | Ver o planejamento de prazo |
-| `05-ETARISMO.md` | O que é etarismo, 15 regras de detecção, base legal (Lei 9.029/95, CLT 373-A) | Entender o Escudo Anti-Etarismo |
-| `06-CONCORRENCIA.md` | Mercado, concorrentes e diferenciais | Argumentar na apresentação |
-| `07-ARQUITETURA.md` | Decisão monolito modular, pacotes, modelo de dados, riscos | Revisar arquitetura (aprovado em 06/10) |
-| `08-ROTAS.md` | Catálogo das 29 rotas (15 do AgeBlind) + changelog de rotas | Consultar contratos (aprovado em 06/10) |
+| `registros\01-EMPATIA.md` | Pesquisa com personas, temas e perguntas de entrevista | Onboarding no processo de design |
+| `registros\02-DEFINICAO.md` | Pontos de vista, "Como podemos…", priorização | Entender *por que* esta solução |
+| `registros\03-IDEACAO.md` + soluções (`segunda-carreira`, `relatos-bairro`, `rotas-acessiveis`) | Conceito das 3 soluções e sinergia entre elas | Ver a ideia original da Segunda Carreira |
+| `registros\04-ROADMAP.md` | Ordem de construção planejada para as sprints | Ver o planejamento de prazo |
+| `registros\05-ETARISMO.md` | O que é etarismo, 15 regras de detecção, base legal (Lei 9.029/95, CLT 373-A) | Entender o Escudo Anti-Etarismo |
+| `registros\06-CONCORRENCIA.md` | Mercado, concorrentes e diferenciais | Argumentar na apresentação |
+| `registros\07-ARQUITETURA.md` | Decisão monolito modular, pacotes, modelo de dados, riscos | Revisar arquitetura (aprovado em 06/10) |
+| `registros\08-ROTAS.md` | Catálogo das 29 rotas (15 do AgeBlind) + changelog de rotas | Consultar contratos (aprovado em 06/10) |
 | `openapi.yaml` | Especificação máquina OpenAPI 3.0 | Importar no Swagger/Postman |
 | `kanban\` | Quadro das sprints + CSV para Trello/Notion | Gestão da equipe |
 | `registros\` | Atas das sessões e template de apresentação | Preparar a banca |
@@ -138,9 +137,9 @@ docker compose up -d --build   # Postgres 16 + API + front nginx (profiles prod,
 
 ## 🧭 Como navegar
 
-- **Novo na equipe:** `01-EMPATIA` → `02-DEFINICAO` → `ageblind-api/README.md`.
-- **Quer entender a solução:** `03-IDEACAO/segunda-carreira.md` → `05-ETARISMO.md`.
-- **Vai programar:** `07-ARQUITETURA` → `08-ROTAS` → `openapi.yaml` → `ageblind-api/api/README.md`.
+- **Novo na equipe:** `registros/01-EMPATIA` → `registros/02-DEFINICAO` → `ageblind-api/README.md`.
+- **Quer entender a solução:** `registros/segunda-carreira.md` → `registros/05-ETARISMO.md`.
+- **Vai programar:** `registros/07-ARQUITETURA` → `registros/08-ROTAS` → `openapi.yaml` → `ageblind-api/api/README.md`.
 - **Vai apresentar:** `registros/apresentacao.md` + `ageblind-api/kanban.md` (status).
 
 ## 🔗 Links
