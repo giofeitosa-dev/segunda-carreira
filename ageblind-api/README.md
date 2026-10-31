@@ -32,7 +32,7 @@ ageblind-api\
 ```
 
 **Documentos da API:**
-[`openapi.yaml`](../openapi.yaml) (tags `Carreira` e `Escudo Anti-Etarismo`) · [`05-ETARISMO.md`](../05-ETARISMO.md) (base das 15 regras) · arquitetura/rotas completas (`07-ARQUITETURA.md`, `08-ROTAS.md`) ficam no repo Reconecta pai
+[`openapi.yaml`](../openapi.yaml) (tags `Carreira` e `Escudo Anti-Etarismo`) · [`registros/05-ETARISMO.md`](../registros/05-ETARISMO.md) (base das 15 regras) · arquitetura/rotas completas (`registros/07-ARQUITETURA.md`, `registros/08-ROTAS.md`) ficam em `registros/` (fora do git)
 
 ---
 
