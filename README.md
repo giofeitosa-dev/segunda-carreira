@@ -3,7 +3,7 @@
 > **"A API que contrata por competência, não por ano de nascimento."**
 > Projeto de hackathon/ReCode — monolito modular Spring Boot construído com Design Thinking (Empatia → Definição → Ideação).
 
-**Status (06/10/2026): ✅ PROJETO CONCLUÍDO** — Sprint 1 (planejamento) · Sprint 2 (desenvolvimento, D-01…D-22) · Sprint 3 (testes/revisão, T-01…T-09) · PR #1 merged · **release [`v1.0.0`](https://github.com/giofeitosa-dev/segunda-carreira/releases/tag/v1.0.0)** · 58/58 testes verdes.
+**Status (31/10/2026): ✅ v1.0.0 publicada e em evolução** — Sprint 1 (planejamento) · Sprint 2 (desenvolvimento, D-01…D-22) · Sprint 3 (testes/revisão, T-01…T-09) · PR #1 merged · release [`v1.0.0`](https://github.com/giofeitosa-dev/segunda-carreira/releases/tag/v1.0.0) · pós-release: Docker + PostgreSQL, CI (GitHub Actions), HTTP Basic no painel RH, currículo estruturado + upload, Flyway baseline · **93/93 testes API · 13/13 front · 5/5 E2E**.
 
 ---
 
@@ -21,7 +21,7 @@
 2. **⭐ Segunda Carreira + Escudo Anti-Etarismo** — reinserção de profissionais 40+ com recomendação de vagas por competências e escudo contra viés etário — **é o que está implementado em [`ageblind-api/`](ageblind-api/)** *(ODS 10 + 5)*.
 3. **Rotas Acessíveis** — rotas com camadas de acessibilidade e segurança *(ODS 11 + 10 + 5)* — docs de concepção; API fora do escopo desta entrega.
 
-**Stack:** Java 17 · Spring Boot 4.1.1 · Maven · Spring Data JPA + H2 (demo) / PostgreSQL (ideal) · SpringDoc OpenAPI · JUnit 5 + MockMvc + JaCoCo.
+**Stack:** Java 17 · Spring Boot 4.1.1 · Maven · Spring Data JPA + H2 (demo) / PostgreSQL (prod, Docker) · Flyway (baseline `V1__init.sql`) · SpringDoc OpenAPI · JUnit 5 + MockMvc + JaCoCo.
 
 ---
 
@@ -49,8 +49,8 @@ reconecta-recode\
 ├── 🖥️ registros\08-ROTAS.md          ← Sprint 1: catálogo oficial das 29 rotas (aprovado)
 │
 │   ── Especificação ──
-├── 📦 openapi.yaml                   ← OpenAPI 3.0 — 29 rotas (15 são do AgeBlind; filtros: tags
-│                                       "Carreira" e "Escudo Anti-Etarismo")
+├── 📦 openapi.yaml                   ← OpenAPI 3.0 — catálogo das 3 soluções (37 operações;
+│                                       22 são do AgeBlind: 17 Carreira + 5 Escudo; filtros por tags)
 │
 │   ── Gestão ──
 ├── 📦 kanban\
@@ -78,7 +78,7 @@ reconecta-recode\
             │   ├── escudo\            ← api · service · domain · dto · seed
             │   └── shared\            ← GlobalExceptionHandler (RFC 7807) · CaminhosLgpd · config
             ├── main\resources\       ← application.properties · seeds (CSV) · regras-idade.json
-            └── test\java\            ← 58 testes (MockMvc, regressão anti-viés, contrato, LGPD)
+            └── test\java\            ← 93 testes (MockMvc, regressão anti-viés, contrato, LGPD)
 ```
 
 ## 📇 Sumário — o que há em cada arquivo
@@ -101,7 +101,7 @@ reconecta-recode\
 | `ageblind-api\SPRINT-*.md` | Detalhe de cada sprint (planejamento, código, testes) | Aprofundar em uma sprint |
 | `ageblind-api\api\README.md` | As 22 rotas documentadas + exemplos de curl | Usar/testar a API |
 | `ageblind-api\api\src\main\` | Código de produção (carreira, escudo, shared) | Desenvolver |
-| `ageblind-api\api\src\test\` | 90 testes (unit, integração, regressão anti-viés) | Rodar `mvnw clean verify` |
+| `ageblind-api\api\src\test\` | 93 testes (unit, integração, regressão anti-viés) | Rodar `mvnw clean verify` |
 
 ---
 
@@ -115,7 +115,7 @@ cd ageblind-api/api
 # → Seed:     10 perfis · 20 vagas · 5 trilhas · métricas de funil
 ```
 
-Testes: `./mvnw clean verify` → **90/90 verdes** (H2 em memória; CI roda o mesmo a cada push/PR).
+Testes: `./mvnw clean verify` → **93/93 verdes** (H2 em memória; CI roda o mesmo a cada push/PR).
 
 Testes do front: `cd ageblind-front && npm test` → **13/13** (Vitest + Testing Library) ·
 `npm run e2e` → **5/5** (Playwright, exige o stack docker de pé) — a CI roda os dois a cada push/PR.

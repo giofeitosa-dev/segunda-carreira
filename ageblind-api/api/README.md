@@ -7,14 +7,14 @@ trilhas, mentorias) com o **Escudo Anti-Etarismo** (currículos e vagas livres d
 viés etário). Hackathon ReCode — ODS 10 (redução das desigualdades) + ODS 5.
 
 **Stack:** Java 17 (Zulu) · Spring Boot **4.1.1** · Maven · Spring Data JPA · H2 ·
-Actuator · SpringDoc 3.1.1
+Flyway (baseline `V1__init.sql`) · Actuator · SpringDoc 3.1.1
 
 ---
 
 ## Rodar
 
 ```bash
-# build + testes (90/90)
+# build + testes (93/93)
 mvnw.cmd clean package            # Linux/macOS: ./mvnw clean package
 
 # API em http://localhost:8080 (H2 em memória, sem seed)
@@ -235,7 +235,7 @@ idempotentes (pulam se já houver dados) e só rodam com `--spring.profiles.acti
 ## Testes
 
 ```bash
-mvnw.cmd test          # 90/90 verdes
+mvnw.cmd test          # 93/93 verdes
 ```
 
 Cobrem validações, anti-viés (idade fora do ranking), motor de regras,
