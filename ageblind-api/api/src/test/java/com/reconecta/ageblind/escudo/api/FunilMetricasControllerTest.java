@@ -6,7 +6,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.reconecta.ageblind.carreira.domain.Vaga;
 import com.reconecta.ageblind.carreira.repository.VagaRepository;
-import com.reconecta.ageblind.escudo.dominio.MetricaFunil;
+import com.reconecta.ageblind.escudo.domain.MetricaFunil;
 import com.reconecta.ageblind.escudo.repository.MetricaFunilRepository;
 import com.reconecta.ageblind.shared.enums.FaixaEtaria;
 

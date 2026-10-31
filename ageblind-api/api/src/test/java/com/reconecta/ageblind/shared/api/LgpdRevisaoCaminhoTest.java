@@ -15,7 +15,7 @@ import com.reconecta.ageblind.carreira.enums.ModeloVaga;
 import com.reconecta.ageblind.carreira.repository.CompetenciaRepository;
 import com.reconecta.ageblind.carreira.repository.PerfilRepository;
 import com.reconecta.ageblind.carreira.repository.VagaRepository;
-import com.reconecta.ageblind.escudo.dominio.MetricaFunil;
+import com.reconecta.ageblind.escudo.domain.MetricaFunil;
 import com.reconecta.ageblind.escudo.repository.MetricaFunilRepository;
 import com.reconecta.ageblind.shared.enums.FaixaEtaria;
 

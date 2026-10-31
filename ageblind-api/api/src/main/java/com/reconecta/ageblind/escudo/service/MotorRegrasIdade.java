@@ -7,8 +7,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.reconecta.ageblind.escudo.dominio.RegraIdade;
-import com.reconecta.ageblind.escudo.dominio.SinalIdade;
+import com.reconecta.ageblind.escudo.domain.RegraIdade;
+import com.reconecta.ageblind.escudo.domain.SinalIdade;
 import com.reconecta.ageblind.escudo.dto.RegraAplicada;
 
 import org.springframework.stereotype.Service;

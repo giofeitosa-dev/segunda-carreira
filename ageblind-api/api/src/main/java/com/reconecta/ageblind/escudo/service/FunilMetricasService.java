@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.reconecta.ageblind.carreira.gateway.VagaGateway;
-import com.reconecta.ageblind.escudo.dominio.MetricaFunil;
+import com.reconecta.ageblind.escudo.domain.MetricaFunil;
 import com.reconecta.ageblind.escudo.dto.EtapaMetrica;
 import com.reconecta.ageblind.escudo.dto.MetricasFunilResponse;
 import com.reconecta.ageblind.escudo.repository.MetricaFunilRepository;

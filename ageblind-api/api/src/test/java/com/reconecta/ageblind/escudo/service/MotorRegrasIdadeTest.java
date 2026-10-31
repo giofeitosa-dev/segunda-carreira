@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
-import com.reconecta.ageblind.escudo.dominio.SinalIdade;
+import com.reconecta.ageblind.escudo.domain.SinalIdade;
 import com.reconecta.ageblind.escudo.dto.RegraAplicada;
 
 import org.junit.jupiter.api.Test;

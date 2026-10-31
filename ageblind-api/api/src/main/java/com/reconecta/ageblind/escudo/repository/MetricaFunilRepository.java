@@ -2,7 +2,7 @@ package com.reconecta.ageblind.escudo.repository;
 
 import java.util.List;
 
-import com.reconecta.ageblind.escudo.dominio.MetricaFunil;
+import com.reconecta.ageblind.escudo.domain.MetricaFunil;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

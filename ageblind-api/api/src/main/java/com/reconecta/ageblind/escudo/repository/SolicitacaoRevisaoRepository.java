@@ -1,6 +1,6 @@
 package com.reconecta.ageblind.escudo.repository;
 
-import com.reconecta.ageblind.escudo.dominio.SolicitacaoRevisao;
+import com.reconecta.ageblind.escudo.domain.SolicitacaoRevisao;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
