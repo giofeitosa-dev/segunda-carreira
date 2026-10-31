@@ -10,9 +10,9 @@
 
 | Sprint | Fase | Entregável | Status |
 |---|---|---|---|
-| 🔹 **Sprint 1** | Planejamento | Arquitetura + definição das rotas + quadro Kanban | ✅ 30/09/2026 (aguarda aprovação) |
-| 🔹 **Sprint 2** | Desenvolvimento | Mão na massa — **Java 17 + Spring Boot 4.1.1**: 15/15 rotas, seed demo, suite 50/50 | ✅ 30/09/2026 (PR #1 aberto) |
-| 🔹 **Sprint 3** | Testes e revisão | Testes dos endpoints + revisão no Git/GitHub | ⬜ próxima |
+| 🔹 **Sprint 1** | Planejamento | Arquitetura + definição das rotas + quadro Kanban | ✅ aprovado (06/10) |
+| 🔹 **Sprint 2** | Desenvolvimento | Mão na massa — **Java 17 + Spring Boot 4.1.1**: endpoints, seed demo + suite de testes | ✅ merged no PR #1 → `v1.0.0` |
+| 🔹 **Sprint 3** | Testes e revisão | Testes dos endpoints + revisão no Git/GitHub | ✅ concluída (T-01…T-09, `v1.0.0`) |
 
 ## Estrutura desta pasta
 
@@ -23,7 +23,7 @@ ageblind-api\
 ├── SPRINT-2-DESENVOLVIMENTO.md    ← backlog de código (setup → módulos → integração)
 ├── SPRINT-3-TESTES-REVISAO.md     ← matriz de testes + checklist Git/GitHub
 ├── kanban.md                      ← quadro único com as 3 sprints
-└── api\                           ← ⭐ projeto Spring Boot (Sprint 2 concluída ✅)
+└── api\                           ← ⭐ projeto Spring Boot (Sprints 1–3 concluídas ✅)
     ├── README.md                  ← como rodar + 22 endpoints + exemplos curl
     ├── pom.xml                    ← Spring Boot 4.1.1 + SpringDoc
     └── src\main\java\com\reconecta\ageblind\
@@ -38,7 +38,7 @@ ageblind-api\
 
 ## Escopo da API
 
-**22 endpoints** (19 paths — de 30 do Reconecta: só os módulos Carreira + Escudo):
+**22 endpoints** (19 paths — de 37 do catálogo Reconecta: só os módulos Carreira + Escudo):
 
 - **Carreira (17):** perfis (consulta/edição), competências transferíveis, currículo estruturado (consultar/substituir/upload PDF-DOCX-TXT), vagas + recomendação, busca externa (Adzuna), trilhas, inscrições (criar/listar/cancelar), lembretes, mentorias
 - **Escudo (5):** `/curriculo/age-blind`, `/curriculo/auditoria`, `/vagas/auditoria-linguagem`, `/funil/metricas`, `/revisao/solicitacao`
@@ -50,13 +50,13 @@ ageblind-api\
 
 | Profile | Banco | Uso |
 |---|---|---|
-| *(nenhum — padrão)* | H2 em memória | Desenvolvimento local e testes (`mvnw verify` → 90/90) |
+| *(nenhum — padrão)* | H2 em memória | Desenvolvimento local e testes (`mvnw verify` → 93/93) |
 | `seed` | H2 em memória | Demo local com dados (`mvnw spring-boot:run -Dspring-boot.run.profiles=seed`) |
 | `prod` | **PostgreSQL** | Container/docker-compose e qualquer ambiente com banco real |
 | `prod,seed` | PostgreSQL | Demo em Postgres com dados (default do `docker-compose.yml`) |
 
 - **Variáveis do `prod`:** `DB_URL` · `DB_USER` · `DB_PASSWORD` (default `jdbc:postgresql://localhost:5432/segunda_carreira` / `reconecta` / `reconecta`). Console H2 desabilitado.
-- **Docker:** `docker compose up -d --build` na raiz do repo sobe Postgres 16 + API (ver README raiz). Sem Flyway por ora — `ddl-auto=update` cria o schema (migração versionada é evolução).
+- **Docker:** `docker compose up -d --build` na raiz do repo sobe Postgres 16 + API + front (ver README raiz). **Flyway ativo** (baseline `V1__init.sql`, 17 tabelas); o profile `prod` mantém `ddl-auto=update` como safety net (migrações futuras entram em `db/migration/`).
 
 ## Os 7 diferenciais (da `06-CONCORRENCIA.md`)
 

@@ -1,4 +1,4 @@
-# Reconecta — Front-end (Segunda Carreira + Escudo Anti-Etarismo)
+# Segunda Carreira — Front-end (Escudo Anti-Etarismo)
 
 > UI de demo para a API [`ageblind-api`](../ageblind-api) — "a API que contrata por
 > competência, não por ano de nascimento". Público: profissionais 40+ em
@@ -33,10 +33,10 @@ npm run dev
 
 ## Testes
 
-- **Componentes (Vitest):** `src/__tests__/` — `Feedback`, `CardVaga`, `api.js`
-  (problem+json/`ApiError`) e `CurriculoEstruturado` (5 seções, validações e
-  payload do `CurriculoRequest`). Roda em qualquer hora, sem backend.
-- **E2E (Playwright):** `e2e/smoke.spec.js` — home, `/vagas`, `/perfil` (com
+- **Componentes (Vitest):** `src/__tests__/` — **13/13** em `Feedback`, `CardVaga`,
+  `api.js` (problem+json/`ApiError`) e `CurriculoEstruturado` (5 seções,
+  validações e payload do `CurriculoRequest`). Roda em qualquer hora, sem backend.
+- **E2E (Playwright):** `e2e/smoke.spec.js` — **5/5**: home, `/vagas`, `/perfil` (com
   perfil ativo no localStorage), `/escudo` e `/rh/painel` (funil com credencial
   errada → 401 e `rh`/`rh-demo` → métricas). **Requer o stack de pé:**
   `docker compose up -d --build` (front em `:3000`).
