@@ -16,15 +16,20 @@ import com.reconecta.ageblind.carreira.repository.PerfilRepository;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
 /**
  * Seed demo de 10 perfis com competências (D-20), a partir de
  * data/perfis-seed.csv. Ativo apenas com o profile "seed".
+ * @Order explícito: roda antes dos demais runners (ex.: UsuarioSeedRunner
+ * vincula o candidato demo ao primeiro perfil).
  */
 @Component
 @Profile("seed")
+@Order(Ordered.HIGHEST_PRECEDENCE + 10)
 public class PerfilSeedRunner implements ApplicationRunner {
 
 	private final PerfilRepository perfilRepository;

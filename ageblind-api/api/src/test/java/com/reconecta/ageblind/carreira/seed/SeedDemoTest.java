@@ -1,8 +1,13 @@
 package com.reconecta.ageblind.carreira.seed;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.reconecta.ageblind.auth.domain.Papel;
+import com.reconecta.ageblind.auth.domain.Usuario;
+import com.reconecta.ageblind.auth.repository.UsuarioRepository;
 import com.reconecta.ageblind.carreira.repository.MentoriaRepository;
 import com.reconecta.ageblind.carreira.repository.PerfilRepository;
 import com.reconecta.ageblind.carreira.repository.TrilhaRepository;
@@ -12,6 +17,7 @@ import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +37,9 @@ class SeedDemoTest {
 
 	@Autowired
 	private MentoriaRepository mentoriaRepository;
+
+	@Autowired
+	private UsuarioRepository usuarioRepository;
 
 	@Test
 	@Transactional
@@ -55,5 +64,23 @@ class SeedDemoTest {
 		assertTrue(algumComCurriculo, "pelo menos um perfil com currículo estruturado (seed)");
 
 		assertFalse(perfilRepository.findAll().stream().anyMatch(p -> p.getNome() == null));
+	}
+
+	/** T013 — usuários demo: candidato vinculado ao 1º perfil, RH sem perfil. */
+	@Test
+	@Transactional
+	void seedCriaUsuariosDemoCandidatoERh() {
+		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+
+		Usuario candidato = usuarioRepository.findByEmail("candidato@demo.com").orElseThrow();
+		assertEquals(Papel.CANDIDATO, candidato.getPapel());
+		assertNotNull(candidato.getPerfil(), "candidato demo vinculado ao primeiro perfil do seed");
+		assertTrue(encoder.matches("demo123", candidato.getSenha()),
+				"senha demo do candidato casada via BCrypt");
+		assertFalse(candidato.getSenha().contains("demo123"), "senha nunca em texto puro");
+
+		Usuario rh = usuarioRepository.findByEmail("rh@demo.com").orElseThrow();
+		assertEquals(Papel.RH, rh.getPapel());
+		assertTrue(rh.getPerfil() == null, "RH não possui perfil de candidato");
 	}
 }
