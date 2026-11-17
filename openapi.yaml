@@ -20,6 +20,8 @@ tags:
     description: ODS 10+5 — currículo age-blind, auditorias e métricas de funil
   - name: Rotas
     description: ODS 11+10+5 — rotas acessíveis e seguras
+  - name: Auth
+    description: Cadastro e login JWT (ciclo 001-jwt-security-baseline)
   - name: Operação
     description: Saúde e documentação
 
@@ -679,6 +681,54 @@ paths:
         '202':
           description: Sincronização disparada
 
+  /api/v1/auth/cadastro:
+    post:
+      tags: [Auth]
+      summary: Cadastra usuário candidato (papel fixo CANDIDATO)
+      operationId: cadastro
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CadastroRequest' }
+      responses:
+        '201':
+          description: Usuário criado (senha nunca no corpo)
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/UsuarioResponse' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '409':
+          description: Email já cadastrado (problem+json)
+          content:
+            application/problem+json:
+              schema: { $ref: '#/components/schemas/ProblemDetail' }
+
+  /api/v1/auth/login:
+    post:
+      tags: [Auth]
+      summary: Autentica e devolve access token JWT HS256
+      operationId: login
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/LoginRequest' }
+      responses:
+        '200':
+          description: Access token (Bearer) + dados do usuário
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/LoginResponse' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401':
+          description: Credenciais inválidas (problem+json, mensagem única)
+          content:
+            application/problem+json:
+              schema: { $ref: '#/components/schemas/ProblemDetail' }
+
   /actuator/health:
     get:
       tags: [Operação]
@@ -689,6 +739,13 @@ paths:
           description: UP
 
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Access token JWT HS256 obtido em POST /api/v1/auth/login
+
   parameters:
     Id:
       name: id
@@ -731,6 +788,39 @@ components:
             properties:
               field: { type: string }
               message: { type: string }
+
+    CadastroRequest:
+      type: object
+      required: [email, senha]
+      properties:
+        email: { type: string, format: email, maxLength: 250 }
+        senha: { type: string, minLength: 8, maxLength: 72 }
+
+    LoginRequest:
+      type: object
+      required: [email, senha]
+      properties:
+        email: { type: string, format: email }
+        senha: { type: string }
+
+    UsuarioResponse:
+      type: object
+      properties:
+        id: { type: integer, format: int64 }
+        email: { type: string, format: email }
+
+    LoginResponse:
+      type: object
+      properties:
+        token: { type: string, description: JWT HS256 (sub, email, papel, exp) }
+        tokenType: { type: string, example: Bearer }
+        expiresIn: { type: integer, description: Segundos até expirar }
+        usuario:
+          type: object
+          properties:
+            id: { type: integer, format: int64 }
+            email: { type: string, format: email }
+            papel: { type: string, enum: [CANDIDATO, RH, EMPRESA] }
 
     CategoriaRelato:
       type: string

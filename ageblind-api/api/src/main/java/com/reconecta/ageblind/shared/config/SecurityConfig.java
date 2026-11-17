@@ -36,6 +36,7 @@ public class SecurityConfig {
 				.sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.headers(h -> h.frameOptions(f -> f.sameOrigin()))
 				.authorizeHttpRequests(auth -> auth
+						.requestMatchers("/api/v1/auth/**").permitAll()
 						.requestMatchers(HttpMethod.POST, "/api/v1/vagas/auditoria-linguagem").hasRole("RH")
 						.requestMatchers("/api/v1/funil/**").hasRole("RH")
 						.requestMatchers("/actuator/health", "/h2-console/**", "/swagger-ui/**",

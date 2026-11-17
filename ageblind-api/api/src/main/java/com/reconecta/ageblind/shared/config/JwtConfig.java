@@ -31,7 +31,7 @@ public class JwtConfig {
 
 	/** Defaults conhecidos que NUNCA podem ir para prod. */
 	private static final List<String> SECRETS_PROIBIDOS = List.of(
-			"changeme", "secret", "password", "ageblind-demo-secret-key-001");
+			"changeme", "secret", "password", "ageblind-demo-secret-key-2026-001");
 
 	private final String secret;
 	private final long expirationMs;
@@ -48,18 +48,15 @@ public class JwtConfig {
 	}
 
 	private void validarSegredo() {
+		// HS256 exige ≥256 bits em QUALQUER profile (Nimbus valida no encode —
+		// falhar no boot é melhor que falhar no primeiro login).
+		if (secret == null || secret.length() < 32) {
+			throw new IllegalStateException(
+					"app.jwt.secret deve ter no mínimo 32 caracteres (HS256 exige 256 bits).");
+		}
 		boolean emProd = List.of(environment.getActiveProfiles()).contains("prod");
 		if (!emProd) {
 			return;
-		}
-		if (secret == null || secret.isBlank()) {
-			throw new IllegalStateException(
-					"JWT_SECRET obrigatorio no profile prod: defina a env JWT_SECRET (minimo 32 caracteres).");
-		}
-		if (secret.length() < 32) {
-			throw new IllegalStateException(
-					"JWT_SECRET muito fraco no profile prod: mínimo de 32 caracteres (recebido: "
-							+ secret.length() + ").");
 		}
 		if (SECRETS_PROIBIDOS.contains(secret)) {
 			throw new IllegalStateException(

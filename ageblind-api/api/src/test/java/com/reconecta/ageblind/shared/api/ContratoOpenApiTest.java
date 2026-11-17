@@ -76,9 +76,15 @@ class ContratoOpenApiTest {
 				.readTree(result.getResponse().getContentAsString())
 				.path("paths");
 		Set<String> runtimePaths = new TreeSet<>();
+		Set<String> runtimeAgeBlind = new TreeSet<>();
 		paths.fieldNames().forEachRemaining(nome -> {
-			if (nome.startsWith("/api/v1")) {
-				runtimePaths.add(nome);
+			if (!nome.startsWith("/api/v1")) {
+				return;
+			}
+			runtimePaths.add(nome);
+			// escopo AgeBlind = paths sem a tag Auth (ciclo 001: /auth/** fica de fora)
+			if (!temTagAuth(paths.path(nome))) {
+				runtimeAgeBlind.add(nome);
 			}
 		});
 
@@ -88,8 +94,25 @@ class ContratoOpenApiTest {
 		Assertions.assertTrue(specPaths.containsAll(runtimePaths),
 				"toda rota em runtime precisa existir no openapi.yaml (sem rota órfã): "
 						+ runtimePaths.stream().filter(r -> !specPaths.contains(r)).toList());
-		Assertions.assertEquals(escopoAgeBlind, runtimePaths,
-				"paths das tags Carreira/Escudo devem bater com a spec em runtime");
+		Assertions.assertEquals(escopoAgeBlind, runtimeAgeBlind,
+				"paths das tags Carreira/Escudo devem bater com a spec em runtime "
+						+ "(tags Auth ficam fora do escopo AgeBlind)");
+	}
+
+	/** true se alguma operação do path declara a tag Auth. */
+	private boolean temTagAuth(JsonNode pathNode) {
+		var metodos = pathNode.fieldNames();
+		while (metodos.hasNext()) {
+			JsonNode operacao = pathNode.get(metodos.next());
+			if (operacao != null && operacao.has("tags")) {
+				for (JsonNode tag : operacao.get("tags")) {
+					if ("Auth".equals(tag.asText())) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
 	}
 
 	private Path localizarSpec() throws IOException {

@@ -70,6 +70,23 @@ public class GlobalExceptionHandler {
 		return respond(HttpStatus.NOT_FOUND, pd);
 	}
 
+	@ExceptionHandler(ConflitoException.class)
+	public ResponseEntity<ProblemDetail> handleConflito(ConflitoException ex) {
+		ProblemDetail pd = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+		pd.setTitle("Conflito");
+		return respond(HttpStatus.CONFLICT, pd);
+	}
+
+	@ExceptionHandler(NaoAutenticadoException.class)
+	public ResponseEntity<ProblemDetail> handleNaoAutenticado(NaoAutenticadoException ex) {
+		ProblemDetail pd = ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, ex.getMessage());
+		pd.setTitle("Não autenticado");
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+				.contentType(MediaType.parseMediaType("application/problem+json"))
+				.header("WWW-Authenticate", "Bearer realm=\"Segunda Carreira\"")
+				.body(pd);
+	}
+
 	@ExceptionHandler(NoResourceFoundException.class)
 	public ResponseEntity<ProblemDetail> handleNotFound(NoResourceFoundException ex) {
 		return problem(HttpStatus.NOT_FOUND, "Recurso não encontrado", ex.getMessage());
