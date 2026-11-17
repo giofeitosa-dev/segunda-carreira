@@ -1,50 +1,63 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+# AgeBlind / Segunda Carreira Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. Security-by-default (NON-NEGOTIABLE)
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+Nenhum endpoint nasce `permitAll` sem justificativa registrada na spec. Regras obrigatórias:
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+- Todo recurso que expõe dado pessoal (perfil, currículo, inscrição, revisão) exige autenticação e checagem de posse (o `perfilId` do token deve ser o dono do recurso).
+- Credenciais nunca em default de produção: `JWT_SECRET`, `DB_PASSWORD` e similares devem falhar (fail-fast) se ausentes no profile `prod`.
+- Princípios de mínimo-privilégio e falha-segura: papel mínimo necessário por rota; erro de auth responde problem+json (RFC 7807) sem vazar detalhes internos.
+- Endpoints de leitura pública (vagas, trilhas, mentorias, busca externa) são permitidos por decisão explícita de produto — documentar sempre na matriz de acesso da spec.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### II. Privacidade & LGPD primeiro
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+- Dado pessoal minimizado: não persistir texto completo de currículo no módulo Escudo (convenção existente — mantida).
+- Toda decisão automatizada que afeta o titular expõe `caminhoParaRevisao` (LGPD art. 20) — verificado por teste (`LgpdRevisaoCaminhoTest`).
+- Direitos do titular (LGPD art. 18) devem ser implementáveis: portabilidade (`GET /meus-dados`) e exclusão/anonimização (`DELETE /minha-conta`).
+- Seeds e dados de demo nunca contêm dados pessoais reais.
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+### III. API-first — contrato antes do código
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+- `openapi.yaml` é a fonte de verdade dos contratos; mudança de contrato passa por spec + atualização do YAML + `ContratoOpenApiTest` verde.
+- Tags do springdoc e escopo do contrato AgeBlind (contagem de paths) devem permanecer sincronizados — mudanças na superfície de API atualizam ambos no mesmo commit.
+- Documentação de uso (READMEs com curl) é atualizada no mesmo PR da mudança de contrato.
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+### IV. Test-first
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+- `./mvnw clean verify` verde é pré-condição de merge (suite atual: 93+ testes, H2 em memória).
+- Regressão anti-viés (Escudo) e testes de contrato nunca são removidos para "passar no build" — só reescritos com justificativa na spec.
+- Front: `npm test` (Vitest) e `npm run e2e` (Playwright, stack docker) verdes quando `ageblind-front/` é tocado.
+- Commit indivisível = suite verde: quebras de contrato (ex.: troca Basic→JWT) e seus testes no mesmo commit.
+
+### V. Simplicity / YAGNI
+
+- Monolito modular Spring Boot mantido (`carreira`, `escudo`, `shared`, `auth`); separação em serviços novos só com justificativa na tabela *Complexity Tracking* do plan.md.
+- Começar simples: sem refresh token, sem OAuth, sem fila, sem cache — a menos que uma spec explicitamente exija.
+- Dependências novas precisam de justificativa (peso, manutenção, segurança).
+
+## Restrições de Stack
+
+- Java 17 · Spring Boot 4.1.1 · Maven (wrapper) · Spring Data JPA · SpringDoc OpenAPI.
+- Banco: H2 em memória (dev/teste) · PostgreSQL 16 (prod, docker-compose).
+- Migrações: Flyway obrigatório para qualquer mudança de schema (`db/migration/V<n>__*.sql`). `ddl-auto=update` não é aceito como mecanismo principal em feature nova — apenas como safety legado do profile prod até migração completa.
+- Idioma de código, docs, mensagens de erro e commits: PT-BR (nomes de pacote/classe em inglês já estabelecidos — manter o padrão existente por arquivo).
+- Segredos sempre via env (`${VAR:default-somente-demo}`); defaults fracos só em profile demo/teste.
+
+## Development Workflow & Quality Gates
+
+- Ciclo Spec-Driven por feature: `create-new-feature.ps1` → `/speckit.specify` → **gate: usuário aprova spec** → `/speckit.plan` → **gate: usuário aprova plan** → `/speckit.tasks` → `/speckit.implement`.
+- Trabalho incremental e contínuo: 1 commit = 1 tarefa = suite verde; Commits Conventional (`feat(api):`, `test(front):`, `docs(spec):`, `ci:`).
+- 1 branch por ciclo SDD + 1 PR por ciclo; merge só com gates do item anterior + CI verde (`.github/workflows/ci.yml`).
+- Checklist de PR (`ageblind-api/pr-checklist.md`) revisado em todo PR; itens de segurança/LGPD entram no checklist a partir do ciclo 003.
+- Dívida técnica conhecida é anotada (como `ddl-auto=update`) e nunca silenciosamente expandida.
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+- Esta Constitution supersede qualquer prática conflitante em specs, plans ou código.
+- Emendas: requerem PR dedicado, atualização de versão (`MAJOR` quebra princípio · `MINOR` adiciona · `PATCH` esclarece), data de ratificação e aprovação do usuário.
+- Todo `plan.md` passa pelo *Constitution Check* antes do Phase 0 research — violações devem ser justificadas na tabela *Complexity Tracking* ou o plano é refeito.
+- Checklists de conformidade (`/speckit.checklist`) são gerados por feature de risco (segurança, LGPD) e revisados pelo usuário antes do merge.
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+**Version**: 1.0.0 | **Ratified**: 2026-11-17 | **Last Amended**: 2026-11-17
