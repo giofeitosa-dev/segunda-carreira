@@ -1,4 +1,5 @@
-import { NavLink, Outlet } from 'react-router-dom'
+import { NavLink, Outlet, useNavigate } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 
 const links = [
   { to: '/', label: 'Início', end: true },
@@ -10,6 +11,14 @@ const links = [
 ]
 
 export default function Layout() {
+  const { isAuthenticated, logout } = useAuth()
+  const navigate = useNavigate()
+
+  const handleSair = () => {
+    logout()
+    navigate('/', { replace: true })
+  }
+
   return (
     <div className="min-h-screen flex flex-col">
       <header className="bg-primaria text-white sticky top-0 z-10 shadow">
@@ -34,6 +43,14 @@ export default function Layout() {
                 {link.label}
               </NavLink>
             ))}
+            {isAuthenticated && (
+              <button
+                onClick={handleSair}
+                className="py-1 border-b-2 border-transparent text-slate-300 hover:text-white transition-colors text-sm"
+              >
+                Sair
+              </button>
+            )}
           </nav>
         </div>
       </header>

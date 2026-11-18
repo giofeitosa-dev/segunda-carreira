@@ -1,5 +1,49 @@
-import { afterEach, expect, test, vi } from 'vitest'
+import { afterEach, beforeEach, expect, test, vi } from 'vitest'
 import { api, ApiError } from '../services/api'
+
+const CHAVE_TOKEN = 'ageblind.token'
+
+let storage = {}
+
+function mockLocalStorage() {
+  return {
+    getItem: (key) => (key in storage ? String(storage[key]) : null),
+    setItem: (key, value) => {
+      storage[key] = String(value)
+    },
+    removeItem: (key) => {
+      delete storage[key]
+    },
+    clear: () => {
+      Object.keys(storage).forEach((k) => delete storage[k])
+    },
+  }
+}
+
+let replaceCalls = []
+
+function mockLocation() {
+  replaceCalls = []
+  Object.defineProperty(window, 'location', {
+    configurable: true,
+    writable: true,
+    value: {
+      replace: (url) => {
+        replaceCalls.push(url)
+      },
+      href: 'http://localhost/',
+      assign: () => {},
+      reload: () => {},
+    },
+  })
+}
+
+beforeEach(() => {
+  storage = {}
+  mockLocation()
+  vi.spyOn(globalThis, 'localStorage', 'get').mockReturnValue(mockLocalStorage())
+  vi.restoreAllMocks()
+})
 
 afterEach(() => {
   vi.restoreAllMocks()
@@ -68,3 +112,52 @@ test('erro sem problem+json vira ApiError com status e mensagem generica', async
   expect(erro).toBeInstanceOf(ApiError)
   expect(erro.status).toBe(502)
 })
+
+test('injeta Authorization Bearer quando ha token no localStorage', async () => {
+  globalThis.localStorage.setItem(CHAVE_TOKEN, 'jwt-teste-999')
+  const fetchMock = vi
+    .spyOn(globalThis, 'fetch')
+    .mockResolvedValue(resposta({ status: 200, ok: true, contentType: 'application/json', body: { ok: true } }))
+
+  await api.get('/perfis/1')
+
+  const [, init] = fetchMock.mock.calls[0]
+  expect(init.headers['Authorization']).toBe('Bearer jwt-teste-999')
+})
+
+test('nao injeta Authorization quando nao ha token', async () => {
+  globalThis.localStorage.removeItem(CHAVE_TOKEN)
+  const fetchMock = vi
+    .spyOn(globalThis, 'fetch')
+    .mockResolvedValue(resposta({ status: 200, ok: true, contentType: 'application/json', body: { ok: true } }))
+
+  await api.get('/perfis/1')
+
+  const [, init] = fetchMock.mock.calls[0]
+  expect(init.headers['Authorization']).toBeUndefined()
+})
+
+test('401 limpa token e dispara handler customizado de nao-autorizado', async () => {
+  globalThis.localStorage.setItem(CHAVE_TOKEN, 'jwt-expirado')
+  const handlerMock = vi.fn()
+  api.setOnUnauthorized(handlerMock)
+
+  const fetchMock = vi
+    .spyOn(globalThis, 'fetch')
+    .mockResolvedValue(
+      resposta({
+        status: 401,
+        ok: false,
+        contentType: 'application/problem+json',
+        body: { title: 'Nao autenticado', status: 401, detail: 'token expirado' },
+      }),
+    )
+
+  const erro = await api.get('/perfis/1').catch((e) => e)
+
+  expect(erro).toBeInstanceOf(ApiError)
+  expect(erro.status).toBe(401)
+  expect(handlerMock).toHaveBeenCalledTimes(1)
+})
+
+
