@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.crypto.spec.SecretKeySpec;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -37,13 +36,11 @@ public class JwtConfig {
 	private final long expirationMs;
 	private final Environment environment;
 
-	public JwtConfig(
-			@Value("${app.jwt.secret}") String secret,
-			@Value("${app.jwt.expiration}") long expirationMs,
-			Environment environment) {
-		this.secret = secret;
-		this.expirationMs = expirationMs;
+	public JwtConfig(Environment environment) {
 		this.environment = environment;
+		this.secret = environment.getProperty("app.jwt.secret", "ageblind-demo-secret-key-2026-001");
+		this.expirationMs = Long.parseLong(
+				environment.getProperty("app.jwt.expiration", "1800000"));
 		validarSegredo();
 	}
 

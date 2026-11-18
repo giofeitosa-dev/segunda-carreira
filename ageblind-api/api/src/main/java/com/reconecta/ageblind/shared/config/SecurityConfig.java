@@ -17,6 +17,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
  * Matriz de acesso JWT (spec US2): leitura pública de vagas/trilhas/mentorias
@@ -24,6 +26,8 @@ import org.springframework.security.web.SecurityFilterChain;
  * resto exige token — posse de dados pessoais é checada por PosseChecker.
  * HTTP Basic e usuário in-memory removidos (FR-007); erros 401/403 em
  * problem+json com WWW-Authenticate Bearer (FR-008).
+ * Rate limit em /api/v1/auth/** via RateLimitFilter (US4.5) e security
+ * headers padrão (US4.3).
  */
 @Configuration
 @EnableWebSecurity
@@ -32,11 +36,18 @@ public class SecurityConfig {
 	@Bean
 	SecurityFilterChain securityFilterChain(
 			HttpSecurity http,
-			JwtAuthenticationConverter jwtAuthenticationConverter) throws Exception {
+			JwtAuthenticationConverter jwtAuthenticationConverter,
+			RateLimitFilter rateLimitFilter,
+			CorsConfigurationSource corsConfigurationSource) throws Exception {
 		http
 				.csrf(AbstractHttpConfigurer::disable)
 				.sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-				.headers(h -> h.frameOptions(f -> f.sameOrigin()))
+				.cors(c -> c.configurationSource(corsConfigurationSource))
+				.headers(h -> h
+						.frameOptions(f -> f.deny())
+						.contentTypeOptions(c -> c.disable())
+						.httpStrictTransportSecurity(s -> s.includeSubDomains(true).maxAgeInSeconds(31536000)))
+				.addFilterBefore(rateLimitFilter, UsernamePasswordAuthenticationFilter.class)
 				.authorizeHttpRequests(auth -> auth
 						.requestMatchers("/api/v1/auth/**").permitAll()
 						.requestMatchers(HttpMethod.GET, "/api/v1/vagas/**").permitAll()
