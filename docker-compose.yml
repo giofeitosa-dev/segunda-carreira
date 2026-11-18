@@ -25,8 +25,7 @@ services:
       DB_PASSWORD: ${POSTGRES_PASSWORD:-reconecta}
       ADZUNA_APP_ID: ${ADZUNA_APP_ID:-}
       ADZUNA_APP_KEY: ${ADZUNA_APP_KEY:-}
-      RH_USER: ${RH_USER:-rh}
-      RH_PASSWORD: ${RH_PASSWORD:-rh-demo}
+      JWT_SECRET: ${JWT_SECRET:-}
     ports:
       - "${API_PORT:-8080}:8080"
     depends_on:

@@ -10,6 +10,7 @@ import com.reconecta.ageblind.carreira.dto.TransferiveisResponse;
 import com.reconecta.ageblind.carreira.service.CompetenciasTransferiveisService;
 import com.reconecta.ageblind.carreira.service.CurriculoService;
 import com.reconecta.ageblind.carreira.service.PerfilService;
+import com.reconecta.ageblind.shared.security.PosseChecker;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -38,12 +39,14 @@ public class PerfilController {
 	private final PerfilService perfilService;
 	private final CompetenciasTransferiveisService transferiveisService;
 	private final CurriculoService curriculoService;
+	private final PosseChecker posseChecker;
 
 	public PerfilController(PerfilService perfilService, CompetenciasTransferiveisService transferiveisService,
-			CurriculoService curriculoService) {
+			CurriculoService curriculoService, PosseChecker posseChecker) {
 		this.perfilService = perfilService;
 		this.transferiveisService = transferiveisService;
 		this.curriculoService = curriculoService;
+		this.posseChecker = posseChecker;
 	}
 
 	@PostMapping
@@ -69,18 +72,21 @@ public class PerfilController {
 	@PostMapping("/{id}/competencias-transferiveis")
 	@Operation(summary = "Mapeia experiência antiga para competências da área alvo (R12)")
 	public TransferiveisResponse competenciasTransferiveis(@PathVariable Long id) {
+		posseChecker.exigirDonoOuRh(id);
 		return transferiveisService.mapear(id);
 	}
 
 	@GetMapping("/{id}/curriculo")
 	@Operation(summary = "Consulta o currículo estruturado do perfil (experiências, formações, projetos)")
 	public CurriculoResponse curriculo(@PathVariable Long id) {
+		posseChecker.exigirDonoOuRh(id);
 		return curriculoService.obter(id);
 	}
 
 	@PutMapping("/{id}/curriculo")
 	@Operation(summary = "Substitui o currículo estruturado do perfil (sem data de nascimento)")
 	public CurriculoResponse substituirCurriculo(@PathVariable Long id, @Valid @RequestBody CurriculoRequest req) {
+		posseChecker.exigirDonoOuRh(id);
 		return curriculoService.substituir(id, req);
 	}
 
@@ -88,6 +94,7 @@ public class PerfilController {
 	@Operation(summary = "Substitui o currículo por upload de PDF, DOCX ou TXT (parse automático, descarta idade)")
 	public CurriculoResponse substituirCurriculoArquivo(@PathVariable Long id,
 			@RequestParam("arquivo") MultipartFile arquivo) {
+		posseChecker.exigirDonoOuRh(id);
 		return curriculoService.substituirPorArquivo(id, arquivo);
 	}
 }

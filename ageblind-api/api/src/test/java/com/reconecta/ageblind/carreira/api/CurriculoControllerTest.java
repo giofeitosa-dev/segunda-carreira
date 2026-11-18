@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.reconecta.ageblind.shared.security.JwtTestSupport;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.RequestPostProcessor;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -23,6 +25,9 @@ class CurriculoControllerTest {
 
 	@Autowired
 	private MockMvc mockMvc;
+
+	@Autowired
+	private JwtTestSupport jwt;
 
 	private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -52,13 +57,14 @@ class CurriculoControllerTest {
 				""";
 	}
 
-	private Long criarPerfil() throws Exception {
+	private Long criarPerfil(RequestPostProcessor candidato) throws Exception {
 		MvcResult criado = mockMvc.perform(post("/api/v1/perfis")
 						.contentType(MediaType.APPLICATION_JSON)
 						.content("""
 								{"nome": "Ana Curriculo", "email": "ana.curriculo@recode.demo",
 								 "areaAtual": "Producao", "areaAlvo": "Logistica"}
-								"""))
+								""")
+						.with(candidato))
 				.andExpect(status().isCreated())
 				.andReturn();
 		return objectMapper.readTree(criado.getResponse().getContentAsString()).get("id").asLong();
@@ -66,11 +72,13 @@ class CurriculoControllerTest {
 
 	@Test
 	void subistituiEConsultaCurriculoEstruturado() throws Exception {
-		Long id = criarPerfil();
+		RequestPostProcessor candidato = jwt.jwtCandidato(null);
+		Long id = criarPerfil(candidato);
 
 		mockMvc.perform(put("/api/v1/perfis/" + id + "/curriculo")
 						.contentType(MediaType.APPLICATION_JSON)
-						.content(jsonCurriculo()))
+						.content(jsonCurriculo())
+						.with(candidato))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.experiencias", hasSize(2)))
 				.andExpect(jsonPath("$.formacoes", hasSize(1)))
@@ -90,7 +98,7 @@ class CurriculoControllerTest {
 				.andExpect(jsonPath("$.dataNascimento").doesNotExist())
 				.andExpect(jsonPath("$.idade").doesNotExist());
 
-		mockMvc.perform(get("/api/v1/perfis/" + id + "/curriculo"))
+		mockMvc.perform(get("/api/v1/perfis/" + id + "/curriculo").with(candidato))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.experiencias", hasSize(2)))
 				.andExpect(jsonPath("$.idiomas", hasSize(2)))
@@ -100,10 +108,12 @@ class CurriculoControllerTest {
 
 	@Test
 	void segundoPutSubstituiAEstruturaInteira() throws Exception {
-		Long id = criarPerfil();
+		RequestPostProcessor candidato = jwt.jwtCandidato(null);
+		Long id = criarPerfil(candidato);
 		mockMvc.perform(put("/api/v1/perfis/" + id + "/curriculo")
 						.contentType(MediaType.APPLICATION_JSON)
-						.content(jsonCurriculo()))
+						.content(jsonCurriculo())
+						.with(candidato))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.experiencias", hasSize(2)));
 
@@ -112,7 +122,8 @@ class CurriculoControllerTest {
 						.content("""
 								{"experiencias": [{"cargo": "Analista", "empresa": "Nova", "anoInicio": 2020}],
 								 "formacoes": [], "projetos": [], "idiomas": [], "certificacoes": []}
-								"""))
+								""")
+						.with(candidato))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.experiencias", hasSize(1)))
 				.andExpect(jsonPath("$.formacoes", hasSize(0)))
@@ -123,19 +134,21 @@ class CurriculoControllerTest {
 
 	@Test
 	void curriculoDePerfilInexistenteDevolve404() throws Exception {
-		mockMvc.perform(get("/api/v1/perfis/99999/curriculo"))
+		mockMvc.perform(get("/api/v1/perfis/99999/curriculo").with(jwt.jwtRh()))
 				.andExpect(status().isNotFound());
 	}
 
 	@Test
 	void itemInvalidoDevolve400ComFieldErrors() throws Exception {
-		Long id = criarPerfil();
+		RequestPostProcessor candidato = jwt.jwtCandidato(null);
+		Long id = criarPerfil(candidato);
 		mockMvc.perform(put("/api/v1/perfis/" + id + "/curriculo")
 						.contentType(MediaType.APPLICATION_JSON)
 						.content("""
 								{"experiencias": [{"cargo": "", "empresa": "", "anoInicio": 2020}],
 								 "formacoes": [], "projetos": []}
-								"""))
+								""")
+						.with(candidato))
 				.andExpect(status().isBadRequest())
 				.andExpect(jsonPath("$.fieldErrors").isArray())
 				.andExpect(jsonPath("$.fieldErrors", hasSize(org.hamcrest.Matchers.greaterThanOrEqualTo(2))));
@@ -143,13 +156,15 @@ class CurriculoControllerTest {
 
 	@Test
 	void anoInicioAnteriorA1900Devolve400() throws Exception {
-		Long id = criarPerfil();
+		RequestPostProcessor candidato = jwt.jwtCandidato(null);
+		Long id = criarPerfil(candidato);
 		mockMvc.perform(put("/api/v1/perfis/" + id + "/curriculo")
 						.contentType(MediaType.APPLICATION_JSON)
 						.content("""
 								{"experiencias": [{"cargo": "Auxiliar", "empresa": "Antiga", "anoInicio": 1890}],
 								 "formacoes": [], "projetos": []}
-								"""))
+								""")
+						.with(candidato))
 				.andExpect(status().isBadRequest());
 	}
 }

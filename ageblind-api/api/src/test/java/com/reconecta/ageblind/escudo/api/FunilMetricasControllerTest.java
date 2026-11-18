@@ -9,18 +9,18 @@ import com.reconecta.ageblind.carreira.repository.VagaRepository;
 import com.reconecta.ageblind.escudo.domain.MetricaFunil;
 import com.reconecta.ageblind.escudo.repository.MetricaFunilRepository;
 import com.reconecta.ageblind.shared.enums.FaixaEtaria;
+import com.reconecta.ageblind.shared.security.JwtTestSupport;
 
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.RequestPostProcessor;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@WithMockUser(roles = "RH")
 class FunilMetricasControllerTest {
 
 	@Autowired
@@ -31,6 +31,9 @@ class FunilMetricasControllerTest {
 
 	@Autowired
 	private MetricaFunilRepository metricaRepository;
+
+	@Autowired
+	private JwtTestSupport jwt;
 
 	private long criarVaga() {
 		Vaga vaga = new Vaga();
@@ -59,9 +62,12 @@ class FunilMetricasControllerTest {
 		linha(vagaId, "Triagem", FaixaEtaria.DE_40_A_49, 100, 31);
 		linha(vagaId, "Triagem", FaixaEtaria.MAIS_50, 100, 18);
 
+		RequestPostProcessor rh = jwt.jwtRh();
+
 		mockMvc.perform(get("/api/v1/funil/metricas")
 						.param("vagaId", String.valueOf(vagaId))
-						.param("periodo", "2026-09"))
+						.param("periodo", "2026-09")
+						.with(rh))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.vagaId").value(vagaId))
 				.andExpect(jsonPath("$.etapas[0].nome").value("Triagem"))
@@ -81,8 +87,11 @@ class FunilMetricasControllerTest {
 		linha(vagaId, "Entrevista", FaixaEtaria.DE_40_A_49, 50, 9);
 		linha(vagaId, "Entrevista", FaixaEtaria.MAIS_50, 50, 8);
 
+		RequestPostProcessor rh = jwt.jwtRh();
+
 		mockMvc.perform(get("/api/v1/funil/metricas")
-						.param("vagaId", String.valueOf(vagaId)))
+						.param("vagaId", String.valueOf(vagaId))
+						.with(rh))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.etapas[0].razaoAdverseImpact").value(0.8))
 				.andExpect(jsonPath("$.etapas[0].alerta").value(false))
@@ -92,7 +101,8 @@ class FunilMetricasControllerTest {
 
 	@Test
 	void metricasDeVagaInexistenteDevolve404() throws Exception {
-		mockMvc.perform(get("/api/v1/funil/metricas").param("vagaId", "999999"))
+		mockMvc.perform(get("/api/v1/funil/metricas").param("vagaId", "999999")
+						.with(jwt.jwtRh()))
 				.andExpect(status().isNotFound());
 	}
 
@@ -107,9 +117,12 @@ class FunilMetricasControllerTest {
 		linha(vagaId, "Contratacao", FaixaEtaria.DE_40_A_49, 100, 30);
 		linha(vagaId, "Contratacao", FaixaEtaria.MAIS_50, 100, 15);
 
+		RequestPostProcessor rh = jwt.jwtRh();
+
 		mockMvc.perform(get("/api/v1/funil/metricas")
 						.param("vagaId", String.valueOf(vagaId))
-						.param("periodo", "2026-09"))
+						.param("periodo", "2026-09")
+						.with(rh))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.etapas[0].aprovacao.ATE_39").value(0.4))
 				.andExpect(jsonPath("$.etapas[0].aprovacao['50_MAIS']").value(0.15))
@@ -121,7 +134,8 @@ class FunilMetricasControllerTest {
 
 	@Test
 	void metricasSemVagaIdDevolve400() throws Exception {
-		mockMvc.perform(get("/api/v1/funil/metricas"))
+		mockMvc.perform(get("/api/v1/funil/metricas")
+						.with(jwt.jwtRh()))
 				.andExpect(status().isBadRequest());
 	}
 }

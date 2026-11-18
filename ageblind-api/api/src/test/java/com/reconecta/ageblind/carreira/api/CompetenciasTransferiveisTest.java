@@ -13,6 +13,7 @@ import com.reconecta.ageblind.carreira.domain.Trilha;
 import com.reconecta.ageblind.carreira.repository.CompetenciaRepository;
 import com.reconecta.ageblind.carreira.repository.PerfilRepository;
 import com.reconecta.ageblind.carreira.repository.TrilhaRepository;
+import com.reconecta.ageblind.shared.security.JwtTestSupport;
 
 import org.junit.jupiter.api.Test;
 
@@ -20,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.RequestPostProcessor;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -36,6 +38,9 @@ class CompetenciasTransferiveisTest {
 
 	@Autowired
 	private TrilhaRepository trilhaRepository;
+
+	@Autowired
+	private JwtTestSupport jwt;
 
 	/** Cenário: profissional de Produção quer migrar para Logística. */
 	private long criarCenario() {
@@ -65,8 +70,9 @@ class CompetenciasTransferiveisTest {
 	@Test
 	void mapeiaExperienciaAntigaParaAreaAlvo() throws Exception {
 		long perfilId = criarCenario();
+		RequestPostProcessor dono = jwt.jwtCandidato(perfilId);
 
-		mockMvc.perform(post("/api/v1/perfis/{id}/competencias-transferiveis", perfilId))
+		mockMvc.perform(post("/api/v1/perfis/{id}/competencias-transferiveis", perfilId).with(dono))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.areaAlvo").value("Logistica"))
 				.andExpect(jsonPath("$.competenciasTransferiveis[0].de").value("PCP"))
@@ -79,7 +85,8 @@ class CompetenciasTransferiveisTest {
 
 	@Test
 	void perfilInexistenteDevolve404() throws Exception {
-		mockMvc.perform(post("/api/v1/perfis/{id}/competencias-transferiveis", 999999L))
+		mockMvc.perform(post("/api/v1/perfis/{id}/competencias-transferiveis", 999999L)
+						.with(jwt.jwtRh()))
 				.andExpect(status().isNotFound());
 	}
 }
