@@ -2,6 +2,22 @@ import { expect, test } from '@playwright/test'
 
 // Smoke E2E contra o stack docker (compose: db + api + front em :3000).
 // ADZUNA sem chave = 503 esperado — nenhum teste depende da busca externa.
+// Autenticação: login obtido via API (request do Playwright) e injetado em
+// localStorage (chave `ageblind.token`, definida em AuthContext) — zero
+// httpCredentials (R11 / US5.4).
+
+const API_BASE = 'http://localhost:8080'
+const TOKEN_KEY = 'ageblind.token'
+
+async function loginViaApi({ email, senha }) {
+  const requestContext = await test.request()
+  const res = await requestContext.post(`${API_BASE}/api/v1/auth/login`, {
+    data: { email, senha },
+  })
+  expect(res.status()).toBe(200)
+  const body = await res.json()
+  return body.token
+}
 
 function capturarErros(page) {
   const erros = []
@@ -52,37 +68,55 @@ async function abrirFunil(page) {
   await select.selectOption({ index: 1 })
 }
 
-// Nota: sem nenhuma credencial o Chromium segura o fetch no diálogo HTTP Basic
-// (pendurado) — por isso o "negativo" usa usuário/senha errados, como no
-// RhProtegidoTest do backend (rh/errada → 401 problem+json "Não autenticado").
-test('painel RH: funil com credenciais erradas recebe 401; rh/rh-demo vê as métricas', async ({ browser }) => {
-  const semAuth = await browser.newContext({
-    httpCredentials: { username: 'rh', password: 'errada' },
-  })
-  const pageSem = await semAuth.newPage()
-  await pageSem.goto('/rh/painel')
-  await expect(pageSem.getByRole('heading', { name: 'Painel RH' })).toBeVisible({
+// Cenário: painel RH com token inválido → 401 (sem httpCredentials)
+test('painel RH: token invalido recebe 401 e nao mostra funil', async ({ page }) => {
+  const erros = capturarErros(page)
+  await page.addInitScript((key) => {
+    localStorage.setItem(key, 'token-invalido-123')
+  }, TOKEN_KEY)
+  await page.goto('/rh/painel')
+  await expect(page.getByRole('heading', { name: 'Painel RH' })).toBeVisible({
     timeout: 20_000,
   })
-  await abrirFunil(pageSem)
-  await expect(pageSem.getByRole('alert')).toContainText(
+  await abrirFunil(page)
+  await expect(page.getByRole('alert')).toContainText(
     /autenticado|credenciais|401|Erro na operação/i,
     { timeout: 15_000 },
   )
-  await semAuth.close()
+  expect(erros.some((e) => e.includes('401'))).toBe(true)
+})
 
-  const comAuth = await browser.newContext({
-    httpCredentials: { username: 'rh', password: 'rh-demo' },
+// Cenário: painel RH com token valido (obtido via API) mostra métricas
+test('painel RH: token valido obtido via API exibe funil de contratação', async ({ page }) => {
+  const token = await loginViaApi({
+    email: 'rh@demo.com',
+    senha: process.env.RH_PASSWORD || 'rh-demo',
   })
-  const pageCom = await comAuth.newPage()
-  await pageCom.goto('/rh/painel')
-  await expect(pageCom.getByRole('heading', { name: 'Painel RH' })).toBeVisible({
+  const erros = capturarErros(page)
+  await page.addInitScript((key, valor) => {
+    localStorage.setItem(key, valor)
+  }, TOKEN_KEY, token)
+  await page.goto('/rh/painel')
+  await expect(page.getByRole('heading', { name: 'Painel RH' })).toBeVisible({
     timeout: 20_000,
   })
-  await abrirFunil(pageCom)
-  await expect(pageCom.getByRole('columnheader', { name: 'Etapa' })).toBeVisible({
+  await abrirFunil(page)
+  await expect(page.getByRole('columnheader', { name: 'Etapa' })).toBeVisible({
     timeout: 20_000,
   })
-  await expect(pageCom.getByRole('alert')).toHaveCount(0)
-  await comAuth.close()
+  await expect(page.getByRole('alert')).toHaveCount(0)
+  expect(erros).toEqual([])
+})
+
+// Cenário: login pela UI preenche formulário e acessa o painel (US3.1 ponta a ponta)
+test('login pela UI: preenche formulario e acessa o painel RH', async ({ page }) => {
+  const erros = capturarErros(page)
+  await page.goto('/login')
+  await page.getByLabel('Email').fill('rh@demo.com')
+  await page.getByLabel('Senha').fill(process.env.RH_PASSWORD || 'rh-demo')
+  await page.getByRole('button', { name: 'Entrar' }).click()
+  await expect(page.getByRole('heading', { name: 'Painel RH' })).toBeVisible({
+    timeout: 20_000,
+  })
+  expect(erros).toEqual([])
 })

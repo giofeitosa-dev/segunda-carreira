@@ -41,8 +41,11 @@ export default function Login() {
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium mb-1">Email</label>
+          <label htmlFor="email" className="block text-sm font-medium mb-1">
+            Email
+          </label>
           <input
+            id="email"
             name="email"
             type="email"
             required
@@ -50,8 +53,11 @@ export default function Login() {
           />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1">Senha</label>
+          <label htmlFor="senha" className="block text-sm font-medium mb-1">
+            Senha
+          </label>
           <input
+            id="senha"
             name="senha"
             type="password"
             required

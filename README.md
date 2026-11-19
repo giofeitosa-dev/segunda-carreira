@@ -129,7 +129,7 @@ docker compose up -d --build   # Postgres 16 + API + front nginx (profiles prod,
 # → Reset dos dados:  docker compose down -v
 # → Sem seed demo:     SPRING_PROFILES_ACTIVE=prod docker compose up -d
 # → Outras portas:     API_PORT=8081 FRONT_PORT=3001 docker compose up -d
-# → Credenciais RH:    RH_USER / RH_PASSWORD (padrão rh / rh-demo) via env
+# → Credenciais RH: JWT_SECRET obrigatório via env; login via POST /api/v1/auth/login (Bearer) — zero httpCredentials no E2E
 # → A API no container usa o profile prod (Postgres); H2 segue como default local/testes
 ```
 

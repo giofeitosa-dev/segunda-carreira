@@ -40,29 +40,32 @@ java -jar target\ageblind-api-0.0.1-SNAPSHOT.jar --spring.profiles.active=seed
 | http://localhost:8080/actuator/health | Health (`UP`) |
 | http://localhost:8080/h2-console | H2 (JDBC: `jdbc:h2:mem:ageblind`) |
 
-### Segurança (HTTP Basic — MVP)
+### Segurança (JWT Bearer — ciclo 001)
 
-Os endpoints **do painel RH** exigem autenticação Basic com role `RH`:
+Os endpoints **do painel RH** exigem autenticação JWT com role `RH`:
 
 | Endpoint | Acesso |
 |---|---|
 | `POST /api/v1/vagas/auditoria-linguagem` | 🔒 `ROLE_RH` |
 | `GET /api/v1/funil/metricas` | 🔒 `ROLE_RH` |
-| Demais endpoints da API | público |
+| Demais endpoints da API | público (leitura aberta) |
 
-Credenciais demo (variáveis de ambiente `RH_USER`/`RH_PASSWORD`, padrão `rh`/`rh-demo`):
+Obtenha o token via `POST /api/v1/auth/login` (cadastro público cria `CANDIDATO`; RH nasce via seed):
 
 ```bash
-# 401 problem+json sem credencial
+# 401 problem+json sem token
 curl http://localhost:8080/api/v1/funil/metricas?vagaId=1
 
-# 200 com credencial
-curl -u rh:rh-demo "http://localhost:8080/api/v1/funil/metricas?vagaId=1"
+# 200 com token Bearer (obtenha o token via login primeiro)
+TOKEN=$(curl -s -X POST http://localhost:8080/api/v1/auth/login \
+  -H 'Content-Type: application/json' \
+  -d '{"email":"rh@demo.com","senha":"rh-demo"}' | jq -r .token)
+
+curl -H "Authorization: Bearer $TOKEN" \
+  "http://localhost:8080/api/v1/funil/metricas?vagaId=1"
 ```
 
-Sem credencial a API devolve `401` com `WWW-Authenticate: Basic` e corpo
-RFC 7807 (`application/problem+json`). Config: `SecurityConfig.java` —
-CSRF desabilitado (API stateless), Swagger/H2/health liberados.
+A API devolve `401` com `WWW-Authenticate: Bearer` e corpo RFC 7807 (`application/problem+json`). Config: `SecurityConfig.java` — CSRF desabilitado (API stateless), Swagger/H2/health liberados, rate limit em `/api/v1/auth/**`.
 
 ---
 
@@ -183,14 +186,18 @@ curl -X POST http://localhost:8080/api/v1/curriculo/auditoria \
   -H "Content-Type: application/json" \
   -d '{"curriculo":"Carlos, jovem nativo digital, 10 anos de experiência em vendas.","vagaAlvo":"Vendedor"}'
 
-# 13) auditoria de linguagem da vaga (requer Basic RH)
+# 13) auditoria de linguagem da vaga (requer token RH Bearer)
+TOKEN=$(curl -s -X POST http://localhost:8080/api/v1/auth/login \
+  -H 'Content-Type: application/json' \
+  -d '{"email":"rh@demo.com","senha":"rh-demo"}' | jq -r .token)
 curl -X POST http://localhost:8080/api/v1/vagas/auditoria-linguagem \
-  -u rh:rh-demo \
+  -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" \
   -d '{"titulo":"Estágio","texto":"Buscamos profissional jovem, dinâmico e com no máximo 5 anos de experiência."}'
 
-# 14) métricas do funil (adverse impact por faixa; requer Basic RH)
-curl -u rh:rh-demo "http://localhost:8080/api/v1/funil/metricas?vagaId=1"
+# 14) métricas do funil (adverse impact por faixa; requer token RH Bearer)
+curl -H "Authorization: Bearer $TOKEN" \
+  "http://localhost:8080/api/v1/funil/metricas?vagaId=1"
 
 # 15) solicitação de revisão → protocolo REV-
 curl -X POST http://localhost:8080/api/v1/revisao/solicitacao \
