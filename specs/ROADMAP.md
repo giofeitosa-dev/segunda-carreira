@@ -8,7 +8,7 @@
 | Ciclo | Feature | Escopo | Branch | Status |
 |---|---|---|---|---|
 | 0 | Governança base | Constitution v1.0.0 + este roadmap | `spec/governance-base` | 🔄 em execução |
-| 001 | `001-jwt-security-baseline` | JWT completo (cadastro/login/roles), autorização com posse, hardening baseline (headers, CORS, rate limit, secret fail-fast), contrato bearer | `001-jwt-security-baseline` | ⬜ não iniciado |
+| 001 | `001-jwt-security-baseline` | JWT completo (cadastro/login/roles), autorização com posse, hardening baseline (headers, CORS, rate limit, secret fail-fast), contrato bearer | `001-jwt-security-baseline` | ✅ concluído (commits C1.1–C1.8) |
 | 002 | `002-observability-audit` | Audit log de segurança, correlation-id/logging estruturado, actuator hardening, supply-chain CI (Dependabot, dependency audit, gitleaks) | `002-observability-audit` | ⬜ não iniciado |
 | 003 | `003-lgpd-governance` | Direitos do titular (portabilidade + exclusão cascata), política de retenção, SECURITY.md + pr-checklist, checklist de conformidade | `003-lgpd-governance` | ⬜ não iniciado |
 
@@ -34,4 +34,4 @@ create-new-feature.ps1 → spec.md ──GATE──▶ plan.md ──GATE──�
 
 | Data | Ciclo | Commit de fechamento | Notas |
 |---|---|---|---|
-| — | — | — | (preencher a cada merge) |
+| 2026-11-18 | 001 | d5c6865 | C1.1–C1.8 implementados: JWT cadastro/login, autorização por papel+posse, hardening (rate limit, CORS, headers, swagger off em prod), front login/Bearer/guarda, E2E sem httpCredentials, READMEs JWT. 117/117 testes API verdes, 22/22 front verdes. |
