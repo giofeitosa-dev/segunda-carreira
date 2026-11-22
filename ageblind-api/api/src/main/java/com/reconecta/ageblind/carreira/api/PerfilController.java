@@ -10,6 +10,7 @@ import com.reconecta.ageblind.carreira.dto.TransferiveisResponse;
 import com.reconecta.ageblind.carreira.service.CompetenciasTransferiveisService;
 import com.reconecta.ageblind.carreira.service.CurriculoService;
 import com.reconecta.ageblind.carreira.service.PerfilService;
+import com.reconecta.ageblind.shared.api.Auditar;
 import com.reconecta.ageblind.shared.security.PosseChecker;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -52,6 +53,7 @@ public class PerfilController {
 	@PostMapping
 	@ResponseStatus(CREATED)
 	@Operation(summary = "Cadastra perfil profissional (sem data de nascimento)")
+	@Auditar(acao = "PERFIL_CRIADO")
 	public ResponseEntity<PerfilResponse> criar(@Valid @RequestBody PerfilRequest req) {
 		PerfilResponse criado = perfilService.criar(req);
 		return ResponseEntity.created(URI.create("/api/v1/perfis/" + criado.id())).body(criado);
@@ -59,12 +61,14 @@ public class PerfilController {
 
 	@GetMapping("/{id}")
 	@Operation(summary = "Consulta perfil")
+	@Auditar(acao = "PERFIL_OBTIDO")
 	public PerfilResponse obter(@PathVariable Long id) {
 		return perfilService.obter(id);
 	}
 
 	@PutMapping("/{id}")
 	@Operation(summary = "Edita perfil profissional (sem data de nascimento)")
+	@Auditar(acao = "PERFIL_ATUALIZADO")
 	public PerfilResponse atualizar(@PathVariable Long id, @Valid @RequestBody PerfilRequest req) {
 		return perfilService.atualizar(id, req);
 	}
