@@ -38,7 +38,8 @@ public class SecurityConfig {
 			HttpSecurity http,
 			JwtAuthenticationConverter jwtAuthenticationConverter,
 			RateLimitFilter rateLimitFilter,
-			CorsConfigurationSource corsConfigurationSource) throws Exception {
+			CorsConfigurationSource corsConfigurationSource,
+			CorrelationIdFilter correlationIdFilter) throws Exception {
 		http
 				.csrf(AbstractHttpConfigurer::disable)
 				.sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -47,6 +48,7 @@ public class SecurityConfig {
 						.frameOptions(f -> f.deny())
 						.contentTypeOptions(c -> c.disable())
 						.httpStrictTransportSecurity(s -> s.includeSubDomains(true).maxAgeInSeconds(31536000)))
+				.addFilterBefore(correlationIdFilter, UsernamePasswordAuthenticationFilter.class)
 				.addFilterBefore(rateLimitFilter, UsernamePasswordAuthenticationFilter.class)
 				.authorizeHttpRequests(auth -> auth
 						.requestMatchers("/api/v1/auth/**").permitAll()
@@ -60,6 +62,7 @@ public class SecurityConfig {
 						.requestMatchers(HttpMethod.POST, "/api/v1/vagas/auditoria-linguagem")
 						.hasRole("RH")
 						.requestMatchers("/api/v1/funil/**").hasRole("RH")
+						.requestMatchers("/api/v1/auditoria").hasRole("RH")
 						.anyRequest().authenticated())
 				.oauth2ResourceServer(o -> o
 						.authenticationEntryPoint(SecurityConfig::problem401)
