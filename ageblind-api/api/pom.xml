@@ -81,6 +81,13 @@
 			<version>3.3.3</version>
 		</dependency>
 
+		<!-- Logging estruturado JSON (ciclo 002 — pesquisa R3) -->
+		<dependency>
+			<groupId>net.logstash.logback</groupId>
+			<artifactId>logstash-logback-encoder</artifactId>
+			<version>7.4</version>
+		</dependency>
+
 <dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
