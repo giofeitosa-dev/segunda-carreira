@@ -193,6 +193,35 @@ paths:
               schema: { $ref: '#/components/schemas/Perfil' }
         '400': { $ref: '#/components/responses/BadRequest' }
 
+  /api/v1/meus-dados:
+    delete:
+      tags: [LGPD]
+      summary: Exclui meus dados pessoais (exclusao cascata, LGPD art. 18)
+      operationId: excluirMeusDados
+      security:
+        - bearerAuth: []
+      responses:
+        '204':
+          description: Dados excluídos com sucesso
+        '401': { $ref: '#/components/responses/BadRequest' }
+        '403': { $ref: '#/components/responses/BadRequest' }
+
+  /api/v1/meus-dados/exportacao:
+    get:
+      tags: [LGPD]
+      summary: Exporta meus dados pessoais (portabilidade, LGPD art. 20)
+      operationId: exportarMeusDados
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Dados pessoais do titular em JSON
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DadosTitularResponse' }
+        '401': { $ref: '#/components/responses/BadRequest' }
+        '403': { $ref: '#/components/responses/BadRequest' }
+
   /api/v1/perfis/{id}:
     get:
       tags: [Carreira]
@@ -1206,6 +1235,115 @@ components:
         ip: { type: string }
         dataHora: { type: string, format: date-time }
         correlationId: { type: string }
+
+    DadosTitularResponse:
+      type: object
+      properties:
+        usuario:
+          $ref: '#/components/schemas/UsuarioDto'
+        perfil:
+          $ref: '#/components/schemas/PerfilDto'
+        experiencias:
+          type: array
+          items: { $ref: '#/components/schemas/ExperienciaDto' }
+        formacoes:
+          type: array
+          items: { $ref: '#/components/schemas/FormacaoDto' }
+        projetos:
+          type: array
+          items: { $ref: '#/components/schemas/ProjetoDto' }
+        idiomas:
+          type: array
+          items: { $ref: '#/components/schemas/IdiomaDto' }
+        certificacoes:
+          type: array
+          items: { $ref: '#/components/schemas/CertificacaoDto' }
+        competencias:
+          type: array
+          items: { $ref: '#/components/schemas/CompetenciaDto' }
+        inscricoes:
+          type: array
+          items: { $ref: '#/components/schemas/InscricaoDto' }
+
+    UsuarioDto:
+      type: object
+      properties:
+        id: { type: integer, format: int64 }
+        email: { type: string }
+        papel: { type: string }
+        criadoEm: { type: string, format: date-time }
+
+    PerfilDto:
+      type: object
+      properties:
+        id: { type: integer, format: int64 }
+        nome: { type: string }
+        email: { type: string }
+        telefone: { type: string }
+        cidade: { type: string }
+        resumo: { type: string }
+        linkedin: { type: string }
+        github: { type: string }
+        criadoEm: { type: string, format: date-time }
+
+    ExperienciaDto:
+      type: object
+      properties:
+        id: { type: integer, format: int64 }
+        cargo: { type: string }
+        empresa: { type: string }
+        anoInicio: { type: integer }
+        anoFim: { type: integer, nullable: true }
+        descricao: { type: string }
+
+    FormacaoDto:
+      type: object
+      properties:
+        id: { type: integer, format: int64 }
+        curso: { type: string }
+        instituicao: { type: string }
+        anoConclusao: { type: integer, nullable: true }
+
+    ProjetoDto:
+      type: object
+      properties:
+        id: { type: integer, format: int64 }
+        nome: { type: string }
+        descricao: { type: string }
+        anoInicio: { type: integer, nullable: true }
+        anoFim: { type: integer, nullable: true }
+
+    IdiomaDto:
+      type: object
+      properties:
+        id: { type: integer, format: int64 }
+        idioma: { type: string }
+        nivel: { type: string }
+
+    CertificacaoDto:
+      type: object
+      properties:
+        id: { type: integer, format: int64 }
+        nome: { type: string }
+        instituicao: { type: string, nullable: true }
+        anoObtencao: { type: integer, nullable: true }
+
+    CompetenciaDto:
+      type: object
+      properties:
+        id: { type: integer, format: int64 }
+        nome: { type: string }
+        nivel: { type: string }
+        anosExperiencia: { type: integer, nullable: true }
+
+    InscricaoDto:
+      type: object
+      properties:
+        id: { type: integer, format: int64 }
+        tipo: { type: string }
+        referenciaId: { type: string }
+        status: { type: string }
+        criadoEm: { type: string, format: date-time }
 
     AuditoriaCurriculo:
       type: object
