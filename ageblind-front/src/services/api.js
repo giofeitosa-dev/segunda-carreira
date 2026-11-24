@@ -1,4 +1,5 @@
 const BASE = '/api/v1'
+const CHAVE_TOKEN = 'ageblind.token'
 
 export class ApiError extends Error {
   constructor(status, title, detail, fieldErrors) {
@@ -11,9 +12,20 @@ export class ApiError extends Error {
   }
 }
 
+let onUnauthorized = () => {
+  localStorage.removeItem(CHAVE_TOKEN)
+  window.location.replace('/login')
+}
+
+export function setOnUnauthorized(handler) {
+  onUnauthorized = handler
+}
+
 async function request(path, options = {}) {
   const { headers: opcoesHeaders, ...resto } = options
   const headers = { ...opcoesHeaders }
+  const token = localStorage.getItem(CHAVE_TOKEN)
+  if (token) headers['Authorization'] = `Bearer ${token}`
   if (!(resto.body instanceof FormData) && !headers['Content-Type']) {
     headers['Content-Type'] = 'application/json'
   }
@@ -25,6 +37,10 @@ async function request(path, options = {}) {
   const body = contentType.includes('json')
     ? await res.json().catch(() => null)
     : null
+
+  if (res.status === 401) {
+    onUnauthorized()
+  }
 
   if (!res.ok) {
     throw new ApiError(
@@ -45,4 +61,7 @@ export const api = {
     request(path, { method: 'PUT', body: JSON.stringify(data) }),
   del: (path) => request(path, { method: 'DELETE' }),
   postForm: (path, formData) => request(path, { method: 'POST', body: formData }),
+  setOnUnauthorized: (handler) => {
+    onUnauthorized = handler
+  },
 }

@@ -25,6 +25,8 @@ jobs:
         run: |
           chmod +x mvnw
           ./mvnw -B -ntp verify
+      - name: Dependency audit
+        run: ./mvnw -B -ntp dependency:audit
 
   front:
     name: Front (Vite)
@@ -105,3 +107,15 @@ jobs:
         run: docker build -t ageblind-api:ci ./ageblind-api/api
       - name: Build da imagem do front
         run: docker build -t ageblind-front:ci ./ageblind-front
+
+  gitleaks:
+    name: Secret scan (gitleaks)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}

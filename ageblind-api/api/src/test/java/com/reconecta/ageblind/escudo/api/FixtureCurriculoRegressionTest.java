@@ -14,6 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.reconecta.ageblind.shared.security.JwtTestSupport;
 
 import org.junit.jupiter.api.Test;
 
@@ -22,6 +23,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.RequestPostProcessor;
 
 /**
  * Regressão anti-viés (Sprint 3, T-03): o currículo real do seed
@@ -34,6 +36,9 @@ class FixtureCurriculoRegressionTest {
 
 	@Autowired
 	private MockMvc mockMvc;
+
+	@Autowired
+	private JwtTestSupport jwt;
 
 	private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -55,9 +60,12 @@ class FixtureCurriculoRegressionTest {
 	void fixtureRealGeraVersaoAgeBlindSemProxiesDeIdade() throws Exception {
 		String corpo = corpoJson(fixture());
 
+		RequestPostProcessor autenticado = jwt.jwtCandidato(null);
+
 		mockMvc.perform(post("/api/v1/curriculo/age-blind")
 						.contentType(MediaType.APPLICATION_JSON)
-						.content(corpo))
+						.content(corpo)
+						.with(autenticado))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.regrasAplicadas",
 						hasSize(greaterThanOrEqualTo(10))))
@@ -78,10 +86,12 @@ class FixtureCurriculoRegressionTest {
 	@Test
 	void auditoriaDaFixtureRealMarcaAoMenosTresSinais() throws Exception {
 		String corpo = corpoJson(fixture());
+		RequestPostProcessor autenticado = jwt.jwtCandidato(null);
 
 		mockMvc.perform(post("/api/v1/curriculo/auditoria")
 						.contentType(MediaType.APPLICATION_JSON)
-						.content(corpo))
+						.content(corpo)
+						.with(autenticado))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.sinaisQueRevelamIdade",
 						hasSize(greaterThanOrEqualTo(3))))

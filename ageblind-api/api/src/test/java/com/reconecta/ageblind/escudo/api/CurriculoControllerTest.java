@@ -5,12 +5,15 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.reconecta.ageblind.shared.security.JwtTestSupport;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.RequestPostProcessor;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -18,6 +21,9 @@ class CurriculoControllerTest {
 
 	@Autowired
 	private MockMvc mockMvc;
+
+	@Autowired
+	private JwtTestSupport jwt;
 
 	private static final String CURRICULO = """
 			Profissional veterano
@@ -29,9 +35,11 @@ class CurriculoControllerTest {
 
 	@Test
 	void geraVersaoAgeBlindCom15Regras() throws Exception {
+		RequestPostProcessor autenticado = jwt.jwtCandidato(null);
 		mockMvc.perform(post("/api/v1/curriculo/age-blind")
 						.contentType(MediaType.APPLICATION_JSON)
-						.content("{\"curriculo\": " + escapar(CURRICULO) + "}"))
+						.content("{\"curriculo\": " + escapar(CURRICULO) + "}")
+						.with(autenticado))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.tipo").value("AGE_BLIND"))
 				.andExpect(jsonPath("$.regrasAplicadas", hasSize(15)))
@@ -45,7 +53,8 @@ class CurriculoControllerTest {
 	void rejeitaCurriculoVazio() throws Exception {
 		mockMvc.perform(post("/api/v1/curriculo/age-blind")
 						.contentType(MediaType.APPLICATION_JSON)
-						.content("{\"curriculo\": \"\"}"))
+						.content("{\"curriculo\": \"\"}")
+						.with(jwt.jwtCandidato(null)))
 				.andExpect(status().isBadRequest())
 				.andExpect(jsonPath("$.fieldErrors[0].field").value("curriculo"));
 	}

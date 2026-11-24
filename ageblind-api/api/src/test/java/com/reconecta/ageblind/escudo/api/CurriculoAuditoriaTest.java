@@ -5,6 +5,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.reconecta.ageblind.shared.security.JwtTestSupport;
 
 import org.junit.jupiter.api.Test;
 
@@ -13,6 +14,7 @@ import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.RequestPostProcessor;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -21,7 +23,14 @@ class CurriculoAuditoriaTest {
 	@Autowired
 	private MockMvc mockMvc;
 
+	@Autowired
+	private JwtTestSupport jwt;
+
 	private final ObjectMapper objectMapper = new ObjectMapper();
+
+	private RequestPostProcessor token() {
+		return jwt.jwtCandidato(null);
+	}
 
 	@Test
 	void auditarCurriculoComProxiesDevolveSinaisEscoreBaixo() throws Exception {
@@ -35,7 +44,8 @@ class CurriculoAuditoriaTest {
 
 		mockMvc.perform(post("/api/v1/curriculo/auditoria")
 						.contentType(MediaType.APPLICATION_JSON)
-						.content(body))
+						.content(body)
+						.with(token()))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.scoreAts").isNumber())
 				.andExpect(jsonPath("$.scoreAts").value(org.hamcrest.Matchers.lessThan(100)))
@@ -58,7 +68,8 @@ class CurriculoAuditoriaTest {
 
 		mockMvc.perform(post("/api/v1/curriculo/auditoria")
 						.contentType(MediaType.APPLICATION_JSON)
-						.content(body))
+						.content(body)
+						.with(token()))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.scoreAts").value(100))
 				.andExpect(jsonPath("$.sinaisQueRevelamIdade.length()").value(0));
@@ -68,7 +79,8 @@ class CurriculoAuditoriaTest {
 	void auditarSemCurriculoDevolve400() throws Exception {
 		mockMvc.perform(post("/api/v1/curriculo/auditoria")
 						.contentType(MediaType.APPLICATION_JSON)
-						.content("{}"))
+						.content("{}")
+						.with(token()))
 				.andExpect(status().isBadRequest());
 	}
 }

@@ -20,6 +20,7 @@ import com.reconecta.ageblind.carreira.repository.PerfilRepository;
 import com.reconecta.ageblind.carreira.repository.TrilhaRepository;
 import com.reconecta.ageblind.carreira.repository.VagaRepository;
 import com.reconecta.ageblind.carreira.service.LembreteJob;
+import com.reconecta.ageblind.shared.security.JwtTestSupport;
 
 import org.junit.jupiter.api.Test;
 
@@ -28,6 +29,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.RequestPostProcessor;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -47,6 +49,9 @@ class InscricaoControllerTest {
 
 	@Autowired
 	private LembreteJob lembreteJob;
+
+	@Autowired
+	private JwtTestSupport jwt;
 
 	private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -72,13 +77,15 @@ class InscricaoControllerTest {
 	@Test
 	void criarInscricaoEmVagaDevolve201ComStatusEnviada() throws Exception {
 		long perfilId = criarPerfil();
+		RequestPostProcessor dono = jwt.jwtCandidato(perfilId);
 		Vaga vaga = criarVagaComPrazo(LocalDateTime.now().plusDays(30));
 		String body = objectMapper.writeValueAsString(java.util.Map.of(
 				"perfilId", perfilId, "tipo", "VAGA", "referenciaId", String.valueOf(vaga.getId())));
 
 		mockMvc.perform(post("/api/v1/inscricoes")
 						.contentType(MediaType.APPLICATION_JSON)
-						.content(body))
+						.content(body)
+						.with(dono))
 				.andExpect(status().isCreated())
 				.andExpect(jsonPath("$.perfilId").value(perfilId))
 				.andExpect(jsonPath("$.tipo").value("VAGA"))
@@ -87,44 +94,55 @@ class InscricaoControllerTest {
 	}
 
 	@Test
-	void criarInscricaoValidacoes400E404() throws Exception {
+	void criarInscricaoValidacoes400E403E404() throws Exception {
+		long perfilId = criarPerfil();
+		RequestPostProcessor dono = jwt.jwtCandidato(perfilId);
+		RequestPostProcessor outro = jwt.jwtCandidato(null);
+
 		mockMvc.perform(post("/api/v1/inscricoes")
 						.contentType(MediaType.APPLICATION_JSON)
-						.content("{}"))
+						.content("{}")
+						.with(dono))
 				.andExpect(status().isBadRequest());
 
+		// posse checada ANTES da existência (não vaza existência de perfil alheio)
 		String perfilInexistente = objectMapper.writeValueAsString(java.util.Map.of(
 				"perfilId", 999999L, "tipo", "VAGA", "referenciaId", "1"));
 		mockMvc.perform(post("/api/v1/inscricoes")
 						.contentType(MediaType.APPLICATION_JSON)
-						.content(perfilInexistente))
-				.andExpect(status().isNotFound());
+						.content(perfilInexistente)
+						.with(outro))
+				.andExpect(status().isForbidden());
 
-		long perfilId = criarPerfil();
+		Vaga vaga = criarVagaComPrazo(LocalDateTime.now().plusDays(30));
 		String vagaInexistente = objectMapper.writeValueAsString(java.util.Map.of(
 				"perfilId", perfilId, "tipo", "VAGA", "referenciaId", "999999"));
 		mockMvc.perform(post("/api/v1/inscricoes")
 						.contentType(MediaType.APPLICATION_JSON)
-						.content(vagaInexistente))
+						.content(vagaInexistente)
+						.with(dono))
 				.andExpect(status().isNotFound());
 
 		String referenciaNaoNumerica = objectMapper.writeValueAsString(java.util.Map.of(
 				"perfilId", perfilId, "tipo", "VAGA", "referenciaId", "abc"));
 		mockMvc.perform(post("/api/v1/inscricoes")
 						.contentType(MediaType.APPLICATION_JSON)
-						.content(referenciaNaoNumerica))
+						.content(referenciaNaoNumerica)
+						.with(dono))
 				.andExpect(status().isBadRequest());
 	}
 
 	@Test
 	void agendarLembreteDevolve202EJobIdentificaNoPrazoSemRecontar() throws Exception {
 		long perfilId = criarPerfil();
+		RequestPostProcessor dono = jwt.jwtCandidato(perfilId);
 		Vaga vaga = criarVagaComPrazo(LocalDateTime.now().plusHours(12));
 		String body = objectMapper.writeValueAsString(java.util.Map.of(
 				"perfilId", perfilId, "tipo", "VAGA", "referenciaId", String.valueOf(vaga.getId())));
 		String resposta = mockMvc.perform(post("/api/v1/inscricoes")
 						.contentType(MediaType.APPLICATION_JSON)
-						.content(body))
+						.content(body)
+						.with(dono))
 				.andExpect(status().isCreated())
 				.andReturn().getResponse().getContentAsString();
 		long inscricaoId = objectMapper.readTree(resposta).get("id").asLong();
@@ -132,27 +150,31 @@ class InscricaoControllerTest {
 		mockMvc.perform(post("/api/v1/webhooks/lembretes")
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(java.util.Map.of(
-								"inscricaoId", inscricaoId, "antecedenciaHoras", 24))))
+								"inscricaoId", inscricaoId, "antecedenciaHoras", 24)))
+						.with(dono))
 				.andExpect(status().isAccepted());
 
 		mockMvc.perform(post("/api/v1/webhooks/lembretes")
 						.contentType(MediaType.APPLICATION_JSON)
-						.content("{\"inscricaoId\": 999999}"))
+						.content("{\"inscricaoId\": 999999}")
+						.with(dono))
 				.andExpect(status().isNotFound());
 
 		mockMvc.perform(post("/api/v1/webhooks/lembretes")
 						.contentType(MediaType.APPLICATION_JSON)
-						.content("{}"))
+						.content("{}")
+						.with(dono))
 				.andExpect(status().isBadRequest());
 
 		// 405 para método não suportado (antes caía no handler genérico como 500)
-		mockMvc.perform(get("/api/v1/perfis"))
+		mockMvc.perform(get("/api/v1/perfis").with(dono))
 				.andExpect(status().isMethodNotAllowed());
 
 		// 400 para corpo JSON malformado
 		mockMvc.perform(post("/api/v1/inscricoes")
 						.contentType(MediaType.APPLICATION_JSON)
-						.content("{invalido"))
+						.content("{invalido")
+						.with(dono))
 				.andExpect(status().isBadRequest());
 
 		// prazo em 12h < antecedência 24h → identificado na janela (uma única vez)
@@ -162,8 +184,10 @@ class InscricaoControllerTest {
 	}
 
 	@Test
-	void listaInscricoesDoPerfilCom404E400() throws Exception {
+	void listaInscricoesDoPerfilCom403E400() throws Exception {
 		long perfilId = criarPerfil();
+		RequestPostProcessor dono = jwt.jwtCandidato(perfilId);
+		RequestPostProcessor semPerfil = jwt.jwtCandidato(null);
 		Vaga vaga1 = criarVagaComPrazo(LocalDateTime.now().plusDays(30));
 		Vaga vaga2 = criarVagaComPrazo(LocalDateTime.now().plusDays(45));
 
@@ -172,44 +196,47 @@ class InscricaoControllerTest {
 					"perfilId", perfilId, "tipo", "VAGA", "referenciaId", String.valueOf(vaga.getId())));
 			mockMvc.perform(post("/api/v1/inscricoes")
 							.contentType(MediaType.APPLICATION_JSON)
-							.content(body))
+							.content(body)
+							.with(dono))
 					.andExpect(status().isCreated());
 		}
 
-		mockMvc.perform(get("/api/v1/inscricoes").param("perfilId", String.valueOf(perfilId)))
+		mockMvc.perform(get("/api/v1/inscricoes").param("perfilId", String.valueOf(perfilId)).with(dono))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$", hasSize(2)))
 				.andExpect(jsonPath("$[0].perfilId").value(perfilId))
 				.andExpect(jsonPath("$[0].id").isNumber());
 
-		mockMvc.perform(get("/api/v1/inscricoes").param("perfilId", "999999"))
-				.andExpect(status().isNotFound());
+		mockMvc.perform(get("/api/v1/inscricoes").param("perfilId", "999999").with(semPerfil))
+				.andExpect(status().isForbidden());
 
-		mockMvc.perform(get("/api/v1/inscricoes"))
+		mockMvc.perform(get("/api/v1/inscricoes").with(dono))
 				.andExpect(status().isBadRequest());
 	}
 
 	@Test
 	void cancelarInscricaoDevolve204ESomeDaListaDepoisDe404() throws Exception {
 		long perfilId = criarPerfil();
+		RequestPostProcessor dono = jwt.jwtCandidato(perfilId);
 		Vaga vaga = criarVagaComPrazo(LocalDateTime.now().plusDays(30));
 		String body = objectMapper.writeValueAsString(java.util.Map.of(
 				"perfilId", perfilId, "tipo", "VAGA", "referenciaId", String.valueOf(vaga.getId())));
 		String resposta = mockMvc.perform(post("/api/v1/inscricoes")
 						.contentType(MediaType.APPLICATION_JSON)
-						.content(body))
+						.content(body)
+						.with(dono))
 				.andExpect(status().isCreated())
 				.andReturn().getResponse().getContentAsString();
 		long inscricaoId = objectMapper.readTree(resposta).get("id").asLong();
 
-		mockMvc.perform(delete("/api/v1/inscricoes/{id}", inscricaoId))
+		mockMvc.perform(delete("/api/v1/inscricoes/{id}", inscricaoId).with(dono))
 				.andExpect(status().isNoContent());
 
-		mockMvc.perform(get("/api/v1/inscricoes").param("perfilId", String.valueOf(perfilId)))
+		mockMvc.perform(get("/api/v1/inscricoes").param("perfilId", String.valueOf(perfilId)).with(dono))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$", hasSize(0)));
 
-		mockMvc.perform(delete("/api/v1/inscricoes/{id}", inscricaoId))
+		mockMvc.perform(delete("/api/v1/inscricoes/{id}", inscricaoId).with(dono))
 				.andExpect(status().isNotFound())
 				.andExpect(jsonPath("$.title").value("Não encontrado"));
 	}

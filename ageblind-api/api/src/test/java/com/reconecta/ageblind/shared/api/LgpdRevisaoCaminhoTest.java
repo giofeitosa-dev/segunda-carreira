@@ -25,16 +25,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.web.servlet.MockMvc;
+import com.reconecta.ageblind.shared.security.JwtTestSupport;
 
-/**
- * Regressão LGPD (Sprint 3, T-03): toda resposta de decisão automatizada
- * (ranking, auditoria, funil) aponta o caminho para revisão humana.
- */
+import org.junit.jupiter.api.Test;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.RequestPostProcessor;
+
 @SpringBootTest
 @AutoConfigureMockMvc
-@WithMockUser(roles = "RH")
 class LgpdRevisaoCaminhoTest {
 
 	private static final String CAMINHO = "/api/v1/revisao/solicitacao";
@@ -53,6 +56,9 @@ class LgpdRevisaoCaminhoTest {
 
 	@Autowired
 	private MetricaFunilRepository metricaRepository;
+
+	@Autowired
+	private JwtTestSupport jwt;
 
 	@Test
 	void recomendacaoApontaParaRevisaoEListaCompetenciasFaltantes() throws Exception {
@@ -86,9 +92,11 @@ class LgpdRevisaoCaminhoTest {
 
 	@Test
 	void auditoriaDeCurriculoApontaParaRevisao() throws Exception {
+		RequestPostProcessor autenticado = jwt.jwtCandidato(null);
 		mockMvc.perform(post("/api/v1/curriculo/auditoria")
 						.contentType(MediaType.APPLICATION_JSON)
-						.content("{\"curriculo\": \"Data de nascimento: 12/03/1970\"}"))
+						.content("{\"curriculo\": \"Data de nascimento: 12/03/1970\"}")
+						.with(autenticado))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.caminhoParaRevisao").value(CAMINHO));
 	}
@@ -112,7 +120,8 @@ class LgpdRevisaoCaminhoTest {
 		metricaRepository.save(m);
 
 		mockMvc.perform(get("/api/v1/funil/metricas")
-						.param("vagaId", String.valueOf(vagaId)))
+						.param("vagaId", String.valueOf(vagaId))
+						.with(jwt.jwtRh()))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.caminhoParaRevisao").value(CAMINHO));
 	}

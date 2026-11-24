@@ -37,8 +37,7 @@ npm run dev
   `api.js` (problem+json/`ApiError`) e `CurriculoEstruturado` (5 seções,
   validações e payload do `CurriculoRequest`). Roda em qualquer hora, sem backend.
 - **E2E (Playwright):** `e2e/smoke.spec.js` — **5/5**: home, `/vagas`, `/perfil` (com
-  perfil ativo no localStorage), `/escudo` e `/rh/painel` (funil com credencial
-  errada → 401 e `rh`/`rh-demo` → métricas). **Requer o stack de pé:**
+  perfil ativo no localStorage), `/escudo` e `/rh/painel` (funil com token inválido → 401 e token válido via API → métricas). **Requer o stack de pé:**
   `docker compose up -d --build` (front em `:3000`).
 - Local usa o Edge instalado (`channel: 'msedge'`, sem download); o CI instala
   o Chromium (`npx playwright install --with-deps chromium`) e roda em paralelo.
@@ -56,9 +55,9 @@ npm run dev
 | `/escudo` | Blindar currículo (15 regras), auditar, pedido de revisão LGPD art. 20 | `POST /curriculo/age-blind`, `POST /curriculo/auditoria`, `POST /revisao/solicitacao` |
 | `/rh/painel` | Auditoria de linguagem de vaga + funil com alerta de adverse impact | `POST /vagas/auditoria-linguagem`, `GET /funil/metricas` |
 
-> **Painel RH (HTTP Basic):** os dois endpoints acima exigem credencial de RH
-> (demo: `rh` / `rh-demo`). O browser abre o prompt nativo de Basic auth na
-> primeira chamada — informe as credenciais e a tela passa a funcionar.
+> **Painel RH (JWT Bearer):** o endpoint acima exige autenticação JWT com role `RH`.
+> Obtenha o token via tela de login (`/login`) ou `POST /api/v1/auth/login`, e o
+> front injeta o header `Authorization: Bearer` automaticamente em cada chamada.
 
 ## Estrutura
 

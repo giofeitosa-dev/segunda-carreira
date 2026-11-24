@@ -12,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -68,6 +69,31 @@ public class GlobalExceptionHandler {
 		ProblemDetail pd = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
 		pd.setTitle("Não encontrado");
 		return respond(HttpStatus.NOT_FOUND, pd);
+	}
+
+	@ExceptionHandler(ConflitoException.class)
+	public ResponseEntity<ProblemDetail> handleConflito(ConflitoException ex) {
+		ProblemDetail pd = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+		pd.setTitle("Conflito");
+		return respond(HttpStatus.CONFLICT, pd);
+	}
+
+	@ExceptionHandler(NaoAutenticadoException.class)
+	public ResponseEntity<ProblemDetail> handleNaoAutenticado(NaoAutenticadoException ex) {
+		ProblemDetail pd = ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, ex.getMessage());
+		pd.setTitle("Não autenticado");
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+				.contentType(MediaType.parseMediaType("application/problem+json"))
+				.header("WWW-Authenticate", "Bearer realm=\"Segunda Carreira\"")
+				.body(pd);
+	}
+
+	@ExceptionHandler(AccessDeniedException.class)
+	public ResponseEntity<ProblemDetail> handleAcessoNegado(AccessDeniedException ex) {
+		ProblemDetail pd = ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN,
+				"Sem permissão para este recurso");
+		pd.setTitle("Acesso negado");
+		return respond(HttpStatus.FORBIDDEN, pd);
 	}
 
 	@ExceptionHandler(NoResourceFoundException.class)

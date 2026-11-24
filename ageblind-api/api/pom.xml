@@ -50,6 +50,11 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
+		<!-- JWT stateless: resource server (Nimbus) para emissão/validação HS256 -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-webmvc</artifactId>
@@ -74,6 +79,13 @@
 			<groupId>org.apache.tika</groupId>
 			<artifactId>tika-parser-microsoft-module</artifactId>
 			<version>3.3.3</version>
+		</dependency>
+
+		<!-- Logging estruturado JSON (ciclo 002 — pesquisa R3) -->
+		<dependency>
+			<groupId>net.logstash.logback</groupId>
+			<artifactId>logstash-logback-encoder</artifactId>
+			<version>7.4</version>
 		</dependency>
 
 <dependency>
@@ -137,6 +149,16 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<systemPropertyVariables>
+						<app.jwt.secret>ageblind-demo-secret-key-2026-001</app.jwt.secret>
+						<app.ratelimit.auth.limite>10000</app.ratelimit.auth.limite>
+					</systemPropertyVariables>
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.jacoco</groupId>

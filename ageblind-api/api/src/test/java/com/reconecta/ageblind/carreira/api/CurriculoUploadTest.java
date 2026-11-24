@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.io.ByteArrayOutputStream;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.reconecta.ageblind.shared.security.JwtTestSupport;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -26,6 +27,7 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.RequestPostProcessor;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -33,6 +35,9 @@ class CurriculoUploadTest {
 
 	@Autowired
 	private MockMvc mockMvc;
+
+	@Autowired
+	private JwtTestSupport jwt;
 
 	private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -57,13 +62,14 @@ class CurriculoUploadTest {
 			Checklist visual - https://exemplo.demo/perdas
 			""";
 
-	private Long criarPerfil() throws Exception {
+	private Long criarPerfil(RequestPostProcessor candidato) throws Exception {
 		MvcResult criado = mockMvc.perform(post("/api/v1/perfis")
 						.contentType(MediaType.APPLICATION_JSON)
 						.content("""
 								{"nome": "Upload Test", "email": "upload@recode.demo",
 								 "areaAtual": "Producao", "areaAlvo": "Logistica"}
-								"""))
+								""")
+						.with(candidato))
 				.andExpect(status().isCreated())
 				.andReturn();
 		return objectMapper.readTree(criado.getResponse().getContentAsString()).get("id").asLong();
@@ -71,9 +77,11 @@ class CurriculoUploadTest {
 
 	@Test
 	void uploadTxtParseiaSecoesEDescartaLinhasDeIdade() throws Exception {
-		Long id = criarPerfil();
+		RequestPostProcessor candidato = jwt.jwtCandidato(null);
+		Long id = criarPerfil(candidato);
 		mockMvc.perform(multipart("/api/v1/perfis/" + id + "/curriculo/arquivo")
-						.file(new MockMultipartFile("arquivo", "cv-ana.txt", "text/plain", CURRICULO_TXT.getBytes())))
+						.file(new MockMultipartFile("arquivo", "cv-ana.txt", "text/plain", CURRICULO_TXT.getBytes()))
+						.with(candidato))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.experiencias", hasSize(2)))
 				.andExpect(jsonPath("$.experiencias[0].cargo").value("Supervisora de Producao"))
@@ -91,13 +99,15 @@ class CurriculoUploadTest {
 				.andExpect(jsonPath("$.idade").doesNotExist());
 
 		mockMvc.perform(multipart("/api/v1/perfis/" + id + "/curriculo")
-						.file(new MockMultipartFile("arquivo", "cv-ana.txt", "text/plain", CURRICULO_TXT.getBytes())))
+						.file(new MockMultipartFile("arquivo", "cv-ana.txt", "text/plain", CURRICULO_TXT.getBytes()))
+						.with(candidato))
 				.andExpect(status().isMethodNotAllowed());
 	}
 
 	@Test
 	void uploadPdfGeradoParseiaExperienciaEFormacao() throws Exception {
-		Long id = criarPerfil();
+		RequestPostProcessor candidato = jwt.jwtCandidato(null);
+		Long id = criarPerfil(candidato);
 		byte[] pdf = pdfComLinhas(
 				"EXPERIENCIA PROFISSIONAL",
 				"Coordenadora de Logistica - Recode - 2020 - 2024",
@@ -105,7 +115,8 @@ class CurriculoUploadTest {
 				"FORMACAO",
 				"Logistica - FACENS - 2015");
 		mockMvc.perform(multipart("/api/v1/perfis/" + id + "/curriculo/arquivo")
-						.file(new MockMultipartFile("arquivo", "cv.pdf", "application/pdf", pdf)))
+						.file(new MockMultipartFile("arquivo", "cv.pdf", "application/pdf", pdf))
+						.with(candidato))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.experiencias", hasSize(1)))
 				.andExpect(jsonPath("$.experiencias[0].cargo").value("Coordenadora de Logistica"))
@@ -117,7 +128,8 @@ class CurriculoUploadTest {
 
 	@Test
 	void uploadDocxGeradoParseiaExperienciaEProjeto() throws Exception {
-		Long id = criarPerfil();
+		RequestPostProcessor candidato = jwt.jwtCandidato(null);
+		Long id = criarPerfil(candidato);
 		byte[] docx = docxComParagrafos(
 				"EXPERIENCIA PROFISSIONAL",
 				"Vendedor Interno - Comercial Delta - 2010 - 2015",
@@ -126,7 +138,8 @@ class CurriculoUploadTest {
 				"Campanha de recorrencia - https://exemplo.demo/campanha");
 		mockMvc.perform(multipart("/api/v1/perfis/" + id + "/curriculo/arquivo")
 						.file(new MockMultipartFile("arquivo", "cv.docx",
-								"application/vnd.openxmlformats-officedocument.wordprocessingml.document", docx)))
+								"application/vnd.openxmlformats-officedocument.wordprocessingml.document", docx))
+						.with(candidato))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.experiencias", hasSize(1)))
 				.andExpect(jsonPath("$.experiencias[0].cargo").value("Vendedor Interno"))
@@ -136,34 +149,40 @@ class CurriculoUploadTest {
 
 	@Test
 	void textoSemSecoesReconheciveisDevolve400() throws Exception {
-		Long id = criarPerfil();
+		RequestPostProcessor candidato = jwt.jwtCandidato(null);
+		Long id = criarPerfil(candidato);
 		mockMvc.perform(multipart("/api/v1/perfis/" + id + "/curriculo/arquivo")
 						.file(new MockMultipartFile("arquivo", "cv.txt", "text/plain",
-								"Lorem ipsum dolor sit amet, consectetur adipiscing elit.".getBytes())))
+								"Lorem ipsum dolor sit amet, consectetur adipiscing elit.".getBytes()))
+						.with(candidato))
 				.andExpect(status().isBadRequest())
 				.andExpect(jsonPath("$.exception", containsString("identificar")));
 	}
 
 	@Test
 	void arquivoVazioDevolve400() throws Exception {
-		Long id = criarPerfil();
+		RequestPostProcessor candidato = jwt.jwtCandidato(null);
+		Long id = criarPerfil(candidato);
 		mockMvc.perform(multipart("/api/v1/perfis/" + id + "/curriculo/arquivo")
-						.file(new MockMultipartFile("arquivo", "cv.txt", "text/plain", new byte[0])))
+						.file(new MockMultipartFile("arquivo", "cv.txt", "text/plain", new byte[0]))
+						.with(candidato))
 				.andExpect(status().isBadRequest())
 				.andExpect(jsonPath("$.exception", containsString("vazio")));
 	}
 
 	@Test
 	void semParteArquivoDevolve400() throws Exception {
-		Long id = criarPerfil();
-		mockMvc.perform(multipart("/api/v1/perfis/" + id + "/curriculo/arquivo"))
+		RequestPostProcessor candidato = jwt.jwtCandidato(null);
+		mockMvc.perform(multipart("/api/v1/perfis/1/curriculo/arquivo")
+						.with(candidato))
 				.andExpect(status().isBadRequest());
 	}
 
 	@Test
 	void perfilInexistenteDevolve404() throws Exception {
 		mockMvc.perform(multipart("/api/v1/perfis/99999/curriculo/arquivo")
-						.file(new MockMultipartFile("arquivo", "cv.txt", "text/plain", CURRICULO_TXT.getBytes())))
+						.file(new MockMultipartFile("arquivo", "cv.txt", "text/plain", CURRICULO_TXT.getBytes()))
+						.with(jwt.jwtRh()))
 				.andExpect(status().isNotFound());
 	}
 

@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.reconecta.ageblind.shared.security.JwtTestSupport;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.RequestPostProcessor;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -24,6 +26,9 @@ class PerfilControllerTest {
 
 	@Autowired
 	private MockMvc mockMvc;
+
+	@Autowired
+	private JwtTestSupport jwt;
 
 	private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -47,9 +52,12 @@ class PerfilControllerTest {
 
 	@Test
 	void criaPerfilCom201EHeaderLocation() throws Exception {
+		RequestPostProcessor candidato = jwt.jwtCandidato(null);
+
 		mockMvc.perform(post("/api/v1/perfis")
 						.contentType(MediaType.APPLICATION_JSON)
-						.content(jsonNovoPerfil()))
+						.content(jsonNovoPerfil())
+						.with(candidato))
 				.andExpect(status().isCreated())
 				.andExpect(header().string("Location", org.hamcrest.Matchers.matchesPattern("/api/v1/perfis/\\d+")))
 				.andExpect(jsonPath("$.id").isNumber())
@@ -67,9 +75,12 @@ class PerfilControllerTest {
 
 	@Test
 	void rejeitaPerfilInvalidoCom400EFieldErrors() throws Exception {
+		RequestPostProcessor candidato = jwt.jwtCandidato(null);
+
 		mockMvc.perform(post("/api/v1/perfis")
 						.contentType(MediaType.APPLICATION_JSON)
-						.content("{\"nome\":\"\", \"email\":\"nao-eh-email\", \"areaAlvo\":\"\"}"))
+						.content("{\"nome\":\"\", \"email\":\"nao-eh-email\", \"areaAlvo\":\"\"}")
+						.with(candidato))
 				.andExpect(status().isBadRequest())
 				.andExpect(jsonPath("$.fieldErrors").isArray())
 				.andExpect(jsonPath("$.fieldErrors", hasSize(org.hamcrest.Matchers.greaterThanOrEqualTo(3))));
@@ -77,7 +88,9 @@ class PerfilControllerTest {
 
 	@Test
 	void rejeitaResumoAcimaDe1500Com400() throws Exception {
+		RequestPostProcessor candidato = jwt.jwtCandidato(null);
 		String resumoLongo = "x".repeat(1501);
+
 		mockMvc.perform(post("/api/v1/perfis")
 						.contentType(MediaType.APPLICATION_JSON)
 						.content("""
@@ -87,30 +100,35 @@ class PerfilControllerTest {
 								  "areaAlvo": "LOGISTICA",
 								  "resumo": "%s"
 								}
-								""".formatted(resumoLongo)))
+								""".formatted(resumoLongo))
+						.with(candidato))
 				.andExpect(status().isBadRequest())
 				.andExpect(jsonPath("$.fieldErrors").isArray());
 	}
 
 	@Test
 	void consultaPerfilCriado() throws Exception {
+		RequestPostProcessor candidato = jwt.jwtCandidato(null);
 		MvcResult criado = mockMvc.perform(post("/api/v1/perfis")
 						.contentType(MediaType.APPLICATION_JSON)
-						.content(jsonNovoPerfil()))
+						.content(jsonNovoPerfil())
+						.with(candidato))
 				.andExpect(status().isCreated())
 				.andReturn();
 
 		String body = criado.getResponse().getContentAsString();
 		long id = objectMapper.readTree(body).get("id").asLong();
 
-		mockMvc.perform(get("/api/v1/perfis/{id}", id))
+		mockMvc.perform(get("/api/v1/perfis/{id}", id).with(candidato))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.email").value("joao@example.com"));
 	}
 
 	@Test
 	void retorna404ProblemDetailParaIdInexistente() throws Exception {
-		mockMvc.perform(get("/api/v1/perfis/{id}", 999_999L))
+		RequestPostProcessor rh = jwt.jwtRh();
+
+		mockMvc.perform(get("/api/v1/perfis/{id}", 999_999L).with(rh))
 				.andExpect(status().isNotFound())
 				.andExpect(jsonPath("$.title").value("Não encontrado"))
 				.andExpect(jsonPath("$.detail").isNotEmpty());
@@ -118,9 +136,11 @@ class PerfilControllerTest {
 
 	@Test
 	void atualizaPerfilCom200ESemCamposDeIdade() throws Exception {
+		RequestPostProcessor candidato = jwt.jwtCandidato(null);
 		MvcResult criado = mockMvc.perform(post("/api/v1/perfis")
 						.contentType(MediaType.APPLICATION_JSON)
-						.content(jsonNovoPerfil()))
+						.content(jsonNovoPerfil())
+						.with(candidato))
 				.andExpect(status().isCreated())
 				.andReturn();
 		long id = objectMapper.readTree(criado.getResponse().getContentAsString()).get("id").asLong();
@@ -142,7 +162,8 @@ class PerfilControllerTest {
 				""";
 		mockMvc.perform(put("/api/v1/perfis/{id}", id)
 						.contentType(MediaType.APPLICATION_JSON)
-						.content(atualizacao))
+						.content(atualizacao)
+						.with(candidato))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.id").value(id))
 				.andExpect(jsonPath("$.nome").value("Jo\u00e3o Editado"))
@@ -157,22 +178,26 @@ class PerfilControllerTest {
 				.andExpect(jsonPath("$.dataNascimento").doesNotExist())
 				.andExpect(jsonPath("$.idade").doesNotExist());
 
-		mockMvc.perform(get("/api/v1/perfis/{id}", id))
+		mockMvc.perform(get("/api/v1/perfis/{id}", id).with(candidato))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.nome").value("Jo\u00e3o Editado"));
 	}
 
 	@Test
 	void atualizarRetorna404InexistenteE400Invalido() throws Exception {
+		RequestPostProcessor rh = jwt.jwtRh();
+
 		mockMvc.perform(put("/api/v1/perfis/{id}", 999_999L)
 						.contentType(MediaType.APPLICATION_JSON)
-						.content(jsonNovoPerfil()))
+						.content(jsonNovoPerfil())
+						.with(rh))
 				.andExpect(status().isNotFound())
 				.andExpect(jsonPath("$.title").value("Não encontrado"));
 
 		mockMvc.perform(put("/api/v1/perfis/{id}", 999_999L)
 						.contentType(MediaType.APPLICATION_JSON)
-						.content("{\"nome\":\"\", \"email\":\"invalido\", \"areaAlvo\":\"\"}"))
+						.content("{\"nome\":\"\", \"email\":\"invalido\", \"areaAlvo\":\"\"}")
+						.with(rh))
 				.andExpect(status().isBadRequest())
 				.andExpect(jsonPath("$.fieldErrors").isArray());
 	}

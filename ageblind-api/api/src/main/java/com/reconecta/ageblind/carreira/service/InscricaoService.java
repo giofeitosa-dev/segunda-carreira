@@ -13,6 +13,7 @@ import com.reconecta.ageblind.carreira.repository.PerfilRepository;
 import com.reconecta.ageblind.carreira.repository.TrilhaRepository;
 import com.reconecta.ageblind.carreira.repository.VagaRepository;
 import com.reconecta.ageblind.shared.api.RecursoNaoEncontradoException;
+import com.reconecta.ageblind.shared.security.PosseChecker;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,20 +25,24 @@ public class InscricaoService {
 	private final PerfilRepository perfilRepository;
 	private final VagaRepository vagaRepository;
 	private final TrilhaRepository trilhaRepository;
+	private final PosseChecker posseChecker;
 
 	public InscricaoService(
 			InscricaoRepository inscricaoRepository,
 			PerfilRepository perfilRepository,
 			VagaRepository vagaRepository,
-			TrilhaRepository trilhaRepository) {
+			TrilhaRepository trilhaRepository,
+			PosseChecker posseChecker) {
 		this.inscricaoRepository = inscricaoRepository;
 		this.perfilRepository = perfilRepository;
 		this.vagaRepository = vagaRepository;
 		this.trilhaRepository = trilhaRepository;
+		this.posseChecker = posseChecker;
 	}
 
 	@Transactional
 	public InscricaoResponse criar(InscricaoRequest req) {
+		posseChecker.exigirDonoOuRh(req.perfilId());
 		Perfil perfil = perfilRepository.findById(req.perfilId())
 				.orElseThrow(() -> new RecursoNaoEncontradoException("Perfil", req.perfilId()));
 		validarReferencia(req);
@@ -73,6 +78,7 @@ public class InscricaoService {
 	public void agendarLembrete(LembreteRequest req) {
 		Inscricao inscricao = inscricaoRepository.findById(req.inscricaoId())
 				.orElseThrow(() -> new RecursoNaoEncontradoException("Inscrição", req.inscricaoId()));
+		posseChecker.exigirDonoOuRh(inscricao.getPerfil().getId());
 		inscricao.setLembreteAgendado(true);
 		inscricao.setLembreteAntecedenciaHoras(req.antecedenciaEfetiva());
 		inscricaoRepository.save(inscricao);
@@ -80,6 +86,7 @@ public class InscricaoService {
 
 	@Transactional(readOnly = true)
 	public List<InscricaoResponse> listarPorPerfil(Long perfilId) {
+		posseChecker.exigirDonoOuRh(perfilId);
 		if (!perfilRepository.existsById(perfilId)) {
 			throw new RecursoNaoEncontradoException("Perfil", perfilId);
 		}
@@ -92,6 +99,7 @@ public class InscricaoService {
 	public void cancelar(Long id) {
 		Inscricao inscricao = inscricaoRepository.findById(id)
 				.orElseThrow(() -> new RecursoNaoEncontradoException("Inscrição", id));
+		posseChecker.exigirDonoOuRh(inscricao.getPerfil().getId());
 		inscricaoRepository.delete(inscricao);
 	}
 
