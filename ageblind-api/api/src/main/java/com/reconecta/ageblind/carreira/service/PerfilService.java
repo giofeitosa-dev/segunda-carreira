@@ -131,8 +131,17 @@ public class PerfilService {
 
 		Perfil perfil = usuario.getPerfil();
 		if (perfil == null) {
-			return new DadosTitularResponse(usuarioDto, null, List.of(), List.of(),
-					List.of(), List.of(), List.of(), List.of(), List.of());
+			DadosTitularResponse response = new DadosTitularResponse();
+			response.setUsuario(usuarioDto);
+			response.setPerfil(null);
+			response.setExperiencias(List.of());
+			response.setFormacoes(List.of());
+			response.setProjetos(List.of());
+			response.setIdiomas(List.of());
+			response.setCertificacoes(List.of());
+			response.setCompetencias(List.of());
+			response.setInscricoes(List.of());
+			return response;
 		}
 
 		// Inicializar coleções lazy dentro da transação
@@ -155,8 +164,8 @@ public class PerfilService {
 		response.setProjetos(mapearProjetos(projetos));
 		response.setIdiomas(mapearIdiomas(idiomas));
 		response.setCertificacoes(mapearCertificacoes(certificacoes));
-		response.setCompetencias(mapearCompetencias(perfil.getCompetencias()));
-		response.setInscricoes(List.of()); // inscricoes não têm acesso direto pelo perfil neste escopo
+		response.setCompetencias(mapearCompetencias(new java.util.ArrayList<>(perfil.getCompetencias())));
+		response.setInscricoes(List.of());
 		return response;
 	}
 
@@ -180,15 +189,14 @@ public class PerfilService {
 	private List<DadosTitularResponse.ProjetoDto> mapearProjetos(List<Projeto> lista) {
 		return lista.stream()
 				.map(p -> new DadosTitularResponse.ProjetoDto(
-						p.getId(), p.getNome(), p.getDescricao(), p.getAnoInicio(),
-						p.getAnoFim()))
+						p.getId(), p.getNome(), p.getDescricao(), p.getLink()))
 				.toList();
 	}
 
 	private List<DadosTitularResponse.IdiomaDto> mapearIdiomas(List<Idioma> lista) {
 		return lista.stream()
 				.map(i -> new DadosTitularResponse.IdiomaDto(
-						i.getId(), i.getIdioma(), i.getNivel()))
+						i.getId(), i.getIdioma(), i.getNivel().name()))
 				.toList();
 	}
 
@@ -196,7 +204,7 @@ public class PerfilService {
 			List<Certificacao> lista) {
 		return lista.stream()
 				.map(c -> new DadosTitularResponse.CertificacaoDto(
-						c.getId(), c.getNome(), c.getInstituicao(), c.getAnoObtencao()))
+						c.getId(), c.getNome(), c.getInstituicao(), c.getAnoConclusao()))
 				.toList();
 	}
 

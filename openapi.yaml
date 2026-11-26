@@ -1310,8 +1310,7 @@ components:
         id: { type: integer, format: int64 }
         nome: { type: string }
         descricao: { type: string }
-        anoInicio: { type: integer, nullable: true }
-        anoFim: { type: integer, nullable: true }
+        link: { type: string }
 
     IdiomaDto:
       type: object

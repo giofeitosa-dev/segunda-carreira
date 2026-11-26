@@ -63,7 +63,7 @@ class ContratoOpenApiTest {
 			Matcher tags = TAGS_SPEC.matcher(linha);
 			if (caminhoAtual != null && tags.find()) {
 				String lista = tags.group(1);
-				if (lista.contains("Carreira") || lista.contains("Escudo")) {
+				if (lista.contains("Carreira") || lista.contains("Escudo") || lista.contains("LGPD")) {
 					escopoAgeBlind.add(caminhoAtual);
 				}
 			}
@@ -89,8 +89,8 @@ class ContratoOpenApiTest {
 		});
 
 		Assertions.assertFalse(specPaths.isEmpty(), "nenhum path lido do openapi.yaml");
-		Assertions.assertEquals(19, escopoAgeBlind.size(),
-				"o escopo AgeBlind deve ter exatamente 19 paths no openapi.yaml");
+		Assertions.assertEquals(21, escopoAgeBlind.size(),
+				"o escopo AgeBlind deve ter exatamente 21 paths no openapi.yaml");
 		Assertions.assertTrue(specPaths.containsAll(runtimePaths),
 				"toda rota em runtime precisa existir no openapi.yaml (sem rota órfã): "
 						+ runtimePaths.stream().filter(r -> !specPaths.contains(r)).toList());

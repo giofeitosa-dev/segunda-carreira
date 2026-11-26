@@ -59,7 +59,7 @@ public class DadosTitularResponse {
 
 	public record FormacaoDto(Long id, String curso, String instituicao, Integer anoConclusao) {}
 
-	public record ProjetoDto(Long id, String nome, String descricao, Integer anoInicio, Integer anoFim) {}
+	public record ProjetoDto(Long id, String nome, String descricao, String link) {}
 
 	public record IdiomaDto(Long id, String idioma, String nivel) {}
 
