@@ -14,7 +14,7 @@ Flyway (baseline `V1__init.sql`) · Actuator · SpringDoc 3.1.1
 ## Rodar
 
 ```bash
-# build + testes (93/93)
+# build + testes (134/134)
 mvnw.cmd clean package            # Linux/macOS: ./mvnw clean package
 
 # API em http://localhost:8080 (H2 em memória, sem seed)
@@ -69,7 +69,7 @@ A API devolve `401` com `WWW-Authenticate: Bearer` e corpo RFC 7807 (`applicatio
 
 ---
 
-## Endpoints (22 endpoints AgeBlind · 19 paths)
+## Endpoints (22 endpoints AgeBlind · 2 LGPD · 21 paths)
 
 ### Módulo Carreira — ODS 10+5
 
@@ -242,7 +242,7 @@ idempotentes (pulam se já houver dados) e só rodam com `--spring.profiles.acti
 ## Testes
 
 ```bash
-mvnw.cmd test          # 93/93 verdes
+mvnw.cmd test          # 134/134 verdes
 ```
 
 Cobrem validações, anti-viés (idade fora do ranking), motor de regras,

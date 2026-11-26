@@ -50,7 +50,7 @@ ageblind-api\
 
 | Profile | Banco | Uso |
 |---|---|---|
-| *(nenhum — padrão)* | H2 em memória | Desenvolvimento local e testes (`mvnw verify` → 93/93) |
+| *(nenhum — padrão)* | H2 em memória | Desenvolvimento local e testes (`mvnw verify` → 134/134) |
 | `seed` | H2 em memória | Demo local com dados (`mvnw spring-boot:run -Dspring-boot.run.profiles=seed`) |
 | `prod` | **PostgreSQL** | Container/docker-compose e qualquer ambiente com banco real |
 | `prod,seed` | PostgreSQL | Demo em Postgres com dados (default do `docker-compose.yml`) |

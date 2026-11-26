@@ -102,7 +102,7 @@ A API expõe **22 endpoints em 19 paths** (17 do módulo Carreira + 5 do Escudo)
 
 ## 9. Validação, Conclusão e Próximos Passos
 
-**Validação (executada em 31/10/2026):** suíte da API **93/93 testes verdes** (`mvnw clean verify`, inclui regressão anti-viés, contrato, LGPD e segurança); front **13/13** (Vitest + Testing Library) e **5/5 E2E** (Playwright contra o stack Docker de pé); CI no GitHub Actions roda API, lint+testes do front, E2E e build das imagens a cada push/PR. Demo com seed: 10 perfis, 20 vagas e 5 trilhas.
+**Validação (executada em 26/11/2026):** suíte da API **134/134 testes verdes** (`mvnw clean verify`, inclui regressão anti-viés, contrato, LGPD e segurança); front **13/13** (Vitest + Testing Library) e **5/5 E2E** (Playwright contra o stack Docker de pé); CI no GitHub Actions roda API, lint+testes do front, E2E e build das imagens a cada push/PR. Demo com seed: 10 perfis, 20 vagas e 5 trilhas.
 
 O projeto consolida-se como ferramenta de impacto social que une conformidade legal estrita (LGPD art. 20, Lei 9.029, CLT 373-A), zero coleta de idade e um ciclo completo: competências transferíveis → trilha → vaga → auditoria → revisão humana.
 

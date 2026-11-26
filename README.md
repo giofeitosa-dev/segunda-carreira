@@ -3,7 +3,7 @@
 > **"A API que contrata por competência, não por ano de nascimento."**
 > Projeto de hackathon/ReCode — monolito modular Spring Boot construído com Design Thinking (Empatia → Definição → Ideação).
 
-**Status (31/10/2026): ✅ v1.0.0 publicada e em evolução** — Sprint 1 (planejamento) · Sprint 2 (desenvolvimento, D-01…D-22) · Sprint 3 (testes/revisão, T-01…T-09) · PR #1 merged · release [`v1.0.0`](https://github.com/giofeitosa-dev/segunda-carreira/releases/tag/v1.0.0) · pós-release: Docker + PostgreSQL, CI (GitHub Actions), HTTP Basic no painel RH, currículo estruturado + upload, Flyway baseline · **93/93 testes API · 13/13 front · 5/5 E2E**.
+**Status (26/11/2026): ✅ v1.0.0 publicada e em evolução** — Sprint 1 (planejamento) · Sprint 2 (desenvolvimento, D-01…D-22) · Sprint 3 (testes/revisão, T-01…T-09) · Ciclo 003 LGPD (exclusão cascata + portabilidade + retenção) · PR #1 merged · release [`v1.0.0`](https://github.com/giofeitosa-dev/segunda-carreira/releases/tag/v1.0.0) · pós-release: Docker + PostgreSQL, CI (GitHub Actions), HTTP Basic no painel RH, currículo estruturado + upload, Flyway baseline · **134/134 testes API · 13/13 front · 5/5 E2E**.
 
 ---
 
@@ -50,7 +50,7 @@ reconecta-recode\
 │
 │   ── Especificação ──
 ├── 📦 openapi.yaml                   ← OpenAPI 3.0 — catálogo das 3 soluções (37 operações;
-│                                       22 são do AgeBlind: 17 Carreira + 5 Escudo; filtros por tags)
+│                                       22 são do AgeBlind: 17 Carreira + 5 Escudo; 2 LGPD (meus-dados); filtros por tags)
 │
 │   ── Gestão ──
 ├── 📦 kanban\
@@ -115,7 +115,7 @@ cd ageblind-api/api
 # → Seed:     10 perfis · 20 vagas · 5 trilhas · métricas de funil
 ```
 
-Testes: `./mvnw clean verify` → **93/93 verdes** (H2 em memória; CI roda o mesmo a cada push/PR).
+Testes: `./mvnw clean verify` → **134/134 verdes** (H2 em memória; CI roda o mesmo a cada push/PR).
 
 Testes do front: `cd ageblind-front && npm test` → **13/13** (Vitest + Testing Library) ·
 `npm run e2e` → **5/5** (Playwright, exige o stack docker de pé) — a CI roda os dois a cada push/PR.
