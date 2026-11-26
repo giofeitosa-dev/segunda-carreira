@@ -40,16 +40,30 @@ public class JwtTestSupport {
 	}
 
 	private Usuario novoUsuario(Papel papel, Long perfilId) {
+		if (perfilId != null) {
+			// Reutiliza usuario ja vinculado ao perfil (evita violar unique constraint
+			// USUARIO.PERFIL_ID quando ja existe vinculacao).
+			Usuario existente = usuarioRepository.findAll().stream()
+					.filter(u -> u.getPerfil() != null && u.getPerfil().getId().equals(perfilId))
+					.findFirst()
+					.orElse(null);
+			if (existente != null) {
+				return existente;
+			}
+			Perfil perfil = perfilRepository.findById(perfilId)
+					.orElseThrow(() -> new IllegalArgumentException(
+							"Perfil " + perfilId + " nao existe para vincular o token"));
+			Usuario usuario = new Usuario();
+			usuario.setEmail(papel.name().toLowerCase() + "-" + UUID.randomUUID() + "@teste.demo");
+			usuario.setSenha("senha-teste-123");
+			usuario.setPapel(papel);
+			usuario.setPerfil(perfil);
+			return usuarioRepository.save(usuario);
+		}
 		Usuario usuario = new Usuario();
 		usuario.setEmail(papel.name().toLowerCase() + "-" + UUID.randomUUID() + "@teste.demo");
 		usuario.setSenha("senha-teste-123");
 		usuario.setPapel(papel);
-		if (perfilId != null) {
-			Perfil perfil = perfilRepository.findById(perfilId)
-					.orElseThrow(() -> new IllegalArgumentException(
-							"Perfil " + perfilId + " não existe para vincular o token"));
-			usuario.setPerfil(perfil);
-		}
 		return usuarioRepository.save(usuario);
 	}
 
